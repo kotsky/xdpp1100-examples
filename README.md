@@ -10,6 +10,6 @@ Short description of each example you can find in **XDPP1100 Firmware Examples [
 
 
 ## Authors
-* **Ruslan Kotvytskyi** (IFAP DC PSS SIS SI) <Ruslan.Kotvytskyi2@infineon.com>
+* **Ruslan Kotvytskyi** (IFAP DC PSS SIS SI) <ruslan.kotvytskyi@gmail.com.com>
 * **Seet Wei Ren Ivan** (IFAP DC PSS SIS SI) <WeiRenIvan.Seet@infineon.com>
 * **Andriyanto Halim** andriyanto.halim@gmail.com 
