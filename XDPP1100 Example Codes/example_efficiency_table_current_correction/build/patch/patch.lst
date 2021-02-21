@@ -1,0 +1,1512 @@
+
+.\build\patch/patch.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .bss          00000090  20063800  20063800  00023800  2**2
+                  ALLOC
+  1 .otp_data     00004000  10020000  10020000  00010000  2**0
+                  ALLOC
+  2 .otp_header   0000001c  10024000  10024000  00010000  2**0
+                  ALLOC
+  3 .txt          00000984  1002401c  1002401c  0001401c  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  4 .otp_patch2   00004000  100249a0  100249a0  000149a0  2**0
+                  ALLOC
+  5 .otp_patch3   00004000  100289a0  100289a0  000149a0  2**0
+                  ALLOC
+  6 .debug_info   0001fd2d  00000000  00000000  000149a0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 00001298  00000000  00000000  000346cd  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_loc    0000117b  00000000  00000000  00035965  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_aranges 00000120  00000000  00000000  00036ae0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 000002a8  00000000  00000000  00036c00  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_macro  0000a943  00000000  00000000  00036ea8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_line   00003df5  00000000  00000000  000417eb  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_str    000653de  00000000  00000000  000455e0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 14 .comment      0000007f  00000000  00000000  000aa9be  2**0
+                  CONTENTS, READONLY
+ 15 .ARM.attributes 00000031  00000000  00000000  000aaa3d  2**0
+                  CONTENTS, READONLY
+ 16 .debug_frame  0000020c  00000000  00000000  000aaa70  2**2
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .txt:
+
+1002401c <patch_entry>:
+/**
+ * This is the patch entry point, which is called after the patch got
+ * successfully loaded into RAM.
+ */
+void patch_entry(void)
+{
+1002401c:	b510      	push	{r4, lr}
+    // Initialize the .bss and .data section
+    memset(SECTION_BASE_ZI, 0, SECTION_LENGTH_ZI);
+1002401e:	480c      	ldr	r0, [pc, #48]	; (10024050 <patch_entry+0x34>)
+10024020:	4a0c      	ldr	r2, [pc, #48]	; (10024054 <patch_entry+0x38>)
+10024022:	1a12      	subs	r2, r2, r0
+10024024:	2100      	movs	r1, #0
+10024026:	f000 fc2b 	bl	10024880 <memset>
+    memcpy(SECTION_BASE_RW_DESTINATION, SECTION_BASE_RW_SOURCE, SECTION_LENGTH_RW);
+1002402a:	480b      	ldr	r0, [pc, #44]	; (10024058 <patch_entry+0x3c>)
+1002402c:	4a0b      	ldr	r2, [pc, #44]	; (1002405c <patch_entry+0x40>)
+1002402e:	1a12      	subs	r2, r2, r0
+10024030:	490b      	ldr	r1, [pc, #44]	; (10024060 <patch_entry+0x44>)
+10024032:	f000 fbe3 	bl	100247fc <memcpy>
+    // Initialize ram execution section
+    memcpy(SECTION_BASE_RAM_EXEC_DESTINATION, SECTION_BASE_RAM_EXEC_SOURCE, SECTION_LENGTH_RAM_EXEC);
+10024036:	480b      	ldr	r0, [pc, #44]	; (10024064 <patch_entry+0x48>)
+10024038:	4a0b      	ldr	r2, [pc, #44]	; (10024068 <patch_entry+0x4c>)
+1002403a:	1a12      	subs	r2, r2, r0
+1002403c:	490b      	ldr	r1, [pc, #44]	; (1002406c <patch_entry+0x50>)
+1002403e:	f000 fbdd 	bl	100247fc <memcpy>
+/* lint requires us to have both a declaration and a definition ... we
+ * could probably bail out through some local lint, but her we simply
+ * play to the rules.
+ */
+HAL_INLINE void HAL_SET32(volatile uint32_t* addr, uint32_t val) {
+    *addr = val;
+10024042:	4a0b      	ldr	r2, [pc, #44]	; (10024070 <patch_entry+0x54>)
+10024044:	4b0b      	ldr	r3, [pc, #44]	; (10024074 <patch_entry+0x58>)
+10024046:	601a      	str	r2, [r3, #0]
+
+
+    SCU_SPARE_FF__SET(0x5971BBBBUL);  // write the patch id to SCU spare for simple test that patch loaded
+    user_drv_init();
+10024048:	f000 fbb4 	bl	100247b4 <user_drv_init>
+}
+1002404c:	bd10      	pop	{r4, pc}
+1002404e:	46c0      	nop			; (mov r8, r8)
+10024050:	20063800 	.word	0x20063800
+10024054:	20063890 	.word	0x20063890
+10024058:	20063800 	.word	0x20063800
+1002405c:	20063800 	.word	0x20063800
+10024060:	100249a0 	.word	0x100249a0
+10024064:	20063890 	.word	0x20063890
+10024068:	20063890 	.word	0x20063890
+1002406c:	100249a0 	.word	0x100249a0
+10024070:	5971bbbb 	.word	0x5971bbbb
+10024074:	40000020 	.word	0x40000020
+
+10024078 <add_on_features_init>:
+#include "pmbus_mfr_autogen.h"
+
+void add_on_features_init (void)
+{
+	uint8_t test1 = 0;
+}
+10024078:	4770      	bx	lr
+
+1002407a <calculate_i>:
+ */
+uint16_t calculate_i(uint32_t input_voltage)
+{
+	for (uint8_t i = 0; i < VIN_MAX_IDX; i++)
+	{
+		if(input_voltage < Vin_table[i]) {
+1002407a:	2823      	cmp	r0, #35	; 0x23
+1002407c:	d90c      	bls.n	10024098 <calculate_i+0x1e>
+1002407e:	282f      	cmp	r0, #47	; 0x2f
+10024080:	d906      	bls.n	10024090 <calculate_i+0x16>
+10024082:	283b      	cmp	r0, #59	; 0x3b
+10024084:	d906      	bls.n	10024094 <calculate_i+0x1a>
+10024086:	284a      	cmp	r0, #74	; 0x4a
+10024088:	d900      	bls.n	1002408c <calculate_i+0x12>
+			return i;
+			break;
+		}
+	}
+}
+1002408a:	4770      	bx	lr
+	for (uint8_t i = 0; i < VIN_MAX_IDX; i++)
+1002408c:	2003      	movs	r0, #3
+1002408e:	e7fc      	b.n	1002408a <calculate_i+0x10>
+10024090:	2001      	movs	r0, #1
+10024092:	e7fa      	b.n	1002408a <calculate_i+0x10>
+10024094:	2002      	movs	r0, #2
+10024096:	e7f8      	b.n	1002408a <calculate_i+0x10>
+10024098:	2000      	movs	r0, #0
+			return i;
+1002409a:	e7f6      	b.n	1002408a <calculate_i+0x10>
+
+1002409c <calculate_j>:
+ */
+uint16_t calculate_j(uint32_t output_power)
+{
+	for (uint8_t j = 0; j < POUT_MAX_IDX; j++)
+	{
+		if(output_power <= Pout_table[j]) {
+1002409c:	2800      	cmp	r0, #0
+1002409e:	d00b      	beq.n	100240b8 <calculate_j+0x1c>
+100240a0:	4a07      	ldr	r2, [pc, #28]	; (100240c0 <calculate_j+0x24>)
+100240a2:	3204      	adds	r2, #4
+	for (uint8_t j = 0; j < POUT_MAX_IDX; j++)
+100240a4:	2301      	movs	r3, #1
+		if(output_power <= Pout_table[j]) {
+100240a6:	6811      	ldr	r1, [r2, #0]
+100240a8:	4281      	cmp	r1, r0
+100240aa:	d206      	bcs.n	100240ba <calculate_j+0x1e>
+	for (uint8_t j = 0; j < POUT_MAX_IDX; j++)
+100240ac:	3301      	adds	r3, #1
+100240ae:	b2db      	uxtb	r3, r3
+100240b0:	3204      	adds	r2, #4
+100240b2:	2b07      	cmp	r3, #7
+100240b4:	d1f7      	bne.n	100240a6 <calculate_j+0xa>
+			return j;
+			break;
+		}
+	}
+}
+100240b6:	4770      	bx	lr
+	for (uint8_t j = 0; j < POUT_MAX_IDX; j++)
+100240b8:	2300      	movs	r3, #0
+			return j;
+100240ba:	0018      	movs	r0, r3
+100240bc:	e7fb      	b.n	100240b6 <calculate_j+0x1a>
+100240be:	46c0      	nop			; (mov r8, r8)
+100240c0:	10024918 	.word	0x10024918
+
+100240c4 <input_current_correction>:
+ * @param input_current value of IIN_TELEM
+ * @param iin_read_exp exponents of Iin
+ * @param loop selects the input_current_correction block to operate on
+ */
+uint16_t input_current_correction(uint32_t output_power, int8_t power_read_exp, uint32_t input_current, int8_t iin_read_exp, int8_t loop )
+{
+100240c4:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+100240c6:	0014      	movs	r4, r2
+100240c8:	ab06      	add	r3, sp, #24
+100240ca:	2500      	movs	r5, #0
+100240cc:	575d      	ldrsb	r5, [r3, r5]
+		exponent = -exponent;
+		value = value >> (exponent);
+	}
+	else
+	{
+		value = value << (exponent);
+100240ce:	0006      	movs	r6, r0
+100240d0:	408e      	lsls	r6, r1
+	if ( exponent <= 0)
+100240d2:	2900      	cmp	r1, #0
+100240d4:	dd24      	ble.n	10024120 <input_current_correction+0x5c>
+	uint32_t pout = SHIFT_EXPONENT_UNSIGNED( output_power , power_read_exp );		// to get integer (uX.0 format) real value of Output Power
+
+	uint32_t vin_read = (uint32_t)TELEM_TLM_VIN_LPF__GET((telem_idx_t)loop);		// to get Input Voltage in u7.4 format
+100240d6:	b2ed      	uxtb	r5, r5
+ * @param idp index of peripheral
+ * @return base address of peripheral's instance
+ */
+__TELEM_INLINE uint32_t* __TELEM_BASE_PTR(telem_idx_t idp)
+{
+    return (uint32_t*)(TELEM_BASE + (uint32_t)((uint32_t)idp * TELEM_STRIDE));
+100240d8:	4b13      	ldr	r3, [pc, #76]	; (10024128 <input_current_correction+0x64>)
+100240da:	18eb      	adds	r3, r5, r3
+100240dc:	029b      	lsls	r3, r3, #10
+ * HW 'behind' this address, changing the address' content.
+ */
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr);
+
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr) {
+    return *addr;
+100240de:	6ad8      	ldr	r0, [r3, #44]	; 0x2c
+	vin_read = vin_read >> 4; 														// to get Input Voltage in u7.0 format
+100240e0:	0900      	lsrs	r0, r0, #4
+
+	uint16_t i = calculate_i(vin_read);		// condition searching
+100240e2:	f7ff ffca 	bl	1002407a <calculate_i>
+100240e6:	0007      	movs	r7, r0
+	uint16_t j = calculate_j(pout);
+100240e8:	0030      	movs	r0, r6
+100240ea:	f7ff ffd7 	bl	1002409c <calculate_j>
+
+	uint16_t correction = correction_table[i][j];		// U1.9 format
+100240ee:	00fb      	lsls	r3, r7, #3
+100240f0:	1bdb      	subs	r3, r3, r7
+100240f2:	181a      	adds	r2, r3, r0
+100240f4:	0052      	lsls	r2, r2, #1
+	int8_t correction_exp = -9;
+
+	uint16_t iin_corr = input_current + SHIFT_EXPONENT_UNSIGNED( input_current * correction, correction_exp ); 		// InputCurrent = InputCurrent * ( 1 + correction )
+100240f6:	490d      	ldr	r1, [pc, #52]	; (1002412c <input_current_correction+0x68>)
+100240f8:	5a52      	ldrh	r2, [r2, r1]
+100240fa:	4362      	muls	r2, r4
+		value = value >> (exponent);
+100240fc:	0a52      	lsrs	r2, r2, #9
+100240fe:	1914      	adds	r4, r2, r4
+10024100:	b2a4      	uxth	r4, r4
+
+	//-----------------TO PMBUS MRF (0xB1)----------
+	uint8_t efficiency = efficiency_table[i][j];		// U0.8 format
+10024102:	4a0b      	ldr	r2, [pc, #44]	; (10024130 <input_current_correction+0x6c>)
+10024104:	18d3      	adds	r3, r2, r3
+	PMBUS_Set_Command_Byte((PMBUS_PAGE_W_BROADCAST_t) loop, PMBUS_CMDCODE_MFR_ESTIMATE_EFFICIENCY, efficiency);		// set value of efficiency to MFR_ESTIMATE_EFFICIENCY
+10024106:	5c1a      	ldrb	r2, [r3, r0]
+10024108:	21b1      	movs	r1, #177	; 0xb1
+1002410a:	0028      	movs	r0, r5
+1002410c:	f7dd fb94 	bl	10001838 <PMBUS_Log_Error+0x73>
+	//-----------------TO PMBUS MRF----------
+
+	if (iin_corr>0x3FF) iin_corr = 0x3FF;
+
+	return iin_corr; 	// max absolute value = 1023
+10024110:	1c20      	adds	r0, r4, #0
+10024112:	4b08      	ldr	r3, [pc, #32]	; (10024134 <input_current_correction+0x70>)
+10024114:	429c      	cmp	r4, r3
+10024116:	d901      	bls.n	1002411c <input_current_correction+0x58>
+10024118:	4b07      	ldr	r3, [pc, #28]	; (10024138 <input_current_correction+0x74>)
+1002411a:	8818      	ldrh	r0, [r3, #0]
+1002411c:	b280      	uxth	r0, r0
+}
+1002411e:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
+		exponent = -exponent;
+10024120:	4249      	negs	r1, r1
+		value = value >> (exponent);
+10024122:	40c8      	lsrs	r0, r1
+10024124:	0006      	movs	r6, r0
+10024126:	e7d6      	b.n	100240d6 <input_current_correction+0x12>
+10024128:	001c000d 	.word	0x001c000d
+1002412c:	10024934 	.word	0x10024934
+10024130:	1002496c 	.word	0x1002496c
+10024134:	000003ff 	.word	0x000003ff
+10024138:	10024914 	.word	0x10024914
+
+1002413c <patch_Telemetry_Sample>:
+/**
+ * Telemetry sample routine called to update all telemetry replace ROM function.
+ * Added modification for input current example
+ */
+void patch_Telemetry_Sample(void)
+{
+1002413c:	b5f0      	push	{r4, r5, r6, r7, lr}
+1002413e:	46de      	mov	lr, fp
+10024140:	4657      	mov	r7, sl
+10024142:	464e      	mov	r6, r9
+10024144:	4645      	mov	r5, r8
+10024146:	b5e0      	push	{r5, r6, r7, lr}
+10024148:	b093      	sub	sp, #76	; 0x4c
+1002414a:	4b4f      	ldr	r3, [pc, #316]	; (10024288 <patch_Telemetry_Sample+0x14c>)
+1002414c:	930a      	str	r3, [sp, #40]	; 0x28
+1002414e:	4b4f      	ldr	r3, [pc, #316]	; (1002428c <patch_Telemetry_Sample+0x150>)
+10024150:	469a      	mov	sl, r3
+10024152:	2300      	movs	r3, #0
+10024154:	469b      	mov	fp, r3
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+10024156:	330f      	adds	r3, #15
+10024158:	4698      	mov	r8, r3
+1002415a:	4c4d      	ldr	r4, [pc, #308]	; (10024290 <patch_Telemetry_Sample+0x154>)
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+1002415c:	465d      	mov	r5, fp
+1002415e:	e0a9      	b.n	100242b4 <patch_Telemetry_Sample+0x178>
+		return ((int32_t) (exp & ((1 << (numbits-1)) - 1)));
+10024160:	2307      	movs	r3, #7
+10024162:	4018      	ands	r0, r3
+10024164:	e0c8      	b.n	100242f8 <patch_Telemetry_Sample+0x1bc>
+10024166:	2307      	movs	r3, #7
+10024168:	4018      	ands	r0, r3
+1002416a:	e0d3      	b.n	10024314 <patch_Telemetry_Sample+0x1d8>
+1002416c:	2307      	movs	r3, #7
+1002416e:	4018      	ands	r0, r3
+10024170:	e0de      	b.n	10024330 <patch_Telemetry_Sample+0x1f4>
+10024172:	2307      	movs	r3, #7
+10024174:	4018      	ands	r0, r3
+10024176:	e0e9      	b.n	1002434c <patch_Telemetry_Sample+0x210>
+10024178:	2303      	movs	r3, #3
+1002417a:	4018      	ands	r0, r3
+1002417c:	e0f4      	b.n	10024368 <patch_Telemetry_Sample+0x22c>
+1002417e:	2307      	movs	r3, #7
+10024180:	4018      	ands	r0, r3
+10024182:	e0ff      	b.n	10024384 <patch_Telemetry_Sample+0x248>
+		exponent = -exponent;
+10024184:	425b      	negs	r3, r3
+		value = value >> (exponent);
+10024186:	0002      	movs	r2, r0
+10024188:	411a      	asrs	r2, r3
+1002418a:	e109      	b.n	100243a0 <patch_Telemetry_Sample+0x264>
+		if (pin > 0x3ff) pin = 0x3ff;  // cap value
+		TELEM_DATA.pin[loop] = pin;
+/* Efficiency Table current correction Example Modification End */
+
+		if (Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_FW_FILTER_EN) == 1) {
+			vout = (vout + (uint32_t)(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_VOUT)))>>1;
+1002418c:	218b      	movs	r1, #139	; 0x8b
+1002418e:	9e03      	ldr	r6, [sp, #12]
+10024190:	0030      	movs	r0, r6
+10024192:	f7dd fa61 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024196:	9b05      	ldr	r3, [sp, #20]
+10024198:	469c      	mov	ip, r3
+1002419a:	4460      	add	r0, ip
+1002419c:	0843      	lsrs	r3, r0, #1
+1002419e:	9305      	str	r3, [sp, #20]
+			/*lint -e702 */
+			iout = (iout + (LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_IOUT))))>>1u;
+100241a0:	218c      	movs	r1, #140	; 0x8c
+100241a2:	0030      	movs	r0, r6
+100241a4:	f7dd fa58 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+100241a8:	0543      	lsls	r3, r0, #21
+100241aa:	0d5b      	lsrs	r3, r3, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100241ac:	2280      	movs	r2, #128	; 0x80
+100241ae:	00d2      	lsls	r2, r2, #3
+100241b0:	4210      	tst	r0, r2
+100241b2:	d144      	bne.n	1002423e <patch_Telemetry_Sample+0x102>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+100241b4:	0018      	movs	r0, r3
+100241b6:	9b06      	ldr	r3, [sp, #24]
+100241b8:	469c      	mov	ip, r3
+100241ba:	4460      	add	r0, ip
+100241bc:	1043      	asrs	r3, r0, #1
+100241be:	9306      	str	r3, [sp, #24]
+			vin  = (vin  + (uint32_t)(LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_VIN))))>>1u;
+100241c0:	2188      	movs	r1, #136	; 0x88
+100241c2:	9803      	ldr	r0, [sp, #12]
+100241c4:	f7dd fa48 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+100241c8:	0543      	lsls	r3, r0, #21
+100241ca:	0d5b      	lsrs	r3, r3, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100241cc:	2280      	movs	r2, #128	; 0x80
+100241ce:	00d2      	lsls	r2, r2, #3
+100241d0:	4210      	tst	r0, r2
+100241d2:	d001      	beq.n	100241d8 <patch_Telemetry_Sample+0x9c>
+100241d4:	482f      	ldr	r0, [pc, #188]	; (10024294 <patch_Telemetry_Sample+0x158>)
+100241d6:	4303      	orrs	r3, r0
+100241d8:	9a07      	ldr	r2, [sp, #28]
+100241da:	189e      	adds	r6, r3, r2
+100241dc:	0873      	lsrs	r3, r6, #1
+100241de:	9307      	str	r3, [sp, #28]
+			iin  = (iin  + (uint32_t)(LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_IIN))))>>1u;
+100241e0:	2189      	movs	r1, #137	; 0x89
+100241e2:	9803      	ldr	r0, [sp, #12]
+100241e4:	f7dd fa38 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+100241e8:	0543      	lsls	r3, r0, #21
+100241ea:	0d5b      	lsrs	r3, r3, #21
+100241ec:	2280      	movs	r2, #128	; 0x80
+100241ee:	00d2      	lsls	r2, r2, #3
+100241f0:	4210      	tst	r0, r2
+100241f2:	d001      	beq.n	100241f8 <patch_Telemetry_Sample+0xbc>
+100241f4:	4a27      	ldr	r2, [pc, #156]	; (10024294 <patch_Telemetry_Sample+0x158>)
+100241f6:	4313      	orrs	r3, r2
+100241f8:	19df      	adds	r7, r3, r7
+100241fa:	087f      	lsrs	r7, r7, #1
+			duty = (duty + (uint32_t)(LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_DUTY_CYCLE))))>>1u;
+100241fc:	2194      	movs	r1, #148	; 0x94
+100241fe:	9803      	ldr	r0, [sp, #12]
+10024200:	f7dd fa2a 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024204:	0543      	lsls	r3, r0, #21
+10024206:	0d5b      	lsrs	r3, r3, #21
+10024208:	2280      	movs	r2, #128	; 0x80
+1002420a:	00d2      	lsls	r2, r2, #3
+1002420c:	4210      	tst	r0, r2
+1002420e:	d119      	bne.n	10024244 <patch_Telemetry_Sample+0x108>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+10024210:	0018      	movs	r0, r3
+10024212:	9b08      	ldr	r3, [sp, #32]
+10024214:	469c      	mov	ip, r3
+10024216:	4460      	add	r0, ip
+10024218:	0843      	lsrs	r3, r0, #1
+1002421a:	9308      	str	r3, [sp, #32]
+			fsw  = (fsw +  (uint32_t)(LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_FREQUENCY))))>>1u;
+1002421c:	2195      	movs	r1, #149	; 0x95
+1002421e:	9803      	ldr	r0, [sp, #12]
+10024220:	f7dd fa1a 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024224:	0543      	lsls	r3, r0, #21
+10024226:	0d5b      	lsrs	r3, r3, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024228:	2280      	movs	r2, #128	; 0x80
+1002422a:	00d2      	lsls	r2, r2, #3
+1002422c:	4210      	tst	r0, r2
+1002422e:	d10c      	bne.n	1002424a <patch_Telemetry_Sample+0x10e>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+10024230:	0018      	movs	r0, r3
+10024232:	9b09      	ldr	r3, [sp, #36]	; 0x24
+10024234:	469c      	mov	ip, r3
+10024236:	4460      	add	r0, ip
+10024238:	0843      	lsrs	r3, r0, #1
+1002423a:	9309      	str	r3, [sp, #36]	; 0x24
+1002423c:	e119      	b.n	10024472 <patch_Telemetry_Sample+0x336>
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+1002423e:	4815      	ldr	r0, [pc, #84]	; (10024294 <patch_Telemetry_Sample+0x158>)
+10024240:	4318      	orrs	r0, r3
+10024242:	e7b8      	b.n	100241b6 <patch_Telemetry_Sample+0x7a>
+10024244:	4813      	ldr	r0, [pc, #76]	; (10024294 <patch_Telemetry_Sample+0x158>)
+10024246:	4318      	orrs	r0, r3
+10024248:	e7e3      	b.n	10024212 <patch_Telemetry_Sample+0xd6>
+1002424a:	4812      	ldr	r0, [pc, #72]	; (10024294 <patch_Telemetry_Sample+0x158>)
+1002424c:	4318      	orrs	r0, r3
+1002424e:	e7f0      	b.n	10024232 <patch_Telemetry_Sample+0xf6>
+		TELEMETRY_VIN_SOURCE source = Telemetry_get_vin_source((PMBUS_PAGE_t)loop);
+		if ((ON_OFF_STATE.On_Off_State[loop]==0)&&
+				((source == (TELEMETRY_VIN_SOURCE)TELEMETRY_VIN_SOURCE_VRECT1) || (source == (TELEMETRY_VIN_SOURCE)TELEMETRY_VIN_SOURCE_VRECT2)))
+		{
+			// if we have vrect sensing and not actively switching we need to set read_vin to 0v
+			PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_VIN, (uint16_t)(((TWOS_COMPLEMENT (5, vin_read_exp[loop]))<<11)));
+10024250:	221f      	movs	r2, #31
+10024252:	9b0b      	ldr	r3, [sp, #44]	; 0x2c
+10024254:	401a      	ands	r2, r3
+10024256:	02d2      	lsls	r2, r2, #11
+10024258:	2188      	movs	r1, #136	; 0x88
+1002425a:	9803      	ldr	r0, [sp, #12]
+1002425c:	f7dd fb32 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+10024260:	e11d      	b.n	1002449e <patch_Telemetry_Sample+0x362>
+10024262:	4b0c      	ldr	r3, [pc, #48]	; (10024294 <patch_Telemetry_Sample+0x158>)
+10024264:	4313      	orrs	r3, r2
+10024266:	e178      	b.n	1002455a <patch_Telemetry_Sample+0x41e>
+		exponent = -exponent;
+10024268:	4276      	negs	r6, r6
+		value = value >> (exponent);
+1002426a:	4133      	asrs	r3, r6
+1002426c:	001a      	movs	r2, r3
+1002426e:	e17c      	b.n	1002456a <patch_Telemetry_Sample+0x42e>
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024270:	4b08      	ldr	r3, [pc, #32]	; (10024294 <patch_Telemetry_Sample+0x158>)
+10024272:	4313      	orrs	r3, r2
+10024274:	e194      	b.n	100245a0 <patch_Telemetry_Sample+0x464>
+		exponent = -exponent;
+10024276:	4276      	negs	r6, r6
+		value = value >> (exponent);
+10024278:	4133      	asrs	r3, r6
+1002427a:	001a      	movs	r2, r3
+1002427c:	e198      	b.n	100245b0 <patch_Telemetry_Sample+0x474>
+		{
+			Set_Firmware_Fault((PMBUS_PAGE_t)loop, FAULT_TYPE_POUT_OP_WARN);
+		}
+		else
+		{
+			Clear_Firmware_Fault((PMBUS_PAGE_t)loop, FAULT_TYPE_POUT_OP_WARN);
+1002427e:	2125      	movs	r1, #37	; 0x25
+10024280:	9803      	ldr	r0, [sp, #12]
+10024282:	f7e3 fe53 	bl	10007f2c <COMMON_FAULT_HANDLE+0x187>
+10024286:	e19d      	b.n	100245c4 <patch_Telemetry_Sample+0x488>
+10024288:	2005cfa4 	.word	0x2005cfa4
+1002428c:	200614d0 	.word	0x200614d0
+10024290:	000003ff 	.word	0x000003ff
+10024294:	fffff800 	.word	0xfffff800
+		{
+			Set_Firmware_Fault((PMBUS_PAGE_t)loop, FAULT_TYPE_PIN_OP_WARN);
+		}
+		else
+		{
+			Clear_Firmware_Fault((PMBUS_PAGE_t)loop, FAULT_TYPE_PIN_OP_WARN);
+10024298:	2124      	movs	r1, #36	; 0x24
+1002429a:	9803      	ldr	r0, [sp, #12]
+1002429c:	f7e3 fe46 	bl	10007f2c <COMMON_FAULT_HANDLE+0x187>
+100242a0:	3501      	adds	r5, #1
+100242a2:	9b0a      	ldr	r3, [sp, #40]	; 0x28
+100242a4:	3304      	adds	r3, #4
+100242a6:	930a      	str	r3, [sp, #40]	; 0x28
+100242a8:	2304      	movs	r3, #4
+100242aa:	469c      	mov	ip, r3
+100242ac:	44e2      	add	sl, ip
+	for(loop=0; loop<(uint8_t)NUM_LOOPS; loop++)  // update for the number of loops in the system
+100242ae:	2d02      	cmp	r5, #2
+100242b0:	d100      	bne.n	100242b4 <patch_Telemetry_Sample+0x178>
+100242b2:	e190      	b.n	100245d6 <patch_Telemetry_Sample+0x49a>
+100242b4:	b2eb      	uxtb	r3, r5
+100242b6:	001e      	movs	r6, r3
+100242b8:	9303      	str	r3, [sp, #12]
+		vout_read_exp[loop] = (int8_t)PMBUS_Get_Vout_Mode_Exponent((PMBUS_PAGE_t)loop);
+100242ba:	46a9      	mov	r9, r5
+100242bc:	0018      	movs	r0, r3
+100242be:	f7dd fa27 	bl	10001710 <PMBUS_Get_On_Off_State+0x7b>
+100242c2:	b247      	sxtb	r7, r0
+		fsw_read_exp[loop]  = (int8_t)LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_FREQUENCY_SWITCH));
+100242c4:	2133      	movs	r1, #51	; 0x33
+100242c6:	0030      	movs	r0, r6
+100242c8:	f7dd f9c6 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+100242cc:	0ac0      	lsrs	r0, r0, #11
+100242ce:	b280      	uxth	r0, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+100242d0:	2310      	movs	r3, #16
+100242d2:	4203      	tst	r3, r0
+100242d4:	d002      	beq.n	100242dc <patch_Telemetry_Sample+0x1a0>
+100242d6:	2620      	movs	r6, #32
+100242d8:	4276      	negs	r6, r6
+100242da:	4330      	orrs	r0, r6
+100242dc:	b243      	sxtb	r3, r0
+100242de:	930e      	str	r3, [sp, #56]	; 0x38
+		vin_read_exp[loop]  = (int8_t)TWOS_UNCOMPLEMENT(4, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_READ_VIN_EXP));
+100242e0:	2158      	movs	r1, #88	; 0x58
+100242e2:	9803      	ldr	r0, [sp, #12]
+100242e4:	f7e4 ff22 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+100242e8:	4643      	mov	r3, r8
+100242ea:	4003      	ands	r3, r0
+100242ec:	08db      	lsrs	r3, r3, #3
+100242ee:	d100      	bne.n	100242f2 <patch_Telemetry_Sample+0x1b6>
+100242f0:	e736      	b.n	10024160 <patch_Telemetry_Sample+0x24>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+100242f2:	4643      	mov	r3, r8
+100242f4:	4383      	bics	r3, r0
+100242f6:	43d8      	mvns	r0, r3
+100242f8:	b243      	sxtb	r3, r0
+100242fa:	930b      	str	r3, [sp, #44]	; 0x2c
+		iout_read_exp[loop] = (int8_t)TWOS_UNCOMPLEMENT(4, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_READ_IOUT_EXP));
+100242fc:	215c      	movs	r1, #92	; 0x5c
+100242fe:	9803      	ldr	r0, [sp, #12]
+10024300:	f7e4 ff14 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+10024304:	4643      	mov	r3, r8
+10024306:	4003      	ands	r3, r0
+10024308:	08db      	lsrs	r3, r3, #3
+1002430a:	d100      	bne.n	1002430e <patch_Telemetry_Sample+0x1d2>
+1002430c:	e72b      	b.n	10024166 <patch_Telemetry_Sample+0x2a>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+1002430e:	4643      	mov	r3, r8
+10024310:	4383      	bics	r3, r0
+10024312:	43d8      	mvns	r0, r3
+10024314:	b243      	sxtb	r3, r0
+10024316:	930c      	str	r3, [sp, #48]	; 0x30
+		iin_read_exp[loop]  = (int8_t)TWOS_UNCOMPLEMENT(4, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_READ_IIN_EXP));
+10024318:	2160      	movs	r1, #96	; 0x60
+1002431a:	9803      	ldr	r0, [sp, #12]
+1002431c:	f7e4 ff06 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+10024320:	4643      	mov	r3, r8
+10024322:	4003      	ands	r3, r0
+10024324:	08db      	lsrs	r3, r3, #3
+10024326:	d100      	bne.n	1002432a <patch_Telemetry_Sample+0x1ee>
+10024328:	e720      	b.n	1002416c <patch_Telemetry_Sample+0x30>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+1002432a:	4643      	mov	r3, r8
+1002432c:	4383      	bics	r3, r0
+1002432e:	43d8      	mvns	r0, r3
+10024330:	b243      	sxtb	r3, r0
+10024332:	930d      	str	r3, [sp, #52]	; 0x34
+		duty_read_exp[loop] = (int8_t)TWOS_UNCOMPLEMENT(4, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_READ_DUTY_EXP));
+10024334:	2164      	movs	r1, #100	; 0x64
+10024336:	9803      	ldr	r0, [sp, #12]
+10024338:	f7e4 fef8 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+1002433c:	4643      	mov	r3, r8
+1002433e:	4003      	ands	r3, r0
+10024340:	08db      	lsrs	r3, r3, #3
+10024342:	d100      	bne.n	10024346 <patch_Telemetry_Sample+0x20a>
+10024344:	e715      	b.n	10024172 <patch_Telemetry_Sample+0x36>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+10024346:	4643      	mov	r3, r8
+10024348:	4383      	bics	r3, r0
+1002434a:	43d8      	mvns	r0, r3
+1002434c:	b243      	sxtb	r3, r0
+1002434e:	930f      	str	r3, [sp, #60]	; 0x3c
+		power_read_exp[loop]= (int8_t)TWOS_UNCOMPLEMENT(3, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_READ_POWER_EXP));
+10024350:	2100      	movs	r1, #0
+10024352:	9803      	ldr	r0, [sp, #12]
+10024354:	f7e4 feea 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+10024358:	2307      	movs	r3, #7
+1002435a:	4003      	ands	r3, r0
+1002435c:	089b      	lsrs	r3, r3, #2
+1002435e:	d100      	bne.n	10024362 <patch_Telemetry_Sample+0x226>
+10024360:	e70a      	b.n	10024178 <patch_Telemetry_Sample+0x3c>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+10024362:	2307      	movs	r3, #7
+10024364:	4383      	bics	r3, r0
+10024366:	43d8      	mvns	r0, r3
+10024368:	b243      	sxtb	r3, r0
+1002436a:	469b      	mov	fp, r3
+		fan_read_exp[loop]  = (int8_t)TWOS_UNCOMPLEMENT(4, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)PMBUS_PAGE_0, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_READ_FAN_EXP));
+1002436c:	2168      	movs	r1, #104	; 0x68
+1002436e:	2000      	movs	r0, #0
+10024370:	f7e4 fedc 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+10024374:	4643      	mov	r3, r8
+10024376:	4003      	ands	r3, r0
+10024378:	08db      	lsrs	r3, r3, #3
+1002437a:	d100      	bne.n	1002437e <patch_Telemetry_Sample+0x242>
+1002437c:	e6ff      	b.n	1002417e <patch_Telemetry_Sample+0x42>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+1002437e:	4643      	mov	r3, r8
+10024380:	4383      	bics	r3, r0
+10024382:	43d8      	mvns	r0, r3
+10024384:	ab11      	add	r3, sp, #68	; 0x44
+10024386:	54e8      	strb	r0, [r5, r3]
+		vout = (uint32_t)Telemetry_get((PMBUS_PAGE_t)loop, VOUT_TELEM);
+10024388:	2100      	movs	r1, #0
+1002438a:	9803      	ldr	r0, [sp, #12]
+1002438c:	f7e5 fdd4 	bl	10009f38 <Telemetry_drv_init+0x47>
+		vout = (uint32_t)SHIFT_EXPONENT((int32_t)vout,  PMBUS_Q_EXP - vout_read_exp[loop]);  // convert to vout_mode format
+10024390:	2310      	movs	r3, #16
+10024392:	425b      	negs	r3, r3
+10024394:	1bdb      	subs	r3, r3, r7
+		value = value << (exponent);
+10024396:	0002      	movs	r2, r0
+10024398:	409a      	lsls	r2, r3
+	if ( exponent <= 0)
+1002439a:	2b00      	cmp	r3, #0
+1002439c:	dc00      	bgt.n	100243a0 <patch_Telemetry_Sample+0x264>
+1002439e:	e6f1      	b.n	10024184 <patch_Telemetry_Sample+0x48>
+100243a0:	9205      	str	r2, [sp, #20]
+100243a2:	4bd7      	ldr	r3, [pc, #860]	; (10024700 <patch_Telemetry_Sample+0x5c4>)
+100243a4:	429a      	cmp	r2, r3
+100243a6:	d900      	bls.n	100243aa <patch_Telemetry_Sample+0x26e>
+100243a8:	9305      	str	r3, [sp, #20]
+100243aa:	4656      	mov	r6, sl
+		TELEM_DATA.vout[loop] = vout;
+100243ac:	9a05      	ldr	r2, [sp, #20]
+100243ae:	6032      	str	r2, [r6, #0]
+		iout = Telemetry_get((PMBUS_PAGE_t)loop, IOUT_TELEM);
+100243b0:	2101      	movs	r1, #1
+100243b2:	9803      	ldr	r0, [sp, #12]
+100243b4:	f7e5 fdc0 	bl	10009f38 <Telemetry_drv_init+0x47>
+100243b8:	42a0      	cmp	r0, r4
+100243ba:	dd00      	ble.n	100243be <patch_Telemetry_Sample+0x282>
+100243bc:	0020      	movs	r0, r4
+100243be:	9006      	str	r0, [sp, #24]
+100243c0:	4bd0      	ldr	r3, [pc, #832]	; (10024704 <patch_Telemetry_Sample+0x5c8>)
+100243c2:	4298      	cmp	r0, r3
+100243c4:	da00      	bge.n	100243c8 <patch_Telemetry_Sample+0x28c>
+100243c6:	9306      	str	r3, [sp, #24]
+		TELEM_DATA.iout[loop] = iout;
+100243c8:	9b06      	ldr	r3, [sp, #24]
+100243ca:	60b3      	str	r3, [r6, #8]
+		vin = (uint32_t)Telemetry_get((PMBUS_PAGE_t)loop, VIN_TELEM);
+100243cc:	2102      	movs	r1, #2
+100243ce:	9803      	ldr	r0, [sp, #12]
+100243d0:	f7e5 fdb2 	bl	10009f38 <Telemetry_drv_init+0x47>
+100243d4:	9007      	str	r0, [sp, #28]
+100243d6:	42a0      	cmp	r0, r4
+100243d8:	d900      	bls.n	100243dc <patch_Telemetry_Sample+0x2a0>
+100243da:	9407      	str	r4, [sp, #28]
+		TELEM_DATA.vin[loop] = vin;
+100243dc:	9b07      	ldr	r3, [sp, #28]
+100243de:	61b3      	str	r3, [r6, #24]
+		duty = (uint32_t)Telemetry_get((PMBUS_PAGE_t)loop, DUTY_TELEM);
+100243e0:	2107      	movs	r1, #7
+100243e2:	9803      	ldr	r0, [sp, #12]
+100243e4:	f7e5 fda8 	bl	10009f38 <Telemetry_drv_init+0x47>
+100243e8:	9008      	str	r0, [sp, #32]
+100243ea:	42a0      	cmp	r0, r4
+100243ec:	d900      	bls.n	100243f0 <patch_Telemetry_Sample+0x2b4>
+100243ee:	9408      	str	r4, [sp, #32]
+		TELEM_DATA.duty[loop] = duty;
+100243f0:	9b08      	ldr	r3, [sp, #32]
+100243f2:	63b3      	str	r3, [r6, #56]	; 0x38
+		fsw = (uint32_t)Telemetry_get((PMBUS_PAGE_t)loop, FSW_TELEM);
+100243f4:	2108      	movs	r1, #8
+100243f6:	9803      	ldr	r0, [sp, #12]
+100243f8:	f7e5 fd9e 	bl	10009f38 <Telemetry_drv_init+0x47>
+100243fc:	9009      	str	r0, [sp, #36]	; 0x24
+100243fe:	42a0      	cmp	r0, r4
+10024400:	d900      	bls.n	10024404 <patch_Telemetry_Sample+0x2c8>
+10024402:	9409      	str	r4, [sp, #36]	; 0x24
+		TELEM_DATA.fsw[loop] = fsw;
+10024404:	9b09      	ldr	r3, [sp, #36]	; 0x24
+10024406:	6333      	str	r3, [r6, #48]	; 0x30
+		pout = (uint32_t)Telemetry_get_power(vout, vout_read_exp[loop], iout, iout_read_exp[loop], power_read_exp[loop]); //in read_power_exp
+10024408:	465b      	mov	r3, fp
+1002440a:	9300      	str	r3, [sp, #0]
+1002440c:	9b0c      	ldr	r3, [sp, #48]	; 0x30
+1002440e:	9a06      	ldr	r2, [sp, #24]
+10024410:	0039      	movs	r1, r7
+10024412:	9805      	ldr	r0, [sp, #20]
+10024414:	f7e5 fee8 	bl	1000a1e8 <Telemetry_get_fan_speed+0x1f>
+10024418:	9004      	str	r0, [sp, #16]
+1002441a:	42a0      	cmp	r0, r4
+1002441c:	d900      	bls.n	10024420 <patch_Telemetry_Sample+0x2e4>
+1002441e:	9404      	str	r4, [sp, #16]
+		TELEM_DATA.pout[loop] = pout;
+10024420:	9b04      	ldr	r3, [sp, #16]
+10024422:	6233      	str	r3, [r6, #32]
+		iin = (uint32_t)Telemetry_get((PMBUS_PAGE_t)loop, IIN_TELEM);
+10024424:	2103      	movs	r1, #3
+10024426:	9803      	ldr	r0, [sp, #12]
+10024428:	f7e5 fd86 	bl	10009f38 <Telemetry_drv_init+0x47>
+		iin = (uint32_t)input_current_correction(pout, power_read_exp[loop], iin, iin_read_exp[loop], loop);	// correction of Input Current
+1002442c:	0002      	movs	r2, r0
+1002442e:	42a0      	cmp	r0, r4
+10024430:	d900      	bls.n	10024434 <patch_Telemetry_Sample+0x2f8>
+10024432:	0022      	movs	r2, r4
+10024434:	464b      	mov	r3, r9
+10024436:	9300      	str	r3, [sp, #0]
+10024438:	9b0d      	ldr	r3, [sp, #52]	; 0x34
+1002443a:	4699      	mov	r9, r3
+1002443c:	4659      	mov	r1, fp
+1002443e:	9804      	ldr	r0, [sp, #16]
+10024440:	f7ff fe40 	bl	100240c4 <input_current_correction>
+10024444:	0007      	movs	r7, r0
+		TELEM_DATA.iin[loop] = iin;
+10024446:	6130      	str	r0, [r6, #16]
+		pin = (uint32_t)Telemetry_get_power(vin, vin_read_exp[loop], (int32_t)iin, iin_read_exp[loop], power_read_exp[loop]);
+10024448:	465a      	mov	r2, fp
+1002444a:	9200      	str	r2, [sp, #0]
+1002444c:	464b      	mov	r3, r9
+1002444e:	0002      	movs	r2, r0
+10024450:	990b      	ldr	r1, [sp, #44]	; 0x2c
+10024452:	9807      	ldr	r0, [sp, #28]
+10024454:	f7e5 fec8 	bl	1000a1e8 <Telemetry_get_fan_speed+0x1f>
+10024458:	4681      	mov	r9, r0
+1002445a:	42a0      	cmp	r0, r4
+1002445c:	d900      	bls.n	10024460 <patch_Telemetry_Sample+0x324>
+1002445e:	46a1      	mov	r9, r4
+		TELEM_DATA.pin[loop] = pin;
+10024460:	464b      	mov	r3, r9
+10024462:	62b3      	str	r3, [r6, #40]	; 0x28
+		if (Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_FW_FILTER_EN) == 1) {
+10024464:	2103      	movs	r1, #3
+10024466:	9803      	ldr	r0, [sp, #12]
+10024468:	f7e4 fe60 	bl	1000912c <Telemetry_GetVersion+0x17>
+1002446c:	2801      	cmp	r0, #1
+1002446e:	d100      	bne.n	10024472 <patch_Telemetry_Sample+0x336>
+10024470:	e68c      	b.n	1002418c <patch_Telemetry_Sample+0x50>
+		TELEMETRY_VIN_SOURCE source = Telemetry_get_vin_source((PMBUS_PAGE_t)loop);
+10024472:	9803      	ldr	r0, [sp, #12]
+10024474:	f7e5 fefe 	bl	1000a274 <Telemetry_get_tempi+0x5b>
+		if ((ON_OFF_STATE.On_Off_State[loop]==0)&&
+10024478:	4ba3      	ldr	r3, [pc, #652]	; (10024708 <patch_Telemetry_Sample+0x5cc>)
+1002447a:	5d5b      	ldrb	r3, [r3, r5]
+1002447c:	2b00      	cmp	r3, #0
+1002447e:	d102      	bne.n	10024486 <patch_Telemetry_Sample+0x34a>
+10024480:	2801      	cmp	r0, #1
+10024482:	d800      	bhi.n	10024486 <patch_Telemetry_Sample+0x34a>
+10024484:	e6e4      	b.n	10024250 <patch_Telemetry_Sample+0x114>
+			PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_VIN, (uint16_t)(((TWOS_COMPLEMENT (5, vin_read_exp[loop]))<<11) | (vin & 0x7ff))); // read_vin is u7.2
+10024486:	221f      	movs	r2, #31
+10024488:	9b0b      	ldr	r3, [sp, #44]	; 0x2c
+1002448a:	401a      	ands	r2, r3
+1002448c:	02d2      	lsls	r2, r2, #11
+1002448e:	9b07      	ldr	r3, [sp, #28]
+10024490:	055e      	lsls	r6, r3, #21
+10024492:	0d76      	lsrs	r6, r6, #21
+10024494:	4332      	orrs	r2, r6
+10024496:	2188      	movs	r1, #136	; 0x88
+10024498:	9803      	ldr	r0, [sp, #12]
+1002449a:	f7dd fa13 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_VOUT,      (uint16_t)vout);
+1002449e:	466b      	mov	r3, sp
+100244a0:	8a9a      	ldrh	r2, [r3, #20]
+100244a2:	218b      	movs	r1, #139	; 0x8b
+100244a4:	9803      	ldr	r0, [sp, #12]
+100244a6:	f7dd fa0d 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+	return ((uint8_t)exp & ((1 << numbits)-1));
+100244aa:	261f      	movs	r6, #31
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_IOUT,      (uint16_t)( (TWOS_COMPLEMENT (5, iout_read_exp[loop] )<<11) | ((uint16_t)iout & 0x7ff))); // read_iout is s7.2
+100244ac:	980c      	ldr	r0, [sp, #48]	; 0x30
+100244ae:	4030      	ands	r0, r6
+100244b0:	02c0      	lsls	r0, r0, #11
+100244b2:	9b06      	ldr	r3, [sp, #24]
+100244b4:	055a      	lsls	r2, r3, #21
+100244b6:	0d52      	lsrs	r2, r2, #21
+100244b8:	4302      	orrs	r2, r0
+100244ba:	218c      	movs	r1, #140	; 0x8c
+100244bc:	9803      	ldr	r0, [sp, #12]
+100244be:	f7dd fa01 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_IIN,       (uint16_t)( (TWOS_COMPLEMENT (5, iin_read_exp[loop]  )<<11) | (iin  & 0x7ff))); // read_iin is u6.4
+100244c2:	9a0d      	ldr	r2, [sp, #52]	; 0x34
+100244c4:	4032      	ands	r2, r6
+100244c6:	02d2      	lsls	r2, r2, #11
+100244c8:	057f      	lsls	r7, r7, #21
+100244ca:	0d7f      	lsrs	r7, r7, #21
+100244cc:	433a      	orrs	r2, r7
+100244ce:	2189      	movs	r1, #137	; 0x89
+100244d0:	9803      	ldr	r0, [sp, #12]
+100244d2:	f7dd f9f7 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_POUT,      (uint16_t)( (TWOS_COMPLEMENT (5, power_read_exp[loop])<<11) | (pout & 0x7ff))); // fixed at u10.0 format
+100244d6:	465f      	mov	r7, fp
+100244d8:	4037      	ands	r7, r6
+100244da:	02ff      	lsls	r7, r7, #11
+100244dc:	9b04      	ldr	r3, [sp, #16]
+100244de:	055a      	lsls	r2, r3, #21
+100244e0:	0d52      	lsrs	r2, r2, #21
+100244e2:	433a      	orrs	r2, r7
+100244e4:	2196      	movs	r1, #150	; 0x96
+100244e6:	9803      	ldr	r0, [sp, #12]
+100244e8:	f7dd f9ec 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_PIN,       (uint16_t)( (TWOS_COMPLEMENT (5, power_read_exp[loop])<<11) | (pin  & 0x7ff)));
+100244ec:	464b      	mov	r3, r9
+100244ee:	055a      	lsls	r2, r3, #21
+100244f0:	0d52      	lsrs	r2, r2, #21
+100244f2:	433a      	orrs	r2, r7
+100244f4:	2197      	movs	r1, #151	; 0x97
+100244f6:	9f03      	ldr	r7, [sp, #12]
+100244f8:	0038      	movs	r0, r7
+100244fa:	f7dd f9e3 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_DUTY_CYCLE,(uint16_t)( (TWOS_COMPLEMENT (5, duty_read_exp[loop] )<<11) | (duty & 0x7ff)));  // u7.3 %
+100244fe:	980f      	ldr	r0, [sp, #60]	; 0x3c
+10024500:	4030      	ands	r0, r6
+10024502:	02c0      	lsls	r0, r0, #11
+10024504:	9b08      	ldr	r3, [sp, #32]
+10024506:	055a      	lsls	r2, r3, #21
+10024508:	0d52      	lsrs	r2, r2, #21
+1002450a:	4302      	orrs	r2, r0
+1002450c:	2194      	movs	r1, #148	; 0x94
+1002450e:	0038      	movs	r0, r7
+10024510:	f7dd f9d8 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_FREQUENCY, (uint16_t)( (TWOS_COMPLEMENT (5, fsw_read_exp[loop]  )<<11) | (fsw  & 0x7ff)));  // Return READ_FREQUENCY in FREQUENCY_SWITCH format
+10024514:	9a0e      	ldr	r2, [sp, #56]	; 0x38
+10024516:	4032      	ands	r2, r6
+10024518:	02d2      	lsls	r2, r2, #11
+1002451a:	9b09      	ldr	r3, [sp, #36]	; 0x24
+1002451c:	055e      	lsls	r6, r3, #21
+1002451e:	0d76      	lsrs	r6, r6, #21
+10024520:	4332      	orrs	r2, r6
+10024522:	2195      	movs	r1, #149	; 0x95
+10024524:	0038      	movs	r0, r7
+10024526:	f7dd f9cd 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+			int32_t exponent = LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_POUT_OP_WARN_LIMIT));
+1002452a:	216a      	movs	r1, #106	; 0x6a
+1002452c:	0038      	movs	r0, r7
+1002452e:	f7dd f893 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10024532:	0ac0      	lsrs	r0, r0, #11
+10024534:	b286      	uxth	r6, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10024536:	2310      	movs	r3, #16
+10024538:	4233      	tst	r3, r6
+1002453a:	d002      	beq.n	10024542 <patch_Telemetry_Sample+0x406>
+1002453c:	2020      	movs	r0, #32
+1002453e:	4240      	negs	r0, r0
+10024540:	4306      	orrs	r6, r0
+			int16_t mantissa = (int16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_POUT_OP_WARN_LIMIT));
+10024542:	216a      	movs	r1, #106	; 0x6a
+10024544:	9803      	ldr	r0, [sp, #12]
+10024546:	f7dd f887 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+1002454a:	0542      	lsls	r2, r0, #21
+1002454c:	0d52      	lsrs	r2, r2, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+1002454e:	2380      	movs	r3, #128	; 0x80
+10024550:	00db      	lsls	r3, r3, #3
+10024552:	4218      	tst	r0, r3
+10024554:	d000      	beq.n	10024558 <patch_Telemetry_Sample+0x41c>
+10024556:	e684      	b.n	10024262 <patch_Telemetry_Sample+0x126>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+10024558:	0013      	movs	r3, r2
+			POWER_WARN_THRESH[loop].pout_op_warn_thresh = (uint16_t) SHIFT_EXPONENT(mantissa, (- power_read_exp[loop] + exponent));
+1002455a:	b21b      	sxth	r3, r3
+1002455c:	465a      	mov	r2, fp
+1002455e:	1ab6      	subs	r6, r6, r2
+		value = value << (exponent);
+10024560:	001a      	movs	r2, r3
+10024562:	40b2      	lsls	r2, r6
+	if ( exponent <= 0)
+10024564:	2e00      	cmp	r6, #0
+10024566:	dc00      	bgt.n	1002456a <patch_Telemetry_Sample+0x42e>
+10024568:	e67e      	b.n	10024268 <patch_Telemetry_Sample+0x12c>
+1002456a:	9b0a      	ldr	r3, [sp, #40]	; 0x28
+1002456c:	001f      	movs	r7, r3
+1002456e:	801a      	strh	r2, [r3, #0]
+			exponent = LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_PIN_OP_WARN_LIMIT));
+10024570:	216b      	movs	r1, #107	; 0x6b
+10024572:	9803      	ldr	r0, [sp, #12]
+10024574:	f7dd f870 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10024578:	0ac0      	lsrs	r0, r0, #11
+1002457a:	b286      	uxth	r6, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+1002457c:	2310      	movs	r3, #16
+1002457e:	4233      	tst	r3, r6
+10024580:	d002      	beq.n	10024588 <patch_Telemetry_Sample+0x44c>
+10024582:	2020      	movs	r0, #32
+10024584:	4240      	negs	r0, r0
+10024586:	4306      	orrs	r6, r0
+			mantissa = (int16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_PIN_OP_WARN_LIMIT));
+10024588:	216b      	movs	r1, #107	; 0x6b
+1002458a:	9803      	ldr	r0, [sp, #12]
+1002458c:	f7dd f864 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024590:	0542      	lsls	r2, r0, #21
+10024592:	0d52      	lsrs	r2, r2, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024594:	2380      	movs	r3, #128	; 0x80
+10024596:	00db      	lsls	r3, r3, #3
+10024598:	4218      	tst	r0, r3
+1002459a:	d000      	beq.n	1002459e <patch_Telemetry_Sample+0x462>
+1002459c:	e668      	b.n	10024270 <patch_Telemetry_Sample+0x134>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+1002459e:	0013      	movs	r3, r2
+			POWER_WARN_THRESH[loop].pin_op_warn_thresh = (uint16_t) SHIFT_EXPONENT(mantissa, (- power_read_exp[loop] + exponent));
+100245a0:	b21b      	sxth	r3, r3
+100245a2:	465a      	mov	r2, fp
+100245a4:	1ab6      	subs	r6, r6, r2
+		value = value << (exponent);
+100245a6:	001a      	movs	r2, r3
+100245a8:	40b2      	lsls	r2, r6
+	if ( exponent <= 0)
+100245aa:	2e00      	cmp	r6, #0
+100245ac:	dc00      	bgt.n	100245b0 <patch_Telemetry_Sample+0x474>
+100245ae:	e662      	b.n	10024276 <patch_Telemetry_Sample+0x13a>
+100245b0:	807a      	strh	r2, [r7, #2]
+		if (pout>POWER_WARN_THRESH[loop].pout_op_warn_thresh)
+100245b2:	883b      	ldrh	r3, [r7, #0]
+100245b4:	9a04      	ldr	r2, [sp, #16]
+100245b6:	4293      	cmp	r3, r2
+100245b8:	d300      	bcc.n	100245bc <patch_Telemetry_Sample+0x480>
+100245ba:	e660      	b.n	1002427e <patch_Telemetry_Sample+0x142>
+			Set_Firmware_Fault((PMBUS_PAGE_t)loop, FAULT_TYPE_POUT_OP_WARN);
+100245bc:	2125      	movs	r1, #37	; 0x25
+100245be:	9803      	ldr	r0, [sp, #12]
+100245c0:	f7e4 fc50 	bl	10008e64 <LOOP_FAULT_HANDLE+0x3db>
+		if (pin>POWER_WARN_THRESH[loop].pin_op_warn_thresh)
+100245c4:	887b      	ldrh	r3, [r7, #2]
+100245c6:	454b      	cmp	r3, r9
+100245c8:	d300      	bcc.n	100245cc <patch_Telemetry_Sample+0x490>
+100245ca:	e665      	b.n	10024298 <patch_Telemetry_Sample+0x15c>
+			Set_Firmware_Fault((PMBUS_PAGE_t)loop, FAULT_TYPE_PIN_OP_WARN);
+100245cc:	2124      	movs	r1, #36	; 0x24
+100245ce:	9803      	ldr	r0, [sp, #12]
+100245d0:	f7e4 fc48 	bl	10008e64 <LOOP_FAULT_HANDLE+0x3db>
+100245d4:	e664      	b.n	100242a0 <patch_Telemetry_Sample+0x164>
+		}
+
+	}
+
+  //ATSEN_TELEM
+	tempa = Telemetry_get(PMBUS_PAGE_0, ATSEN_TELEM);
+100245d6:	2104      	movs	r1, #4
+100245d8:	2000      	movs	r0, #0
+100245da:	f7e5 fcad 	bl	10009f38 <Telemetry_drv_init+0x47>
+100245de:	9003      	str	r0, [sp, #12]
+	TELEM_DATA.temperature[0] = tempa;
+100245e0:	4c4a      	ldr	r4, [pc, #296]	; (1002470c <patch_Telemetry_Sample+0x5d0>)
+100245e2:	6620      	str	r0, [r4, #96]	; 0x60
+  //BTSEN_TELEM
+	tempb = Telemetry_get(PMBUS_PAGE_0, BTSEN_TELEM);
+100245e4:	2105      	movs	r1, #5
+100245e6:	2000      	movs	r0, #0
+100245e8:	f7e5 fca6 	bl	10009f38 <Telemetry_drv_init+0x47>
+100245ec:	0005      	movs	r5, r0
+	TELEM_DATA.temperature[1] = tempb;
+100245ee:	6660      	str	r0, [r4, #100]	; 0x64
+  //ITSEN_TELEM
+	tempi = Telemetry_get_tempi();
+100245f0:	f7e5 fe12 	bl	1000a218 <Telemetry_get_power+0x2f>
+100245f4:	9005      	str	r0, [sp, #20]
+	TELEM_DATA.temperature[2] = tempi;
+100245f6:	66a0      	str	r0, [r4, #104]	; 0x68
+	//tempa = Telemetry_get((PMBUS_PAGE_t)loop, ITSEN_TELEM);
+
+	// Here we determine which READ_TEMPERATURE gets tempA, tempB, and tempI
+	for(loop=0; loop<NUM_LOOPS; loop++)
+100245f8:	2400      	movs	r4, #0
+	{
+		switch ((PMBUS_Get_Command_Byte ((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_MFR_SELECT_TEMPERATURE_SENSOR)) & 0x7 )
+100245fa:	2707      	movs	r7, #7
+		{
+			case 0:
+				temp_1 = tempa;
+				temp_2 = tempb;
+100245fc:	9504      	str	r5, [sp, #16]
+100245fe:	e026      	b.n	1002464e <patch_Telemetry_Sample+0x512>
+				break;
+			case 1:
+				temp_1 = tempa;
+				temp_2 = tempi;
+10024600:	9d05      	ldr	r5, [sp, #20]
+				temp_1 = tempa;
+10024602:	9e03      	ldr	r6, [sp, #12]
+10024604:	e00d      	b.n	10024622 <patch_Telemetry_Sample+0x4e6>
+				break;
+			case 2:
+				temp_1 = tempb;
+				temp_2 = tempa;
+10024606:	9d03      	ldr	r5, [sp, #12]
+				temp_1 = tempb;
+10024608:	9e04      	ldr	r6, [sp, #16]
+				break;
+1002460a:	e00a      	b.n	10024622 <patch_Telemetry_Sample+0x4e6>
+			case 3:
+				temp_1 = tempb;
+				temp_2 = tempi;
+1002460c:	9d05      	ldr	r5, [sp, #20]
+				temp_1 = tempb;
+1002460e:	9e04      	ldr	r6, [sp, #16]
+				break;
+10024610:	e007      	b.n	10024622 <patch_Telemetry_Sample+0x4e6>
+			case 4:
+				temp_1 = tempi;
+				temp_2 = tempa;
+10024612:	9d03      	ldr	r5, [sp, #12]
+				temp_1 = tempi;
+10024614:	9e05      	ldr	r6, [sp, #20]
+				break;
+10024616:	e004      	b.n	10024622 <patch_Telemetry_Sample+0x4e6>
+			case 5:
+				temp_1 = tempi;
+				temp_2 = tempb;
+10024618:	9d04      	ldr	r5, [sp, #16]
+				temp_1 = tempi;
+1002461a:	9e05      	ldr	r6, [sp, #20]
+				break;
+1002461c:	e001      	b.n	10024622 <patch_Telemetry_Sample+0x4e6>
+				temp_2 = tempb;
+1002461e:	9d04      	ldr	r5, [sp, #16]
+				temp_1 = tempa;
+10024620:	9e03      	ldr	r6, [sp, #12]
+				temp_1 = tempa;
+				temp_2 = tempb;
+				break;
+		}
+
+		if (Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_FW_FILTER_EN) == 1) {
+10024622:	2103      	movs	r1, #3
+10024624:	0020      	movs	r0, r4
+10024626:	f7e4 fd81 	bl	1000912c <Telemetry_GetVersion+0x17>
+1002462a:	2801      	cmp	r0, #1
+1002462c:	d01b      	beq.n	10024666 <patch_Telemetry_Sample+0x52a>
+			temp_1 = (temp_1 + (LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_TEMPERATURE_1))))>>1u;
+			/*lint -e702 */
+			temp_2 = (temp_2 + (LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_TEMPERATURE_2))))>>1u;
+		}
+
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, PMBUS_CMDCODE_READ_TEMPERATURE_1, ((uint16_t)temp_1 & 0x7ff));
+1002462e:	0572      	lsls	r2, r6, #21
+10024630:	0d52      	lsrs	r2, r2, #21
+10024632:	218d      	movs	r1, #141	; 0x8d
+10024634:	0020      	movs	r0, r4
+10024636:	f7dd f945 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, PMBUS_CMDCODE_READ_TEMPERATURE_2, ((uint16_t)temp_2 & 0x7ff));
+1002463a:	056a      	lsls	r2, r5, #21
+1002463c:	0d52      	lsrs	r2, r2, #21
+1002463e:	218e      	movs	r1, #142	; 0x8e
+10024640:	0020      	movs	r0, r4
+10024642:	f7dd f93f 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+	for(loop=0; loop<NUM_LOOPS; loop++)
+10024646:	3401      	adds	r4, #1
+10024648:	b2e4      	uxtb	r4, r4
+1002464a:	2c02      	cmp	r4, #2
+1002464c:	d024      	beq.n	10024698 <patch_Telemetry_Sample+0x55c>
+		switch ((PMBUS_Get_Command_Byte ((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_MFR_SELECT_TEMPERATURE_SENSOR)) & 0x7 )
+1002464e:	21dc      	movs	r1, #220	; 0xdc
+10024650:	0020      	movs	r0, r4
+10024652:	f7dc ffc5 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+10024656:	4038      	ands	r0, r7
+10024658:	b2c3      	uxtb	r3, r0
+1002465a:	2b05      	cmp	r3, #5
+1002465c:	d8df      	bhi.n	1002461e <patch_Telemetry_Sample+0x4e2>
+1002465e:	0080      	lsls	r0, r0, #2
+10024660:	4b2b      	ldr	r3, [pc, #172]	; (10024710 <patch_Telemetry_Sample+0x5d4>)
+10024662:	581b      	ldr	r3, [r3, r0]
+10024664:	469f      	mov	pc, r3
+			temp_1 = (temp_1 + (LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_TEMPERATURE_1))))>>1u;
+10024666:	218d      	movs	r1, #141	; 0x8d
+10024668:	0020      	movs	r0, r4
+1002466a:	f7dc fff5 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+1002466e:	0543      	lsls	r3, r0, #21
+10024670:	0d5b      	lsrs	r3, r3, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024672:	0542      	lsls	r2, r0, #21
+10024674:	d501      	bpl.n	1002467a <patch_Telemetry_Sample+0x53e>
+10024676:	4a27      	ldr	r2, [pc, #156]	; (10024714 <patch_Telemetry_Sample+0x5d8>)
+10024678:	4313      	orrs	r3, r2
+1002467a:	18f6      	adds	r6, r6, r3
+1002467c:	1076      	asrs	r6, r6, #1
+			temp_2 = (temp_2 + (LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_TEMPERATURE_2))))>>1u;
+1002467e:	218e      	movs	r1, #142	; 0x8e
+10024680:	0020      	movs	r0, r4
+10024682:	f7dc ffe9 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024686:	0543      	lsls	r3, r0, #21
+10024688:	0d5b      	lsrs	r3, r3, #21
+1002468a:	0542      	lsls	r2, r0, #21
+1002468c:	d501      	bpl.n	10024692 <patch_Telemetry_Sample+0x556>
+1002468e:	4a21      	ldr	r2, [pc, #132]	; (10024714 <patch_Telemetry_Sample+0x5d8>)
+10024690:	4313      	orrs	r3, r2
+10024692:	18ed      	adds	r5, r5, r3
+10024694:	106d      	asrs	r5, r5, #1
+10024696:	e7ca      	b.n	1002462e <patch_Telemetry_Sample+0x4f2>
+	}
+
+	uint16_t fan_speed1 = Telemetry_get_fan_speed(FAN1);
+10024698:	2000      	movs	r0, #0
+1002469a:	f7e5 fd95 	bl	1000a1c8 <Telemetry_get_adc_code+0x3f>
+1002469e:	4680      	mov	r8, r0
+	uint16_t fan_speed2 = Telemetry_get_fan_speed(FAN2);
+100246a0:	2001      	movs	r0, #1
+100246a2:	f7e5 fd91 	bl	1000a1c8 <Telemetry_get_adc_code+0x3f>
+100246a6:	0006      	movs	r6, r0
+
+	// Get fan speed, replicate on both loops
+	// since the bottom 8 lsb's of fan_speed register are always zero we shift those off and use +6 exponent to get 64 to 65k rpm
+	int32_t temp = SHIFT_EXPONENT(fan_speed1, -(fan_read_exp[PMBUS_PAGE_0]));
+100246a8:	ab11      	add	r3, sp, #68	; 0x44
+100246aa:	2500      	movs	r5, #0
+100246ac:	575d      	ldrsb	r5, [r3, r5]
+100246ae:	426f      	negs	r7, r5
+	if ( exponent <= 0)
+100246b0:	2f00      	cmp	r7, #0
+100246b2:	dd33      	ble.n	1002471c <patch_Telemetry_Sample+0x5e0>
+	if (temp > 0x3ff) temp = 0x3ff;  // clamp fan speed at mantissa size
+	PMBUS_Set_Command_Word(PMBUS_PAGE_WB_BROADCAST, (uint8_t)PMBUS_CMDCODE_READ_FAN_SPEED_1, (uint16_t)(((TWOS_COMPLEMENT (5, fan_read_exp[PMBUS_PAGE_0]))<<11)
+100246b4:	241f      	movs	r4, #31
+100246b6:	402c      	ands	r4, r5
+100246b8:	02e4      	lsls	r4, r4, #11
+			| temp));
+100246ba:	b224      	sxth	r4, r4
+		value = value << (exponent);
+100246bc:	4640      	mov	r0, r8
+100246be:	40b8      	lsls	r0, r7
+100246c0:	4b15      	ldr	r3, [pc, #84]	; (10024718 <patch_Telemetry_Sample+0x5dc>)
+100246c2:	4298      	cmp	r0, r3
+100246c4:	dd00      	ble.n	100246c8 <patch_Telemetry_Sample+0x58c>
+100246c6:	0018      	movs	r0, r3
+100246c8:	4320      	orrs	r0, r4
+	PMBUS_Set_Command_Word(PMBUS_PAGE_WB_BROADCAST, (uint8_t)PMBUS_CMDCODE_READ_FAN_SPEED_1, (uint16_t)(((TWOS_COMPLEMENT (5, fan_read_exp[PMBUS_PAGE_0]))<<11)
+100246ca:	b282      	uxth	r2, r0
+100246cc:	2190      	movs	r1, #144	; 0x90
+100246ce:	20ff      	movs	r0, #255	; 0xff
+100246d0:	f7dd f8f8 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+100246d4:	0032      	movs	r2, r6
+100246d6:	40ba      	lsls	r2, r7
+	temp = SHIFT_EXPONENT(fan_speed2, -(fan_read_exp[PMBUS_PAGE_0]));  // shift the fan speed by the exponent
+	if (temp > 0x3ff) temp = 0x3ff;  // clamp fan speed at mantissa size
+	PMBUS_Set_Command_Word(PMBUS_PAGE_WB_BROADCAST, (uint8_t)PMBUS_CMDCODE_READ_FAN_SPEED_2, (uint16_t)(((TWOS_COMPLEMENT (5, fan_read_exp[PMBUS_PAGE_0]))<<11)
+			| temp));
+100246d8:	4b0f      	ldr	r3, [pc, #60]	; (10024718 <patch_Telemetry_Sample+0x5dc>)
+100246da:	429a      	cmp	r2, r3
+100246dc:	dd00      	ble.n	100246e0 <patch_Telemetry_Sample+0x5a4>
+100246de:	001a      	movs	r2, r3
+100246e0:	4322      	orrs	r2, r4
+	PMBUS_Set_Command_Word(PMBUS_PAGE_WB_BROADCAST, (uint8_t)PMBUS_CMDCODE_READ_FAN_SPEED_2, (uint16_t)(((TWOS_COMPLEMENT (5, fan_read_exp[PMBUS_PAGE_0]))<<11)
+100246e2:	b292      	uxth	r2, r2
+100246e4:	2191      	movs	r1, #145	; 0x91
+100246e6:	20ff      	movs	r0, #255	; 0xff
+100246e8:	f7dd f8ec 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+
+	call_system_cb(TELEMETRY_SAMPLE);
+100246ec:	2000      	movs	r0, #0
+100246ee:	f7de f8a7 	bl	10002840 <call_module_init_cb+0x13>
+
+}
+100246f2:	b013      	add	sp, #76	; 0x4c
+100246f4:	bc3c      	pop	{r2, r3, r4, r5}
+100246f6:	4690      	mov	r8, r2
+100246f8:	4699      	mov	r9, r3
+100246fa:	46a2      	mov	sl, r4
+100246fc:	46ab      	mov	fp, r5
+100246fe:	bdf0      	pop	{r4, r5, r6, r7, pc}
+10024700:	0000ffff 	.word	0x0000ffff
+10024704:	fffffc01 	.word	0xfffffc01
+10024708:	2005d290 	.word	0x2005d290
+1002470c:	200614d0 	.word	0x200614d0
+10024710:	10024988 	.word	0x10024988
+10024714:	fffff800 	.word	0xfffff800
+10024718:	000003ff 	.word	0x000003ff
+	PMBUS_Set_Command_Word(PMBUS_PAGE_WB_BROADCAST, (uint8_t)PMBUS_CMDCODE_READ_FAN_SPEED_1, (uint16_t)(((TWOS_COMPLEMENT (5, fan_read_exp[PMBUS_PAGE_0]))<<11)
+1002471c:	341d      	adds	r4, #29
+1002471e:	402c      	ands	r4, r5
+10024720:	02e4      	lsls	r4, r4, #11
+			| temp));
+10024722:	b224      	sxth	r4, r4
+		value = value >> (exponent);
+10024724:	4640      	mov	r0, r8
+10024726:	4128      	asrs	r0, r5
+10024728:	4b06      	ldr	r3, [pc, #24]	; (10024744 <patch_Telemetry_Sample+0x608>)
+1002472a:	4298      	cmp	r0, r3
+1002472c:	dd00      	ble.n	10024730 <patch_Telemetry_Sample+0x5f4>
+1002472e:	0018      	movs	r0, r3
+10024730:	4320      	orrs	r0, r4
+	PMBUS_Set_Command_Word(PMBUS_PAGE_WB_BROADCAST, (uint8_t)PMBUS_CMDCODE_READ_FAN_SPEED_1, (uint16_t)(((TWOS_COMPLEMENT (5, fan_read_exp[PMBUS_PAGE_0]))<<11)
+10024732:	b282      	uxth	r2, r0
+10024734:	2190      	movs	r1, #144	; 0x90
+10024736:	20ff      	movs	r0, #255	; 0xff
+10024738:	f7dd f8c4 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+1002473c:	0032      	movs	r2, r6
+1002473e:	412a      	asrs	r2, r5
+10024740:	e7ca      	b.n	100246d8 <patch_Telemetry_Sample+0x59c>
+10024742:	46c0      	nop			; (mov r8, r8)
+10024744:	000003ff 	.word	0x000003ff
+
+10024748 <pmbus_mfr_autogen_init>:
+	//PMBUS_CMD_MFR_ESTIMATE_EFFICIENCY.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_ESTIMATE_EFFICIENCY.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_ESTIMATE_EFFICIENCY.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_ESTIMATE_EFFICIENCY.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_ESTIMATE_EFFICIENCY.RANGE_TYPE = (uint8_t) PMBUS_RANGE_LINEAR11_UNSIGNED;
+	PMBUS_CMD_MFR_ESTIMATE_EFFICIENCY.RANGE = &PMBUS_CMD_MFR_ESTIMATE_EFFICIENCY_RANGE[0];
+10024748:	4b0b      	ldr	r3, [pc, #44]	; (10024778 <pmbus_mfr_autogen_init+0x30>)
+1002474a:	4a0c      	ldr	r2, [pc, #48]	; (1002477c <pmbus_mfr_autogen_init+0x34>)
+1002474c:	605a      	str	r2, [r3, #4]
+	PMBUS_CMD_MFR_ESTIMATE_EFFICIENCY_RANGE[0] = 0;
+1002474e:	2100      	movs	r1, #0
+10024750:	7011      	strb	r1, [r2, #0]
+	PMBUS_CMD_MFR_ESTIMATE_EFFICIENCY_RANGE[1] = 8;
+10024752:	3108      	adds	r1, #8
+10024754:	7051      	strb	r1, [r2, #1]
+	PMBUS_CMD_MFR_ESTIMATE_EFFICIENCY.CMD_CONFIG = 0xc38123b1;
+10024756:	4a0a      	ldr	r2, [pc, #40]	; (10024780 <pmbus_mfr_autogen_init+0x38>)
+10024758:	601a      	str	r2, [r3, #0]
+	PMBUS_CMD_MFR_ESTIMATE_EFFICIENCY.DATA0 = &PMBUS_CMD_MFR_ESTIMATE_EFFICIENCY_DATA_LOOP0[0];  // set the pointer to the data array
+1002475a:	4a0a      	ldr	r2, [pc, #40]	; (10024784 <pmbus_mfr_autogen_init+0x3c>)
+1002475c:	609a      	str	r2, [r3, #8]
+	PMBUS_CMD_MFR_ESTIMATE_EFFICIENCY.DATA1 = &PMBUS_CMD_MFR_ESTIMATE_EFFICIENCY_DATA_LOOP1[0];  // set the pointer to the data array
+1002475e:	4a0a      	ldr	r2, [pc, #40]	; (10024788 <pmbus_mfr_autogen_init+0x40>)
+10024760:	60da      	str	r2, [r3, #12]
+	// RANGE SUPPORT for MFR_ESTIMATE_EFFICIENCY COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_ESTIMATE_EFFICIENCY] = &PMBUS_CMD_MFR_ESTIMATE_EFFICIENCY;
+10024762:	22b1      	movs	r2, #177	; 0xb1
+10024764:	0092      	lsls	r2, r2, #2
+10024766:	4909      	ldr	r1, [pc, #36]	; (1002478c <pmbus_mfr_autogen_init+0x44>)
+10024768:	508b      	str	r3, [r1, r2]
+	//PMBUS_CMD_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_ESTIMATE_EFFICIENCY] = &PMBUS_CMD_MFR_ESTIMATE_EFFICIENCY;
+	//lint -e{778} suppress "Constant expression evaluates to 0 in operation '&'" 
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_ESTIMATE_EFFICIENCY/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_ESTIMATE_EFFICIENCY&31u));
+1002476a:	4a09      	ldr	r2, [pc, #36]	; (10024790 <pmbus_mfr_autogen_init+0x48>)
+1002476c:	2380      	movs	r3, #128	; 0x80
+1002476e:	029b      	lsls	r3, r3, #10
+10024770:	6951      	ldr	r1, [r2, #20]
+10024772:	430b      	orrs	r3, r1
+10024774:	6153      	str	r3, [r2, #20]
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_ESTIMATE_EFFICIENCY/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_ESTIMATE_EFFICIENCY&31u));
+
+}
+10024776:	4770      	bx	lr
+10024778:	20063804 	.word	0x20063804
+1002477c:	20063814 	.word	0x20063814
+10024780:	c38123b1 	.word	0xc38123b1
+10024784:	20063800 	.word	0x20063800
+10024788:	20063818 	.word	0x20063818
+1002478c:	2005d534 	.word	0x2005d534
+10024790:	2005d934 	.word	0x2005d934
+
+10024794 <AT_TARGET_ENABLE>:
+}
+
+void AT_TARGET_ENABLE(PMBUS_PAGE_t loop)
+{
+
+}
+10024794:	4770      	bx	lr
+	...
+
+10024798 <regulation_sm_callbacks_init>:
+{
+10024798:	b510      	push	{r4, lr}
+	Regulation_set_regulation_event_cb(REGULATION_STATE_AT_TARGET_VID, REGULATION_CONTROLS_ENABLE,
+1002479a:	4a03      	ldr	r2, [pc, #12]	; (100247a8 <regulation_sm_callbacks_init+0x10>)
+1002479c:	2109      	movs	r1, #9
+1002479e:	2003      	movs	r0, #3
+100247a0:	f7e3 f9de 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+}
+100247a4:	bd10      	pop	{r4, pc}
+100247a6:	46c0      	nop			; (mov r8, r8)
+100247a8:	10024795 	.word	0x10024795
+
+100247ac <patch_pmbus_mfr_autogen_init>:
+
+void patch_pmbus_mfr_autogen_init(void);
+
+
+void patch_pmbus_mfr_autogen_init(void)
+{
+100247ac:	b510      	push	{r4, lr}
+	pmbus_mfr_autogen_init();
+100247ae:	f7ff ffcb 	bl	10024748 <pmbus_mfr_autogen_init>
+}
+100247b2:	bd10      	pop	{r4, pc}
+
+100247b4 <user_drv_init>:
+/**
+ * Main entry point of the user application.  Good place to set breakpoint when debugging a patch.
+ * This will only get executed a single time prior to configuration loading and before RTOS starts
+ */
+void user_drv_init(void)
+{
+100247b4:	b510      	push	{r4, lr}
+	memset(&user_data, 0, sizeof(USER_DATA_t));  // ZI the user data
+100247b6:	2274      	movs	r2, #116	; 0x74
+100247b8:	2100      	movs	r1, #0
+100247ba:	480a      	ldr	r0, [pc, #40]	; (100247e4 <user_drv_init+0x30>)
+100247bc:	f000 f860 	bl	10024880 <memset>
+
+	/* Efficiency Table current correction Example Modification Start */
+	patch_rom_table.patch_Telemetry_Sample = patch_Telemetry_Sample; // update patch function.
+100247c0:	4909      	ldr	r1, [pc, #36]	; (100247e8 <user_drv_init+0x34>)
+100247c2:	2381      	movs	r3, #129	; 0x81
+100247c4:	009b      	lsls	r3, r3, #2
+100247c6:	4a09      	ldr	r2, [pc, #36]	; (100247ec <user_drv_init+0x38>)
+100247c8:	50d1      	str	r1, [r2, r3]
+	/* Efficiency Table current correction Example Modification End */
+
+	// this is the initialization of user pmbus commands autogenerated from pmbus spreadsheet
+	ptr_mfr_specific_init = (mfr_specific_init_ptr) patch_pmbus_mfr_autogen_init;
+100247ca:	4a09      	ldr	r2, [pc, #36]	; (100247f0 <user_drv_init+0x3c>)
+100247cc:	4b09      	ldr	r3, [pc, #36]	; (100247f4 <user_drv_init+0x40>)
+100247ce:	601a      	str	r2, [r3, #0]
+
+	// set the pointer funtion in init of regulation state machine to user callback setup for each state
+	set_module_init_cb(MODULE_REGULATION, regulation_sm_callbacks_init);
+100247d0:	4909      	ldr	r1, [pc, #36]	; (100247f8 <user_drv_init+0x44>)
+100247d2:	2002      	movs	r0, #2
+100247d4:	f7e0 f88a 	bl	100048ec <scratchpad_semaphore_release+0x33>
+
+	add_on_features_init();
+100247d8:	f7ff fc4e 	bl	10024078 <add_on_features_init>
+	regulation_sm_callbacks_init();
+100247dc:	f7ff ffdc 	bl	10024798 <regulation_sm_callbacks_init>
+
+}
+100247e0:	bd10      	pop	{r4, pc}
+100247e2:	46c0      	nop			; (mov r8, r8)
+100247e4:	2006381c 	.word	0x2006381c
+100247e8:	1002413d 	.word	0x1002413d
+100247ec:	2005d074 	.word	0x2005d074
+100247f0:	100247ad 	.word	0x100247ad
+100247f4:	2005d468 	.word	0x2005d468
+100247f8:	10024799 	.word	0x10024799
+
+100247fc <memcpy>:
+100247fc:	b5f0      	push	{r4, r5, r6, r7, lr}
+100247fe:	0005      	movs	r5, r0
+10024800:	2a0f      	cmp	r2, #15
+10024802:	d92f      	bls.n	10024864 <memcpy+0x68>
+10024804:	000b      	movs	r3, r1
+10024806:	4303      	orrs	r3, r0
+10024808:	079b      	lsls	r3, r3, #30
+1002480a:	d134      	bne.n	10024876 <memcpy+0x7a>
+1002480c:	0016      	movs	r6, r2
+1002480e:	000c      	movs	r4, r1
+10024810:	0003      	movs	r3, r0
+10024812:	3e10      	subs	r6, #16
+10024814:	0935      	lsrs	r5, r6, #4
+10024816:	3501      	adds	r5, #1
+10024818:	012d      	lsls	r5, r5, #4
+1002481a:	1945      	adds	r5, r0, r5
+1002481c:	6827      	ldr	r7, [r4, #0]
+1002481e:	601f      	str	r7, [r3, #0]
+10024820:	6867      	ldr	r7, [r4, #4]
+10024822:	605f      	str	r7, [r3, #4]
+10024824:	68a7      	ldr	r7, [r4, #8]
+10024826:	609f      	str	r7, [r3, #8]
+10024828:	68e7      	ldr	r7, [r4, #12]
+1002482a:	3410      	adds	r4, #16
+1002482c:	60df      	str	r7, [r3, #12]
+1002482e:	3310      	adds	r3, #16
+10024830:	429d      	cmp	r5, r3
+10024832:	d1f3      	bne.n	1002481c <memcpy+0x20>
+10024834:	230f      	movs	r3, #15
+10024836:	439e      	bics	r6, r3
+10024838:	3610      	adds	r6, #16
+1002483a:	1985      	adds	r5, r0, r6
+1002483c:	1989      	adds	r1, r1, r6
+1002483e:	4013      	ands	r3, r2
+10024840:	2b03      	cmp	r3, #3
+10024842:	d91a      	bls.n	1002487a <memcpy+0x7e>
+10024844:	1f1e      	subs	r6, r3, #4
+10024846:	2300      	movs	r3, #0
+10024848:	08b4      	lsrs	r4, r6, #2
+1002484a:	3401      	adds	r4, #1
+1002484c:	00a4      	lsls	r4, r4, #2
+1002484e:	58cf      	ldr	r7, [r1, r3]
+10024850:	50ef      	str	r7, [r5, r3]
+10024852:	3304      	adds	r3, #4
+10024854:	42a3      	cmp	r3, r4
+10024856:	d1fa      	bne.n	1002484e <memcpy+0x52>
+10024858:	2403      	movs	r4, #3
+1002485a:	43a6      	bics	r6, r4
+1002485c:	1d33      	adds	r3, r6, #4
+1002485e:	4022      	ands	r2, r4
+10024860:	18c9      	adds	r1, r1, r3
+10024862:	18ed      	adds	r5, r5, r3
+10024864:	2a00      	cmp	r2, #0
+10024866:	d005      	beq.n	10024874 <memcpy+0x78>
+10024868:	2300      	movs	r3, #0
+1002486a:	5ccc      	ldrb	r4, [r1, r3]
+1002486c:	54ec      	strb	r4, [r5, r3]
+1002486e:	3301      	adds	r3, #1
+10024870:	4293      	cmp	r3, r2
+10024872:	d1fa      	bne.n	1002486a <memcpy+0x6e>
+10024874:	bdf0      	pop	{r4, r5, r6, r7, pc}
+10024876:	0005      	movs	r5, r0
+10024878:	e7f6      	b.n	10024868 <memcpy+0x6c>
+1002487a:	001a      	movs	r2, r3
+1002487c:	e7f2      	b.n	10024864 <memcpy+0x68>
+1002487e:	46c0      	nop			; (mov r8, r8)
+
+10024880 <memset>:
+10024880:	b5f0      	push	{r4, r5, r6, r7, lr}
+10024882:	0783      	lsls	r3, r0, #30
+10024884:	d043      	beq.n	1002490e <memset+0x8e>
+10024886:	1e54      	subs	r4, r2, #1
+10024888:	2a00      	cmp	r2, #0
+1002488a:	d03f      	beq.n	1002490c <memset+0x8c>
+1002488c:	b2ce      	uxtb	r6, r1
+1002488e:	0002      	movs	r2, r0
+10024890:	2503      	movs	r5, #3
+10024892:	e002      	b.n	1002489a <memset+0x1a>
+10024894:	001a      	movs	r2, r3
+10024896:	3c01      	subs	r4, #1
+10024898:	d338      	bcc.n	1002490c <memset+0x8c>
+1002489a:	1c53      	adds	r3, r2, #1
+1002489c:	7016      	strb	r6, [r2, #0]
+1002489e:	422b      	tst	r3, r5
+100248a0:	d1f8      	bne.n	10024894 <memset+0x14>
+100248a2:	2c03      	cmp	r4, #3
+100248a4:	d92a      	bls.n	100248fc <memset+0x7c>
+100248a6:	22ff      	movs	r2, #255	; 0xff
+100248a8:	400a      	ands	r2, r1
+100248aa:	0215      	lsls	r5, r2, #8
+100248ac:	4315      	orrs	r5, r2
+100248ae:	042a      	lsls	r2, r5, #16
+100248b0:	4315      	orrs	r5, r2
+100248b2:	2c0f      	cmp	r4, #15
+100248b4:	d914      	bls.n	100248e0 <memset+0x60>
+100248b6:	0027      	movs	r7, r4
+100248b8:	001a      	movs	r2, r3
+100248ba:	3f10      	subs	r7, #16
+100248bc:	093e      	lsrs	r6, r7, #4
+100248be:	3601      	adds	r6, #1
+100248c0:	0136      	lsls	r6, r6, #4
+100248c2:	199e      	adds	r6, r3, r6
+100248c4:	6015      	str	r5, [r2, #0]
+100248c6:	6055      	str	r5, [r2, #4]
+100248c8:	6095      	str	r5, [r2, #8]
+100248ca:	60d5      	str	r5, [r2, #12]
+100248cc:	3210      	adds	r2, #16
+100248ce:	4296      	cmp	r6, r2
+100248d0:	d1f8      	bne.n	100248c4 <memset+0x44>
+100248d2:	220f      	movs	r2, #15
+100248d4:	4397      	bics	r7, r2
+100248d6:	3710      	adds	r7, #16
+100248d8:	19db      	adds	r3, r3, r7
+100248da:	4014      	ands	r4, r2
+100248dc:	2c03      	cmp	r4, #3
+100248de:	d90d      	bls.n	100248fc <memset+0x7c>
+100248e0:	001a      	movs	r2, r3
+100248e2:	1f27      	subs	r7, r4, #4
+100248e4:	08be      	lsrs	r6, r7, #2
+100248e6:	3601      	adds	r6, #1
+100248e8:	00b6      	lsls	r6, r6, #2
+100248ea:	199e      	adds	r6, r3, r6
+100248ec:	c220      	stmia	r2!, {r5}
+100248ee:	42b2      	cmp	r2, r6
+100248f0:	d1fc      	bne.n	100248ec <memset+0x6c>
+100248f2:	2203      	movs	r2, #3
+100248f4:	4397      	bics	r7, r2
+100248f6:	3704      	adds	r7, #4
+100248f8:	19db      	adds	r3, r3, r7
+100248fa:	4014      	ands	r4, r2
+100248fc:	2c00      	cmp	r4, #0
+100248fe:	d005      	beq.n	1002490c <memset+0x8c>
+10024900:	b2c9      	uxtb	r1, r1
+10024902:	191c      	adds	r4, r3, r4
+10024904:	7019      	strb	r1, [r3, #0]
+10024906:	3301      	adds	r3, #1
+10024908:	429c      	cmp	r4, r3
+1002490a:	d1fb      	bne.n	10024904 <memset+0x84>
+1002490c:	bdf0      	pop	{r4, r5, r6, r7, pc}
+1002490e:	0014      	movs	r4, r2
+10024910:	0003      	movs	r3, r0
+10024912:	e7c6      	b.n	100248a2 <memset+0x22>
+10024914:	000003ff 	.word	0x000003ff
+
+10024918 <Pout_table>:
+10024918:	00000000 00000028 00000050 000000a0     ....(...P.......
+10024928:	00000140 00000280 00000320              @....... ...
+
+10024934 <correction_table>:
+10024934:	00210000 001b001e 00150015 00000000     ..!.............
+10024944:	001e0021 0014001a 00160013 00210000     !.............!.
+10024954:	0018001e 00120013 00000019 00200024     ............$. .
+10024964:	0015001a 001c0012                       ........
+
+1002496c <efficiency_table>:
+1002496c:	f3f2f100 00f6f6f6 f7f4f2f1 f000f6f7     ................
+1002497c:	f7f7f5f2 f1ef00f4 f3f7f6f4 1002461e     .............F..
+1002498c:	10024600 10024606 1002460c 10024612     .F...F...F...F..
+1002499c:	10024618                                .F..

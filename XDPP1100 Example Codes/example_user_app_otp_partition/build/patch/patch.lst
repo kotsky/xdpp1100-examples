@@ -1,0 +1,3447 @@
+
+.\build\patch/patch.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .bss          00000334  20063800  20063800  00023800  2**2
+                  ALLOC
+  1 .otp_data     00004000  10020000  10020000  00010000  2**0
+                  ALLOC
+  2 .otp_header   0000001c  10024000  10024000  00010000  2**0
+                  ALLOC
+  3 .txt          00004000  1002401c  1002401c  00010000  2**0
+                  ALLOC
+  4 .otp_patch2   00001584  1002801c  1002801c  0001801c  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  5 .otp_patch3   00004000  100295a0  100295a0  000195a0  2**0
+                  ALLOC
+  6 .debug_info   000222b2  00000000  00000000  000195a0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 000016ed  00000000  00000000  0003b852  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_loc    00002d68  00000000  00000000  0003cf3f  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_aranges 000001e0  00000000  00000000  0003fca7  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000470  00000000  00000000  0003fe87  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_macro  0000af84  00000000  00000000  000402f7  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_line   0000432a  00000000  00000000  0004b27b  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_str    0006baea  00000000  00000000  0004f5a5  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 14 .comment      0000007f  00000000  00000000  000bb08f  2**0
+                  CONTENTS, READONLY
+ 15 .ARM.attributes 00000031  00000000  00000000  000bb10e  2**0
+                  CONTENTS, READONLY
+ 16 .debug_frame  000004a8  00000000  00000000  000bb140  2**2
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .otp_patch2:
+
+1002801c <patch2_entry>:
+/**
+ * This is the patch entry point, which is called after the patch got
+ * successfully loaded into RAM.
+ */
+void patch2_entry(void)
+{
+1002801c:	b510      	push	{r4, lr}
+    // Initialize the .bss and .data section
+    memset(SECTION_BASE_ZI, 0, SECTION_LENGTH_ZI);
+1002801e:	480c      	ldr	r0, [pc, #48]	; (10028050 <_end_otp_patch1+0x34>)
+10028020:	4a0c      	ldr	r2, [pc, #48]	; (10028054 <_end_otp_patch1+0x38>)
+10028022:	1a12      	subs	r2, r2, r0
+10028024:	2100      	movs	r1, #0
+10028026:	f001 f86d 	bl	10029104 <memset>
+    memcpy(SECTION_BASE_RW_DESTINATION, SECTION_BASE_RW_SOURCE, SECTION_LENGTH_RW);
+1002802a:	480b      	ldr	r0, [pc, #44]	; (10028058 <_end_otp_patch1+0x3c>)
+1002802c:	4a0b      	ldr	r2, [pc, #44]	; (1002805c <_end_otp_patch1+0x40>)
+1002802e:	1a12      	subs	r2, r2, r0
+10028030:	490b      	ldr	r1, [pc, #44]	; (10028060 <_end_otp_patch1+0x44>)
+10028032:	f001 f825 	bl	10029080 <memcpy>
+    // Initialize ram execution section
+    memcpy(SECTION_BASE_RAM_EXEC_DESTINATION, SECTION_BASE_RAM_EXEC_SOURCE, SECTION_LENGTH_RAM_EXEC);
+10028036:	480b      	ldr	r0, [pc, #44]	; (10028064 <_end_otp_patch1+0x48>)
+10028038:	4a0b      	ldr	r2, [pc, #44]	; (10028068 <_end_otp_patch1+0x4c>)
+1002803a:	1a12      	subs	r2, r2, r0
+1002803c:	490b      	ldr	r1, [pc, #44]	; (1002806c <_end_otp_patch1+0x50>)
+1002803e:	f001 f81f 	bl	10029080 <memcpy>
+/* lint requires us to have both a declaration and a definition ... we
+ * could probably bail out through some local lint, but her we simply
+ * play to the rules.
+ */
+HAL_INLINE void HAL_SET32(volatile uint32_t* addr, uint32_t val) {
+    *addr = val;
+10028042:	4a0b      	ldr	r2, [pc, #44]	; (10028070 <_end_otp_patch1+0x54>)
+10028044:	4b0b      	ldr	r3, [pc, #44]	; (10028074 <_end_otp_patch1+0x58>)
+10028046:	601a      	str	r2, [r3, #0]
+
+
+    SCU_SPARE_FF__SET(0x5971BBBBUL);  // write the patch id to SCU spare for simple test that patch loaded
+    user_drv_init();
+10028048:	f000 fff6 	bl	10029038 <user_drv_init>
+}
+1002804c:	bd10      	pop	{r4, pc}
+1002804e:	46c0      	nop			; (mov r8, r8)
+10028050:	20063800 	.word	0x20063800
+10028054:	20063b34 	.word	0x20063b34
+10028058:	20063800 	.word	0x20063800
+1002805c:	20063800 	.word	0x20063800
+10028060:	100295a0 	.word	0x100295a0
+10028064:	20063b34 	.word	0x20063b34
+10028068:	20063b34 	.word	0x20063b34
+1002806c:	1002801c 	.word	0x1002801c
+10028070:	5971bbbb 	.word	0x5971bbbb
+10028074:	40000020 	.word	0x40000020
+
+10028078 <add_on_features_init>:
+
+void add_on_features_init (void)
+{
+
+#ifdef en_ishare
+	patch_rom_table.patch_Regulation_Shutdown_Sequence = &patch_Regulation_Shutdown_Sequence;
+10028078:	4902      	ldr	r1, [pc, #8]	; (10028084 <add_on_features_init+0xc>)
+1002807a:	23d8      	movs	r3, #216	; 0xd8
+1002807c:	005b      	lsls	r3, r3, #1
+1002807e:	4a02      	ldr	r2, [pc, #8]	; (10028088 <add_on_features_init+0x10>)
+10028080:	50d1      	str	r1, [r2, r3]
+#endif
+
+}
+10028082:	4770      	bx	lr
+10028084:	100282b5 	.word	0x100282b5
+10028088:	2005d074 	.word	0x2005d074
+
+1002808c <enable_ishare>:
+
+#ifdef en_ishare
+
+void enable_ishare(PMBUS_PAGE_t loop)
+{
+1002808c:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+1002808e:	0004      	movs	r4, r0
+	uint16_t data = PMBUS_Get_Command_Word(PMBUS_PAGE_0, PMBUS_CMDCODE_MFR_ISHARE_THRESHOLD);
+10028090:	21da      	movs	r1, #218	; 0xda
+10028092:	2000      	movs	r0, #0
+10028094:	f7d9 fae0 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10028098:	0542      	lsls	r2, r0, #21
+1002809a:	0d52      	lsrs	r2, r2, #21
+ */
+__DRIVER_INLINE int32_t LINEAR11_TO_MANTISSA(uint16_t packed_linear_format_number)
+{
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+	int32_t mant_signbit=mant_bits & 0x0400;
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+1002809c:	0543      	lsls	r3, r0, #21
+1002809e:	d41a      	bmi.n	100280d6 <enable_ishare+0x4a>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+100280a0:	0013      	movs	r3, r2
+	data = (uint16_t)LINEAR11_TO_MANTISSA(data);  // grab mantissa
+	uint8_t pwm11_bit_index = 6; //bit6
+
+	if (data !=0)
+100280a2:	b29b      	uxth	r3, r3
+100280a4:	2b00      	cmp	r3, #0
+100280a6:	d119      	bne.n	100280dc <enable_ishare+0x50>
+ * HW 'behind' this address, changing the address' content.
+ */
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr);
+
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr) {
+    return *addr;
+100280a8:	4a55      	ldr	r2, [pc, #340]	; (10028200 <enable_ishare+0x174>)
+100280aa:	6813      	ldr	r3, [r2, #0]
+ * @param bf_value new value for TSEN_EN.TS_TSIDAC_IMON_SEL
+ */
+__TSEN_INLINE void TSEN_TSEN_EN__TS_TSIDAC_IMON_SEL__SET(uint32_t bf_value)
+{
+    uint32_t reg = TSEN_TSEN_EN__GET();
+    reg = (reg & ~TSEN_TSEN_EN__TS_TSIDAC_IMON_SEL__Msk);
+100280ac:	4955      	ldr	r1, [pc, #340]	; (10028204 <enable_ishare+0x178>)
+100280ae:	400b      	ands	r3, r1
+    *addr = val;
+100280b0:	6013      	str	r3, [r2, #0]
+    return *addr;
+100280b2:	4a55      	ldr	r2, [pc, #340]	; (10028208 <enable_ishare+0x17c>)
+100280b4:	6813      	ldr	r3, [r2, #0]
+ * @param bf_value new value for EN_REG3.EN_ISHARE
+ */
+__COMMON_INLINE void COMMON_EN_REG3__EN_ISHARE__SET(uint32_t bf_value)
+{
+    uint32_t reg = COMMON_EN_REG3__GET();
+    reg = (reg & ~COMMON_EN_REG3__EN_ISHARE__Msk);
+100280b6:	4955      	ldr	r1, [pc, #340]	; (1002820c <enable_ishare+0x180>)
+100280b8:	400b      	ands	r3, r1
+    *addr = val;
+100280ba:	6013      	str	r3, [r2, #0]
+		TSEN_TSEN_EN__TS_TSIDAC_IMON_SEL__SET(0);// IMON output current DAC enable
+		COMMON_EN_REG3__EN_ISHARE__SET(0);//disable for IMON based current sharing function
+	}
+
+	// Read mfr_added_droop
+	uint32_t mfr_added_vout_droop = PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_MFR_ADDED_DROOP_DURING_RAMP);
+100280bc:	21fc      	movs	r1, #252	; 0xfc
+100280be:	0020      	movs	r0, r4
+100280c0:	f7d9 faca 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+100280c4:	0543      	lsls	r3, r0, #21
+100280c6:	0d5b      	lsrs	r3, r3, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100280c8:	0542      	lsls	r2, r0, #21
+100280ca:	d501      	bpl.n	100280d0 <enable_ishare+0x44>
+100280cc:	4a50      	ldr	r2, [pc, #320]	; (10028210 <enable_ishare+0x184>)
+100280ce:	4313      	orrs	r3, r2
+
+	// Align VOUT_DROOP to PMBUS_Q_EXP precision
+	mfr_added_vout_droop = (uint32_t)LINEAR11_TO_MANTISSA((uint16_t)mfr_added_vout_droop);
+
+	if (mfr_added_vout_droop !=0)
+100280d0:	2b00      	cmp	r3, #0
+100280d2:	d135      	bne.n	10028140 <enable_ishare+0xb4>
+		user_data.current_droop = mohms;
+
+		if (mohms > 0x7ff) mohms = 0x7ff;  // cap at max
+		VCONTROL_VC_VAVP3__VC_VAVP_RLL__SET((vcontrol_idx_t) loop, mohms);
+	}
+}
+100280d4:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
+100280d6:	4b4e      	ldr	r3, [pc, #312]	; (10028210 <enable_ishare+0x184>)
+100280d8:	4313      	orrs	r3, r2
+100280da:	e7e2      	b.n	100280a2 <enable_ishare+0x16>
+    return *addr;
+100280dc:	4d4d      	ldr	r5, [pc, #308]	; (10028214 <enable_ishare+0x188>)
+100280de:	682b      	ldr	r3, [r5, #0]
+    reg = (reg & ~COMMON_MP_FUNC5__PWM11_FUNC__Msk);
+100280e0:	2207      	movs	r2, #7
+100280e2:	4393      	bics	r3, r2
+    reg = (reg | (COMMON_MP_FUNC5__PWM11_FUNC__Shift((uint32_t)bf_value)));
+100280e4:	3a06      	subs	r2, #6
+100280e6:	4313      	orrs	r3, r2
+    *addr = val;
+100280e8:	602b      	str	r3, [r5, #0]
+    return *addr;
+100280ea:	682b      	ldr	r3, [r5, #0]
+    reg = (reg & ~COMMON_MP_FUNC5__PWM11_PD__Msk);
+100280ec:	3207      	adds	r2, #7
+100280ee:	4393      	bics	r3, r2
+    *addr = val;
+100280f0:	602b      	str	r3, [r5, #0]
+    return *addr;
+100280f2:	682b      	ldr	r3, [r5, #0]
+    reg = (reg & ~COMMON_MP_FUNC5__PWM11_PU_N__Msk);
+100280f4:	3208      	adds	r2, #8
+    reg = (reg | (COMMON_MP_FUNC5__PWM11_PU_N__Shift((uint32_t)bf_value)));
+100280f6:	4313      	orrs	r3, r2
+    *addr = val;
+100280f8:	602b      	str	r3, [r5, #0]
+		GpioBit_SetCnfg (GPIO_0, pwm11_bit_index);
+100280fa:	2106      	movs	r1, #6
+100280fc:	2000      	movs	r0, #0
+100280fe:	f7d8 fe75 	bl	10000dec <GpioBit_IntrType+0x97>
+		GpioBit_SetDir (GPIO_0, pwm11_bit_index, DIRECTION_OUTPUT);
+10028102:	2201      	movs	r2, #1
+10028104:	2106      	movs	r1, #6
+10028106:	2000      	movs	r0, #0
+10028108:	f7d8 fe90 	bl	10000e2c <GpioBit_SetCnfg+0x3f>
+    return *addr;
+1002810c:	493c      	ldr	r1, [pc, #240]	; (10028200 <enable_ishare+0x174>)
+1002810e:	680b      	ldr	r3, [r1, #0]
+10028110:	4a3c      	ldr	r2, [pc, #240]	; (10028204 <enable_ishare+0x178>)
+10028112:	401a      	ands	r2, r3
+    reg = (reg | (TSEN_TSEN_EN__TS_TSIDAC_IMON_SEL__Shift((uint32_t)bf_value)));
+10028114:	2380      	movs	r3, #128	; 0x80
+10028116:	005b      	lsls	r3, r3, #1
+10028118:	4313      	orrs	r3, r2
+    *addr = val;
+1002811a:	600b      	str	r3, [r1, #0]
+    return *addr;
+1002811c:	493a      	ldr	r1, [pc, #232]	; (10028208 <enable_ishare+0x17c>)
+1002811e:	680b      	ldr	r3, [r1, #0]
+    reg = (reg & ~COMMON_EN_REG3__EN_ISHARE__Msk);
+10028120:	4a3a      	ldr	r2, [pc, #232]	; (1002820c <enable_ishare+0x180>)
+10028122:	401a      	ands	r2, r3
+    reg = (reg | (COMMON_EN_REG3__EN_ISHARE__Shift((uint32_t)bf_value)));
+10028124:	2380      	movs	r3, #128	; 0x80
+10028126:	015b      	lsls	r3, r3, #5
+10028128:	4313      	orrs	r3, r2
+    *addr = val;
+1002812a:	600b      	str	r3, [r1, #0]
+		GpioBit_DatWr(GPIO_0, pwm11_bit_index, 0x0); // gpio driver requires a value of 1 on bus to be 0xff in index of that data location
+1002812c:	2200      	movs	r2, #0
+1002812e:	2106      	movs	r1, #6
+10028130:	2000      	movs	r0, #0
+10028132:	f7d8 fdc3 	bl	10000cbc <GpioBit_DatRd+0x1f>
+    return *addr;
+10028136:	682b      	ldr	r3, [r5, #0]
+    reg = (reg & ~COMMON_MP_FUNC5__PWM11_PPEN__Msk);
+10028138:	2220      	movs	r2, #32
+    reg = (reg | (COMMON_MP_FUNC5__PWM11_PPEN__Shift((uint32_t)bf_value)));
+1002813a:	4313      	orrs	r3, r2
+    *addr = val;
+1002813c:	602b      	str	r3, [r5, #0]
+1002813e:	e7bd      	b.n	100280bc <enable_ishare+0x30>
+		user_data.enable_added_droop = 1; //enable periodic irq at target to remove droop
+10028140:	2101      	movs	r1, #1
+10028142:	2398      	movs	r3, #152	; 0x98
+10028144:	4a34      	ldr	r2, [pc, #208]	; (10028218 <enable_ishare+0x18c>)
+10028146:	54d1      	strb	r1, [r2, r3]
+		uint32_t vout_scale = PMBUS_Get_Vout_Scale(loop, PMBUS_Q_EXP);
+10028148:	3911      	subs	r1, #17
+1002814a:	0020      	movs	r0, r4
+1002814c:	f7d9 faef 	bl	1000172e <PMBUS_Get_Vout_Mode_Exponent+0x1d>
+10028150:	0005      	movs	r5, r0
+		uint32_t vout_droop = PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_VOUT_DROOP);
+10028152:	2128      	movs	r1, #40	; 0x28
+10028154:	0020      	movs	r0, r4
+10028156:	f7d9 fa7f 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+1002815a:	0007      	movs	r7, r0
+ * Takes a linear11 format (16bit, 5bit exponent 11bit mantissa) number
+ * and extracts the exponent
+ */
+__DRIVER_INLINE int32_t LINEAR11_TO_EXPONENT(uint16_t packed_linear_format_number)
+{
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+1002815c:	0ac3      	lsrs	r3, r0, #11
+1002815e:	b29b      	uxth	r3, r3
+10028160:	001e      	movs	r6, r3
+	int32_t exp_signbit=exp_bits & 0x0010;
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10028162:	06da      	lsls	r2, r3, #27
+10028164:	d502      	bpl.n	1002816c <enable_ishare+0xe0>
+10028166:	2620      	movs	r6, #32
+10028168:	4276      	negs	r6, r6
+1002816a:	431e      	orrs	r6, r3
+		mfr_added_vout_droop = PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_MFR_ADDED_DROOP_DURING_RAMP);
+1002816c:	21fc      	movs	r1, #252	; 0xfc
+1002816e:	0020      	movs	r0, r4
+10028170:	f7d9 fa72 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10028174:	0ac3      	lsrs	r3, r0, #11
+10028176:	b29b      	uxth	r3, r3
+10028178:	469c      	mov	ip, r3
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+1002817a:	06da      	lsls	r2, r3, #27
+1002817c:	d503      	bpl.n	10028186 <enable_ishare+0xfa>
+1002817e:	2220      	movs	r2, #32
+10028180:	4252      	negs	r2, r2
+10028182:	431a      	orrs	r2, r3
+10028184:	4694      	mov	ip, r2
+10028186:	057a      	lsls	r2, r7, #21
+10028188:	0d52      	lsrs	r2, r2, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+1002818a:	057b      	lsls	r3, r7, #21
+1002818c:	d42a      	bmi.n	100281e4 <enable_ishare+0x158>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+1002818e:	0013      	movs	r3, r2
+		uint32_t vout_droop_mohms = (uint32_t)SHIFT_EXPONENT((int32_t)(vout_droop * vout_scale) , (-LOADLINE_EXP+vout_droop_exp+PMBUS_Q_EXP));
+10028190:	436b      	muls	r3, r5
+10028192:	0031      	movs	r1, r6
+10028194:	3909      	subs	r1, #9
+		exponent = -exponent;
+		value = value >> (exponent);
+	}
+	else
+	{
+		value = value << (exponent);
+10028196:	001a      	movs	r2, r3
+10028198:	408a      	lsls	r2, r1
+	if ( exponent <= 0)
+1002819a:	2900      	cmp	r1, #0
+1002819c:	dd25      	ble.n	100281ea <enable_ishare+0x15e>
+1002819e:	0541      	lsls	r1, r0, #21
+100281a0:	0d49      	lsrs	r1, r1, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100281a2:	0543      	lsls	r3, r0, #21
+100281a4:	d501      	bpl.n	100281aa <enable_ishare+0x11e>
+100281a6:	4b1a      	ldr	r3, [pc, #104]	; (10028210 <enable_ishare+0x184>)
+100281a8:	4319      	orrs	r1, r3
+		uint32_t mfr_added_vout_droop_mohms = (uint32_t)SHIFT_EXPONENT((int32_t)(mfr_added_vout_droop * vout_scale) , (-LOADLINE_EXP+mfr_added_vout_droop_exp+PMBUS_Q_EXP));
+100281aa:	434d      	muls	r5, r1
+100281ac:	4661      	mov	r1, ip
+100281ae:	3909      	subs	r1, #9
+		value = value << (exponent);
+100281b0:	002b      	movs	r3, r5
+100281b2:	408b      	lsls	r3, r1
+	if ( exponent <= 0)
+100281b4:	2900      	cmp	r1, #0
+100281b6:	dd1d      	ble.n	100281f4 <enable_ishare+0x168>
+		uint32_t mohms = vout_droop_mohms + mfr_added_vout_droop_mohms;
+100281b8:	189b      	adds	r3, r3, r2
+		user_data.calculated_droop = vout_droop_mohms;
+100281ba:	4917      	ldr	r1, [pc, #92]	; (10028218 <enable_ishare+0x18c>)
+100281bc:	2088      	movs	r0, #136	; 0x88
+100281be:	500a      	str	r2, [r1, r0]
+		user_data.current_droop = mohms;
+100281c0:	228c      	movs	r2, #140	; 0x8c
+100281c2:	508b      	str	r3, [r1, r2]
+ * @param idp index of peripheral
+ * @return base address of peripheral's instance
+ */
+__VCONTROL_INLINE uint32_t* __VCONTROL_BASE_PTR(vcontrol_idx_t idp)
+{
+    return (uint32_t*)(VCONTROL_BASE + (uint32_t)((uint32_t)idp * VCONTROL_STRIDE));
+100281c4:	4a15      	ldr	r2, [pc, #84]	; (1002821c <enable_ishare+0x190>)
+100281c6:	4694      	mov	ip, r2
+100281c8:	4464      	add	r4, ip
+100281ca:	02a4      	lsls	r4, r4, #10
+    return *addr;
+100281cc:	6922      	ldr	r2, [r4, #16]
+ * @param bf_value new value for VC_VAVP3.VC_VAVP_RLL
+ */
+__VCONTROL_INLINE void VCONTROL_VC_VAVP3__VC_VAVP_RLL__SET(vcontrol_idx_t idp, uint32_t bf_value)
+{
+    uint32_t reg = VCONTROL_VC_VAVP3__GET(idp);
+    reg = (reg & ~VCONTROL_VC_VAVP3__VC_VAVP_RLL__Msk);
+100281ce:	0ad2      	lsrs	r2, r2, #11
+100281d0:	02d2      	lsls	r2, r2, #11
+    reg = (reg | (VCONTROL_VC_VAVP3__VC_VAVP_RLL__Shift((uint32_t)bf_value)));
+100281d2:	4913      	ldr	r1, [pc, #76]	; (10028220 <enable_ishare+0x194>)
+100281d4:	428b      	cmp	r3, r1
+100281d6:	d900      	bls.n	100281da <enable_ishare+0x14e>
+100281d8:	000b      	movs	r3, r1
+100281da:	055b      	lsls	r3, r3, #21
+100281dc:	0d5b      	lsrs	r3, r3, #21
+100281de:	4313      	orrs	r3, r2
+    *addr = val;
+100281e0:	6123      	str	r3, [r4, #16]
+}
+100281e2:	e777      	b.n	100280d4 <enable_ishare+0x48>
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100281e4:	4b0a      	ldr	r3, [pc, #40]	; (10028210 <enable_ishare+0x184>)
+100281e6:	4313      	orrs	r3, r2
+100281e8:	e7d2      	b.n	10028190 <enable_ishare+0x104>
+		exponent = -exponent;
+100281ea:	2209      	movs	r2, #9
+100281ec:	1b96      	subs	r6, r2, r6
+		value = value >> (exponent);
+100281ee:	4133      	asrs	r3, r6
+100281f0:	001a      	movs	r2, r3
+100281f2:	e7d4      	b.n	1002819e <enable_ishare+0x112>
+		exponent = -exponent;
+100281f4:	2309      	movs	r3, #9
+100281f6:	4661      	mov	r1, ip
+100281f8:	1a5b      	subs	r3, r3, r1
+		value = value >> (exponent);
+100281fa:	411d      	asrs	r5, r3
+100281fc:	002b      	movs	r3, r5
+100281fe:	e7db      	b.n	100281b8 <enable_ishare+0x12c>
+10028200:	70004c00 	.word	0x70004c00
+10028204:	fffffeff 	.word	0xfffffeff
+10028208:	70003054 	.word	0x70003054
+1002820c:	ffffefff 	.word	0xffffefff
+10028210:	fffff800 	.word	0xfffff800
+10028214:	70003014 	.word	0x70003014
+10028218:	20063a6c 	.word	0x20063a6c
+1002821c:	001c0005 	.word	0x001c0005
+10028220:	000007ff 	.word	0x000007ff
+
+10028224 <disable_ishare>:
+
+/*lint -e715 */
+void disable_ishare(PMBUS_PAGE_t loop)
+{
+10028224:	b510      	push	{r4, lr}
+
+	uint16_t data = PMBUS_Get_Command_Word(PMBUS_PAGE_0, PMBUS_CMDCODE_MFR_ISHARE_THRESHOLD);
+10028226:	21da      	movs	r1, #218	; 0xda
+10028228:	2000      	movs	r0, #0
+1002822a:	f7d9 fa15 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+1002822e:	0543      	lsls	r3, r0, #21
+10028230:	0d5b      	lsrs	r3, r3, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10028232:	0542      	lsls	r2, r0, #21
+10028234:	d501      	bpl.n	1002823a <disable_ishare+0x16>
+10028236:	4a19      	ldr	r2, [pc, #100]	; (1002829c <disable_ishare+0x78>)
+10028238:	4313      	orrs	r3, r2
+    return *addr;
+1002823a:	4919      	ldr	r1, [pc, #100]	; (100282a0 <disable_ishare+0x7c>)
+1002823c:	680a      	ldr	r2, [r1, #0]
+    reg = (reg & ~TSEN_TSEN_EN__TS_TSIDAC_IMON_SEL__Msk);
+1002823e:	4819      	ldr	r0, [pc, #100]	; (100282a4 <disable_ishare+0x80>)
+10028240:	4002      	ands	r2, r0
+    *addr = val;
+10028242:	600a      	str	r2, [r1, #0]
+    return *addr;
+10028244:	4918      	ldr	r1, [pc, #96]	; (100282a8 <disable_ishare+0x84>)
+10028246:	680a      	ldr	r2, [r1, #0]
+    reg = (reg & ~COMMON_EN_REG3__EN_ISHARE__Msk);
+10028248:	4818      	ldr	r0, [pc, #96]	; (100282ac <disable_ishare+0x88>)
+1002824a:	4002      	ands	r2, r0
+    *addr = val;
+1002824c:	600a      	str	r2, [r1, #0]
+	data = (uint16_t)LINEAR11_TO_MANTISSA(data);  // grab mantissa
+
+	TSEN_TSEN_EN__TS_TSIDAC_IMON_SEL__SET(0);// IMON output current DAC disable
+	COMMON_EN_REG3__EN_ISHARE__SET(0);//disable for IMON based current sharing function
+
+	if (data !=0)
+1002824e:	b29b      	uxth	r3, r3
+10028250:	2b00      	cmp	r3, #0
+10028252:	d100      	bne.n	10028256 <disable_ishare+0x32>
+		GpioBit_DatWr(GPIO_0, pwm11_bit_index, 0xFF); // gpio driver requires a value of 1 on bus to be 0xff in index of that data location
+
+		COMMON_MP_FUNC5__PWM11_FUNC__SET(1);  //GPIO0[5]
+
+	}
+}
+10028254:	bd10      	pop	{r4, pc}
+    return *addr;
+10028256:	4c16      	ldr	r4, [pc, #88]	; (100282b0 <disable_ishare+0x8c>)
+10028258:	6823      	ldr	r3, [r4, #0]
+    reg = (reg & ~COMMON_MP_FUNC5__PWM11_PD__Msk);
+1002825a:	2208      	movs	r2, #8
+1002825c:	4393      	bics	r3, r2
+    *addr = val;
+1002825e:	6023      	str	r3, [r4, #0]
+    return *addr;
+10028260:	6823      	ldr	r3, [r4, #0]
+    reg = (reg & ~COMMON_MP_FUNC5__PWM11_PU_N__Msk);
+10028262:	3208      	adds	r2, #8
+    reg = (reg | (COMMON_MP_FUNC5__PWM11_PU_N__Shift((uint32_t)bf_value)));
+10028264:	4313      	orrs	r3, r2
+    *addr = val;
+10028266:	6023      	str	r3, [r4, #0]
+		GpioBit_SetCnfg (GPIO_0, pwm11_bit_index);
+10028268:	2106      	movs	r1, #6
+1002826a:	2000      	movs	r0, #0
+1002826c:	f7d8 fdbe 	bl	10000dec <GpioBit_IntrType+0x97>
+		GpioBit_SetDir (GPIO_0, pwm11_bit_index, DIRECTION_OUTPUT);
+10028270:	2201      	movs	r2, #1
+10028272:	2106      	movs	r1, #6
+10028274:	2000      	movs	r0, #0
+10028276:	f7d8 fdd9 	bl	10000e2c <GpioBit_SetCnfg+0x3f>
+    return *addr;
+1002827a:	6823      	ldr	r3, [r4, #0]
+    reg = (reg & ~COMMON_MP_FUNC5__PWM11_PPEN__Msk);
+1002827c:	2220      	movs	r2, #32
+1002827e:	4393      	bics	r3, r2
+    *addr = val;
+10028280:	6023      	str	r3, [r4, #0]
+		GpioBit_DatWr(GPIO_0, pwm11_bit_index, 0xFF); // gpio driver requires a value of 1 on bus to be 0xff in index of that data location
+10028282:	32df      	adds	r2, #223	; 0xdf
+10028284:	2106      	movs	r1, #6
+10028286:	2000      	movs	r0, #0
+10028288:	f7d8 fd18 	bl	10000cbc <GpioBit_DatRd+0x1f>
+    return *addr;
+1002828c:	6823      	ldr	r3, [r4, #0]
+    reg = (reg & ~COMMON_MP_FUNC5__PWM11_FUNC__Msk);
+1002828e:	2207      	movs	r2, #7
+10028290:	4393      	bics	r3, r2
+    reg = (reg | (COMMON_MP_FUNC5__PWM11_FUNC__Shift((uint32_t)bf_value)));
+10028292:	3a06      	subs	r2, #6
+10028294:	4313      	orrs	r3, r2
+    *addr = val;
+10028296:	6023      	str	r3, [r4, #0]
+}
+10028298:	e7dc      	b.n	10028254 <disable_ishare+0x30>
+1002829a:	46c0      	nop			; (mov r8, r8)
+1002829c:	fffff800 	.word	0xfffff800
+100282a0:	70004c00 	.word	0x70004c00
+100282a4:	fffffeff 	.word	0xfffffeff
+100282a8:	70003054 	.word	0x70003054
+100282ac:	ffffefff 	.word	0xffffefff
+100282b0:	70003014 	.word	0x70003014
+
+100282b4 <patch_Regulation_Shutdown_Sequence>:
+	VCONTROL_VC_VAVP3__VC_VAVP_RLL__SET((vcontrol_idx_t) PMBUS_PAGE_0, (uint32_t)user_data.current_droop);
+
+}
+
+void patch_Regulation_Shutdown_Sequence (PMBUS_PAGE_t loop, REGULATION_STATE state, REGULATION_CONTROLS control)
+{
+100282b4:	b570      	push	{r4, r5, r6, lr}
+100282b6:	b082      	sub	sp, #8
+100282b8:	0004      	movs	r4, r0
+100282ba:	000d      	movs	r5, r1
+	//////////////SHUTDOWN SEQUENCE//////////////
+	//Mask faults
+	Regulation_Fault_Mask (loop, state, control);
+100282bc:	f7dd fb92 	bl	100059e4 <Regulation_FAULT_Timer_Activation+0x73>
+{
+	uint32_t config;
+	uint16_t srfet_mask;
+	uint16_t fet_mask;
+
+	config = PMBUS_Get_Command_Dword(loop, PMBUS_CMDCODE_FW_CONFIG_PWM);
+100282c0:	21c4      	movs	r1, #196	; 0xc4
+100282c2:	0020      	movs	r0, r4
+100282c4:	f7d9 f9a8 	bl	10001618 <PMBUS_Get_Command_Byte+0x37>
+    return *addr;
+100282c8:	4922      	ldr	r1, [pc, #136]	; (10028354 <patch_Regulation_Shutdown_Sequence+0xa0>)
+100282ca:	680b      	ldr	r3, [r1, #0]
+	fet_mask = config & 0x0fff;
+	srfet_mask = (config & 0x0fff0000)>>16;
+100282cc:	0102      	lsls	r2, r0, #4
+			break;
+		case REGULATION_SRFET_ON:
+			PWM_PWM_ON__SET((PWM_PWM_ON__GET()) | fet_mask | srfet_mask);  // primary side PWM's on, SR's off (reset setting)
+			break;
+		case REGULATION_PWMS_OFF:
+			PWM_PWM_ON__SET((PWM_PWM_ON__GET()) & (~srfet_mask) & (~fet_mask) );  // zero out all fets associated with the loop
+100282ce:	0d12      	lsrs	r2, r2, #20
+	fet_mask = config & 0x0fff;
+100282d0:	0500      	lsls	r0, r0, #20
+			PWM_PWM_ON__SET((PWM_PWM_ON__GET()) & (~srfet_mask) & (~fet_mask) );  // zero out all fets associated with the loop
+100282d2:	0d00      	lsrs	r0, r0, #20
+100282d4:	4383      	bics	r3, r0
+100282d6:	4393      	bics	r3, r2
+    *addr = val;
+100282d8:	600b      	str	r3, [r1, #0]
+
+	Regulation_PWM_Control(loop, REGULATION_PWMS_OFF);  // ALL FET's OFF
+	Regulation_Set_VID(loop, 0, 0, 0, 0, 1);
+100282da:	2601      	movs	r6, #1
+100282dc:	9601      	str	r6, [sp, #4]
+100282de:	2300      	movs	r3, #0
+100282e0:	9300      	str	r3, [sp, #0]
+100282e2:	2200      	movs	r2, #0
+100282e4:	2100      	movs	r1, #0
+100282e6:	0020      	movs	r0, r4
+100282e8:	f7de f8e2 	bl	100064b0 <Regulation_Power_Mode+0x1b7>
+    return (uint32_t*)(VCONTROL_BASE + (uint32_t)((uint32_t)idp * VCONTROL_STRIDE));
+100282ec:	4b1a      	ldr	r3, [pc, #104]	; (10028358 <patch_Regulation_Shutdown_Sequence+0xa4>)
+100282ee:	18e3      	adds	r3, r4, r3
+100282f0:	029b      	lsls	r3, r3, #10
+    return *addr;
+100282f2:	685a      	ldr	r2, [r3, #4]
+    reg = (reg & ~VCONTROL_VC_VRAMP1__VC_VRAMP_ON__Msk);
+100282f4:	4919      	ldr	r1, [pc, #100]	; (1002835c <patch_Regulation_Shutdown_Sequence+0xa8>)
+100282f6:	400a      	ands	r2, r1
+    *addr = val;
+100282f8:	605a      	str	r2, [r3, #4]
+    return *addr;
+100282fa:	6a1a      	ldr	r2, [r3, #32]
+ * @param bf_value new value for VC_IRQ.VC_VCONTROL_IRQ_EN
+ */
+__VCONTROL_INLINE void VCONTROL_VC_IRQ__VC_VCONTROL_IRQ_EN__SET(vcontrol_idx_t idp, uint32_t bf_value)
+{
+    uint32_t reg = VCONTROL_VC_IRQ__GET(idp);
+    reg = (reg & ~VCONTROL_VC_IRQ__VC_VCONTROL_IRQ_EN__Msk);
+100282fc:	2103      	movs	r1, #3
+100282fe:	438a      	bics	r2, r1
+    *addr = val;
+10028300:	621a      	str	r2, [r3, #32]
+	VCONTROL_VC_VRAMP1__VC_VRAMP_ON__SET((vcontrol_idx_t)loop, 0);  // turn off vramp_on signal to allow pwms to stop regulation
+	// clear the interrupt here in case it was left over from a fault
+	VCONTROL_VC_IRQ__VC_VCONTROL_IRQ_EN__SET((vcontrol_idx_t) loop, 0);
+
+	//disable the hardware blocks: (telemetry and faults are always active but masked at different times)
+	Regulation_Power_Mode (loop, state);
+10028302:	0029      	movs	r1, r5
+10028304:	0020      	movs	r0, r4
+10028306:	f7dd fff7 	bl	100062f8 <Regulation_PWM_Deadtime_Set+0x33>
+    return *addr;
+1002830a:	4915      	ldr	r1, [pc, #84]	; (10028360 <patch_Regulation_Shutdown_Sequence+0xac>)
+1002830c:	680b      	ldr	r3, [r1, #0]
+1002830e:	680a      	ldr	r2, [r1, #0]
+ * @param bf_value new value for TLM_IRQ_EN.TLM_IRQ_EN
+ */
+__TLMCOM_INLINE void TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__SET(uint32_t bf_value)
+{
+    uint32_t reg = TLMCOM_TLM_IRQ_EN__GET();
+    reg = (reg & ~TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__Msk);
+10028310:	0c12      	lsrs	r2, r2, #16
+10028312:	0412      	lsls	r2, r2, #16
+
+	// disable power good and ton_max interrupts
+	TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__SET(TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__GET() &
+10028314:	4813      	ldr	r0, [pc, #76]	; (10028364 <patch_Regulation_Shutdown_Sequence+0xb0>)
+10028316:	4003      	ands	r3, r0
+    reg = (reg | (TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__Shift((uint32_t)bf_value)));
+10028318:	4313      	orrs	r3, r2
+    *addr = val;
+1002831a:	600b      	str	r3, [r1, #0]
+ * @param ida index in STATUS_OFF array
+ * @return address of STATUS_OFF
+ */
+__PMBUS_INLINE uint32_t* __PMBUS_STATUS_OFF__ADDRESS(pmbus_status_loop_idx_t ida)
+{
+    return (uint32_t*)((uint32_t)__PMBUS_BASE_PTR() + (uint32_t)(offsetof(PMBUS_t, STATUS_OFF)) + (uint32_t)(sizeof(uint32_t)*(uint32_t)ida));
+1002831c:	00a3      	lsls	r3, r4, #2
+1002831e:	4a12      	ldr	r2, [pc, #72]	; (10028368 <patch_Regulation_Shutdown_Sequence+0xb4>)
+10028320:	4694      	mov	ip, r2
+10028322:	4463      	add	r3, ip
+10028324:	601e      	str	r6, [r3, #0]
+																			(1u<<(uint32_t)VOUT_UV_TON_MAX_DISABLE_1)));
+
+	// update pmbus status off bit:
+	PMBUS_STATUS_OFF__SET((pmbus_status_loop_idx_t)loop, 1);
+	// update status word from result:
+	PMBUS_Inter_Thread_Set_Command((PMBUS_PAGE_W_BROADCAST_t)loop, PMBUS_CMDCODE_STATUS_WORD, PMBUS_READ);
+10028326:	2201      	movs	r2, #1
+10028328:	2179      	movs	r1, #121	; 0x79
+1002832a:	0020      	movs	r0, r4
+1002832c:	f7d9 fa0e 	bl	1000174c <PMBUS_Get_Vout_Scale+0x1d>
+
+	// Clear HW Fault Shutdown mask
+	FAULT_FAULT_SHUT_CLR_LOOP__FAULT_SHUT_CLR_LOOP__SET((fault_idx_t) REGULATION_APP.loop, 1) ;
+10028330:	4b0e      	ldr	r3, [pc, #56]	; (1002836c <patch_Regulation_Shutdown_Sequence+0xb8>)
+ * @param idp index of peripheral
+ * @return base address of peripheral's instance
+ */
+__FAULT_INLINE uint32_t* __FAULT_BASE_PTR(fault_idx_t idp)
+{
+    return (uint32_t*)(FAULT_BASE + (uint32_t)((uint32_t)idp * FAULT_STRIDE));
+10028332:	781b      	ldrb	r3, [r3, #0]
+10028334:	4a0e      	ldr	r2, [pc, #56]	; (10028370 <patch_Regulation_Shutdown_Sequence+0xbc>)
+10028336:	4694      	mov	ip, r2
+10028338:	4463      	add	r3, ip
+1002833a:	029b      	lsls	r3, r3, #10
+1002833c:	669e      	str	r6, [r3, #104]	; 0x68
+
+	if (loop == PMBUS_PAGE_0)
+1002833e:	2c00      	cmp	r4, #0
+10028340:	d102      	bne.n	10028348 <patch_Regulation_Shutdown_Sequence+0x94>
+10028342:	2201      	movs	r2, #1
+10028344:	4b0b      	ldr	r3, [pc, #44]	; (10028374 <patch_Regulation_Shutdown_Sequence+0xc0>)
+10028346:	601a      	str	r2, [r3, #0]
+	{
+	FAULTCOM_FAULT_SHUT_CLR_COM__FAULT_SHUT_CLR_COM__SET(1) ;
+	}
+	///////////////////////////////
+
+	disable_ishare(PMBUS_PAGE_0);
+10028348:	2000      	movs	r0, #0
+1002834a:	f7ff ff6b 	bl	10028224 <disable_ishare>
+}
+1002834e:	b002      	add	sp, #8
+10028350:	bd70      	pop	{r4, r5, r6, pc}
+10028352:	46c0      	nop			; (mov r8, r8)
+10028354:	70002c28 	.word	0x70002c28
+10028358:	001c0005 	.word	0x001c0005
+1002835c:	feffffff 	.word	0xfeffffff
+10028360:	70005060 	.word	0x70005060
+10028364:	0000ffcf 	.word	0x0000ffcf
+10028368:	70080150 	.word	0x70080150
+1002836c:	2005ea54 	.word	0x2005ea54
+10028370:	001c000f 	.word	0x001c000f
+10028374:	70005410 	.word	0x70005410
+
+10028378 <added_droop_enable>:
+{
+10028378:	b510      	push	{r4, lr}
+	if (user_data.enable_added_droop != 0)
+1002837a:	2398      	movs	r3, #152	; 0x98
+1002837c:	4a07      	ldr	r2, [pc, #28]	; (1002839c <added_droop_enable+0x24>)
+1002837e:	5cd3      	ldrb	r3, [r2, r3]
+10028380:	2b00      	cmp	r3, #0
+10028382:	d001      	beq.n	10028388 <added_droop_enable+0x10>
+		if(loop==PMBUS_PAGE_0)
+10028384:	2800      	cmp	r0, #0
+10028386:	d000      	beq.n	1002838a <added_droop_enable+0x12>
+}
+10028388:	bd10      	pop	{r4, pc}
+			user_data.remove_added_droop_counter = 0;
+1002838a:	2100      	movs	r1, #0
+1002838c:	2399      	movs	r3, #153	; 0x99
+1002838e:	54d1      	strb	r1, [r2, r3]
+			Regulation_setup_fsw_irq(loop, fsw_irq_idx_2, fsw_irq_rate_sel_8);
+10028390:	2204      	movs	r2, #4
+10028392:	3102      	adds	r1, #2
+10028394:	f7df fbfc 	bl	10007b90 <Regulation_set_regulation_event_cb+0x2f>
+}
+10028398:	e7f6      	b.n	10028388 <added_droop_enable+0x10>
+1002839a:	46c0      	nop			; (mov r8, r8)
+1002839c:	20063a6c 	.word	0x20063a6c
+
+100283a0 <remove_added_droop_irq_callback>:
+{
+100283a0:	b510      	push	{r4, lr}
+	uint32_t mohms = ((user_data.current_droop - user_data.calculated_droop)>>1U) -1;
+100283a2:	4b1b      	ldr	r3, [pc, #108]	; (10028410 <remove_added_droop_irq_callback+0x70>)
+100283a4:	228c      	movs	r2, #140	; 0x8c
+100283a6:	589a      	ldr	r2, [r3, r2]
+100283a8:	2188      	movs	r1, #136	; 0x88
+100283aa:	5859      	ldr	r1, [r3, r1]
+100283ac:	1a53      	subs	r3, r2, r1
+100283ae:	085b      	lsrs	r3, r3, #1
+100283b0:	3b01      	subs	r3, #1
+	user_data.current_droop -= mohms;
+100283b2:	1ad2      	subs	r2, r2, r3
+	if (user_data.current_droop > 0x7ff) user_data.current_droop = 0x7ff;  // cap at max
+100283b4:	4817      	ldr	r0, [pc, #92]	; (10028414 <remove_added_droop_irq_callback+0x74>)
+100283b6:	4282      	cmp	r2, r0
+100283b8:	d824      	bhi.n	10028404 <remove_added_droop_irq_callback+0x64>
+	user_data.current_droop -= mohms;
+100283ba:	208c      	movs	r0, #140	; 0x8c
+100283bc:	4c14      	ldr	r4, [pc, #80]	; (10028410 <remove_added_droop_irq_callback+0x70>)
+100283be:	5022      	str	r2, [r4, r0]
+	if ((user_data.current_droop <= user_data.calculated_droop) || (mohms == 0))
+100283c0:	228c      	movs	r2, #140	; 0x8c
+100283c2:	4813      	ldr	r0, [pc, #76]	; (10028410 <remove_added_droop_irq_callback+0x70>)
+100283c4:	5882      	ldr	r2, [r0, r2]
+100283c6:	4291      	cmp	r1, r2
+100283c8:	d201      	bcs.n	100283ce <remove_added_droop_irq_callback+0x2e>
+100283ca:	2b00      	cmp	r3, #0
+100283cc:	d10a      	bne.n	100283e4 <remove_added_droop_irq_callback+0x44>
+		user_data.current_droop = user_data.calculated_droop;
+100283ce:	4b10      	ldr	r3, [pc, #64]	; (10028410 <remove_added_droop_irq_callback+0x70>)
+100283d0:	228c      	movs	r2, #140	; 0x8c
+100283d2:	5099      	str	r1, [r3, r2]
+		user_data.enable_added_droop = 0; //enable periodic irq at target to remove droop
+100283d4:	2100      	movs	r1, #0
+100283d6:	320c      	adds	r2, #12
+100283d8:	5499      	strb	r1, [r3, r2]
+		Regulation_setup_fsw_irq(PMBUS_PAGE_0, fsw_irq_idx_2, fsw_irq_rate_sel_disabled);
+100283da:	2200      	movs	r2, #0
+100283dc:	3102      	adds	r1, #2
+100283de:	2000      	movs	r0, #0
+100283e0:	f7df fbd6 	bl	10007b90 <Regulation_set_regulation_event_cb+0x2f>
+	user_data.remove_added_droop_counter++;  // keep track of interrupt count
+100283e4:	490a      	ldr	r1, [pc, #40]	; (10028410 <remove_added_droop_irq_callback+0x70>)
+100283e6:	2299      	movs	r2, #153	; 0x99
+100283e8:	5c8b      	ldrb	r3, [r1, r2]
+100283ea:	3301      	adds	r3, #1
+100283ec:	548b      	strb	r3, [r1, r2]
+    return *addr;
+100283ee:	480a      	ldr	r0, [pc, #40]	; (10028418 <remove_added_droop_irq_callback+0x78>)
+100283f0:	6803      	ldr	r3, [r0, #0]
+    reg = (reg & ~VCONTROL_VC_VAVP3__VC_VAVP_RLL__Msk);
+100283f2:	0adb      	lsrs	r3, r3, #11
+100283f4:	02da      	lsls	r2, r3, #11
+	VCONTROL_VC_VAVP3__VC_VAVP_RLL__SET((vcontrol_idx_t) PMBUS_PAGE_0, (uint32_t)user_data.current_droop);
+100283f6:	238c      	movs	r3, #140	; 0x8c
+    reg = (reg | (VCONTROL_VC_VAVP3__VC_VAVP_RLL__Shift((uint32_t)bf_value)));
+100283f8:	58cb      	ldr	r3, [r1, r3]
+100283fa:	055b      	lsls	r3, r3, #21
+100283fc:	0d5b      	lsrs	r3, r3, #21
+100283fe:	4313      	orrs	r3, r2
+    *addr = val;
+10028400:	6003      	str	r3, [r0, #0]
+}
+10028402:	bd10      	pop	{r4, pc}
+	if (user_data.current_droop > 0x7ff) user_data.current_droop = 0x7ff;  // cap at max
+10028404:	4c03      	ldr	r4, [pc, #12]	; (10028414 <remove_added_droop_irq_callback+0x74>)
+10028406:	228c      	movs	r2, #140	; 0x8c
+10028408:	4801      	ldr	r0, [pc, #4]	; (10028410 <remove_added_droop_irq_callback+0x70>)
+1002840a:	5084      	str	r4, [r0, r2]
+1002840c:	e7d8      	b.n	100283c0 <remove_added_droop_irq_callback+0x20>
+1002840e:	46c0      	nop			; (mov r8, r8)
+10028410:	20063a6c 	.word	0x20063a6c
+10028414:	000007ff 	.word	0x000007ff
+10028418:	70001410 	.word	0x70001410
+
+1002841c <frequency_dither_enable>:
+/**
+ * Function to enable the frequency dither (spreading) feature
+ * @param loop regulation loop to operate on.
+ */
+void frequency_dither_enable(PMBUS_PAGE_t loop)
+{
+1002841c:	b510      	push	{r4, lr}
+	// if the pmbus command is 0 or we didn't calculate the limits disable feature
+	if ((user_data.control[loop] != 0)&&(user_data.period_min[loop] != 0)&&(user_data.period_max[loop] != 0))
+1002841e:	4b0e      	ldr	r3, [pc, #56]	; (10028458 <frequency_dither_enable+0x3c>)
+10028420:	181b      	adds	r3, r3, r0
+10028422:	3384      	adds	r3, #132	; 0x84
+10028424:	781b      	ldrb	r3, [r3, #0]
+10028426:	2b00      	cmp	r3, #0
+10028428:	d00f      	beq.n	1002844a <frequency_dither_enable+0x2e>
+1002842a:	0002      	movs	r2, r0
+1002842c:	321c      	adds	r2, #28
+1002842e:	0092      	lsls	r2, r2, #2
+10028430:	4b09      	ldr	r3, [pc, #36]	; (10028458 <frequency_dither_enable+0x3c>)
+10028432:	189b      	adds	r3, r3, r2
+10028434:	685b      	ldr	r3, [r3, #4]
+10028436:	2b00      	cmp	r3, #0
+10028438:	d007      	beq.n	1002844a <frequency_dither_enable+0x2e>
+1002843a:	0002      	movs	r2, r0
+1002843c:	321a      	adds	r2, #26
+1002843e:	0092      	lsls	r2, r2, #2
+10028440:	4b05      	ldr	r3, [pc, #20]	; (10028458 <frequency_dither_enable+0x3c>)
+10028442:	189b      	adds	r3, r3, r2
+10028444:	685b      	ldr	r3, [r3, #4]
+10028446:	2b00      	cmp	r3, #0
+10028448:	d100      	bne.n	1002844c <frequency_dither_enable+0x30>
+	{
+		Regulation_setup_fsw_irq(loop, fsw_irq_idx_3, fsw_irq_rate_sel_16);
+	}
+}
+1002844a:	bd10      	pop	{r4, pc}
+		Regulation_setup_fsw_irq(loop, fsw_irq_idx_3, fsw_irq_rate_sel_16);
+1002844c:	2205      	movs	r2, #5
+1002844e:	2103      	movs	r1, #3
+10028450:	f7df fb9e 	bl	10007b90 <Regulation_set_regulation_event_cb+0x2f>
+}
+10028454:	e7f9      	b.n	1002844a <frequency_dither_enable+0x2e>
+10028456:	46c0      	nop			; (mov r8, r8)
+10028458:	20063a6c 	.word	0x20063a6c
+
+1002845c <frequency_dither_disable>:
+/**
+ * Function to disable the frequency dither (spreading) feature
+ * @param loop regulation loop to operate on.
+ */
+void frequency_dither_disable(PMBUS_PAGE_t loop)
+{
+1002845c:	b510      	push	{r4, lr}
+1002845e:	0004      	movs	r4, r0
+	// if config bits 0 or 1 are set then we need to not disable the fsw irq
+	// otherwise we are interfering with ROM features
+	Regulation_setup_fsw_irq(loop, fsw_irq_idx_3, fsw_irq_rate_sel_disabled);
+10028460:	2200      	movs	r2, #0
+10028462:	2103      	movs	r1, #3
+10028464:	f7df fb94 	bl	10007b90 <Regulation_set_regulation_event_cb+0x2f>
+
+	// restore the pmbus switching frequency of the loop
+	PMBUS_Inter_Thread_Set_Command((PMBUS_PAGE_W_BROADCAST_t)loop,
+10028468:	2200      	movs	r2, #0
+1002846a:	2133      	movs	r1, #51	; 0x33
+1002846c:	0020      	movs	r0, r4
+1002846e:	f7d9 f96d 	bl	1000174c <PMBUS_Get_Vout_Scale+0x1d>
+			PMBUS_CMDCODE_FREQUENCY_SWITCH, PMBUS_WRITE);
+}
+10028472:	bd10      	pop	{r4, pc}
+
+10028474 <frequency_dither_irq_callback>:
+ * Interrupt service callback for FSW_IRQn
+ * This is used for current limited startup for cycle by cycle adjustment of limit
+ * @param loop regulation loop to operate on.
+ */
+void frequency_dither_irq_callback(PMBUS_PAGE_t loop)
+{
+10028474:	b510      	push	{r4, lr}
+10028476:	0004      	movs	r4, r0
+	// first we modulo divide the counter by the unit count to see if we are
+	// a multiple of the base unit of 64 periods or not
+	// we use num_period_units+1 to ensure that we can't divide by zero
+	// figure out if we are a multiple of the num_period_units+1 value
+	// otherwise we do nothing increment count and exit isr
+	if ((user_data.counter[loop] % (num_period_units+1)) == 0)
+10028478:	4b2d      	ldr	r3, [pc, #180]	; (10028530 <frequency_dither_irq_callback+0xbc>)
+1002847a:	0002      	movs	r2, r0
+1002847c:	321e      	adds	r2, #30
+1002847e:	0092      	lsls	r2, r2, #2
+10028480:	189a      	adds	r2, r3, r2
+	num_period_units = user_data.control[loop] >> 4;
+10028482:	181b      	adds	r3, r3, r0
+10028484:	3384      	adds	r3, #132	; 0x84
+10028486:	7819      	ldrb	r1, [r3, #0]
+10028488:	0909      	lsrs	r1, r1, #4
+	if ((user_data.counter[loop] % (num_period_units+1)) == 0)
+1002848a:	3101      	adds	r1, #1
+1002848c:	6850      	ldr	r0, [r2, #4]
+1002848e:	f7d7 ffa8 	bl	100003e2 <__aeabi_uidivmod>
+10028492:	2900      	cmp	r1, #0
+10028494:	d136      	bne.n	10028504 <frequency_dither_irq_callback+0x90>
+	{
+		// now grab the current period we are working from
+		if (loop == PMBUS_PAGE_0)
+10028496:	2c00      	cmp	r4, #0
+10028498:	d117      	bne.n	100284ca <frequency_dither_irq_callback+0x56>
+    return *addr;
+1002849a:	4b26      	ldr	r3, [pc, #152]	; (10028534 <frequency_dither_irq_callback+0xc0>)
+1002849c:	681b      	ldr	r3, [r3, #0]
+ * @return current value of RAMP0_TSWITCH0.TSWITCH0
+ */
+__PWM_INLINE uint32_t PWM_RAMP0_TSWITCH0__TSWITCH0__GET(void)
+{
+    uint32_t reg = PWM_RAMP0_TSWITCH0__GET();
+    reg = (reg & PWM_RAMP0_TSWITCH0__TSWITCH0__Msk);
+1002849e:	05db      	lsls	r3, r3, #23
+100284a0:	0ddb      	lsrs	r3, r3, #23
+			current_period = PWM_RAMP0_TSWITCH0__TSWITCH0__GET();
+		else
+			current_period = PWM_RAMP1_TSWITCH1__TSWITCH1__GET();
+
+		// figure out which direction to go
+		if ((user_data.up0_down1[loop] == 0) && (current_period >= user_data.period_max[loop]))
+100284a2:	4a23      	ldr	r2, [pc, #140]	; (10028530 <frequency_dither_irq_callback+0xbc>)
+100284a4:	1912      	adds	r2, r2, r4
+100284a6:	3286      	adds	r2, #134	; 0x86
+100284a8:	7812      	ldrb	r2, [r2, #0]
+100284aa:	2a00      	cmp	r2, #0
+100284ac:	d13b      	bne.n	10028526 <frequency_dither_irq_callback+0xb2>
+100284ae:	0021      	movs	r1, r4
+100284b0:	311a      	adds	r1, #26
+100284b2:	0089      	lsls	r1, r1, #2
+100284b4:	4a1e      	ldr	r2, [pc, #120]	; (10028530 <frequency_dither_irq_callback+0xbc>)
+100284b6:	1852      	adds	r2, r2, r1
+100284b8:	6852      	ldr	r2, [r2, #4]
+100284ba:	4293      	cmp	r3, r2
+100284bc:	d317      	bcc.n	100284ee <frequency_dither_irq_callback+0x7a>
+			user_data.up0_down1[loop] = 1;  // change to downward direction
+100284be:	4a1c      	ldr	r2, [pc, #112]	; (10028530 <frequency_dither_irq_callback+0xbc>)
+100284c0:	1912      	adds	r2, r2, r4
+100284c2:	3286      	adds	r2, #134	; 0x86
+100284c4:	2101      	movs	r1, #1
+100284c6:	7011      	strb	r1, [r2, #0]
+100284c8:	e02f      	b.n	1002852a <frequency_dither_irq_callback+0xb6>
+100284ca:	4b1b      	ldr	r3, [pc, #108]	; (10028538 <frequency_dither_irq_callback+0xc4>)
+100284cc:	681b      	ldr	r3, [r3, #0]
+ * @return current value of RAMP1_TSWITCH1.TSWITCH1
+ */
+__PWM_INLINE uint32_t PWM_RAMP1_TSWITCH1__TSWITCH1__GET(void)
+{
+    uint32_t reg = PWM_RAMP1_TSWITCH1__GET();
+    reg = (reg & PWM_RAMP1_TSWITCH1__TSWITCH1__Msk);
+100284ce:	05db      	lsls	r3, r3, #23
+100284d0:	0ddb      	lsrs	r3, r3, #23
+100284d2:	e7e6      	b.n	100284a2 <frequency_dither_irq_callback+0x2e>
+		else if ((user_data.up0_down1[loop] == 1) && (current_period <= user_data.period_min[loop]))
+100284d4:	0021      	movs	r1, r4
+100284d6:	311c      	adds	r1, #28
+100284d8:	0089      	lsls	r1, r1, #2
+100284da:	4a15      	ldr	r2, [pc, #84]	; (10028530 <frequency_dither_irq_callback+0xbc>)
+100284dc:	1852      	adds	r2, r2, r1
+100284de:	6852      	ldr	r2, [r2, #4]
+100284e0:	4293      	cmp	r3, r2
+100284e2:	d822      	bhi.n	1002852a <frequency_dither_irq_callback+0xb6>
+			user_data.up0_down1[loop] = 0;
+100284e4:	4a12      	ldr	r2, [pc, #72]	; (10028530 <frequency_dither_irq_callback+0xbc>)
+100284e6:	1912      	adds	r2, r2, r4
+100284e8:	3286      	adds	r2, #134	; 0x86
+100284ea:	2100      	movs	r1, #0
+100284ec:	7011      	strb	r1, [r2, #0]
+
+		// now do the actual step up or down
+		if (user_data.up0_down1[loop]==0)
+			current_period++;  // 20ns step size multiplied by number of steps in pmbus command
+100284ee:	3301      	adds	r3, #1
+		else
+			current_period--;
+
+		// write the register in hal:
+		if (loop == PMBUS_PAGE_0)
+100284f0:	2c00      	cmp	r4, #0
+100284f2:	d00f      	beq.n	10028514 <frequency_dither_irq_callback+0xa0>
+100284f4:	4910      	ldr	r1, [pc, #64]	; (10028538 <frequency_dither_irq_callback+0xc4>)
+100284f6:	680a      	ldr	r2, [r1, #0]
+    reg = (reg & ~PWM_RAMP1_TSWITCH1__TSWITCH1__Msk);
+100284f8:	0a52      	lsrs	r2, r2, #9
+100284fa:	0252      	lsls	r2, r2, #9
+    reg = (reg | (PWM_RAMP1_TSWITCH1__TSWITCH1__Shift((uint32_t)bf_value)));
+100284fc:	05db      	lsls	r3, r3, #23
+100284fe:	0ddb      	lsrs	r3, r3, #23
+10028500:	4313      	orrs	r3, r2
+    *addr = val;
+10028502:	600b      	str	r3, [r1, #0]
+			PWM_RAMP0_TSWITCH0__TSWITCH0__SET(current_period);
+		else
+			PWM_RAMP1_TSWITCH1__TSWITCH1__SET(current_period);
+	}
+	user_data.counter[loop]++;  // keep track of interrupt count
+10028504:	341e      	adds	r4, #30
+10028506:	00a3      	lsls	r3, r4, #2
+10028508:	4c09      	ldr	r4, [pc, #36]	; (10028530 <frequency_dither_irq_callback+0xbc>)
+1002850a:	18e4      	adds	r4, r4, r3
+1002850c:	6863      	ldr	r3, [r4, #4]
+1002850e:	3301      	adds	r3, #1
+10028510:	6063      	str	r3, [r4, #4]
+}
+10028512:	bd10      	pop	{r4, pc}
+    return *addr;
+10028514:	4907      	ldr	r1, [pc, #28]	; (10028534 <frequency_dither_irq_callback+0xc0>)
+10028516:	680a      	ldr	r2, [r1, #0]
+    reg = (reg & ~PWM_RAMP0_TSWITCH0__TSWITCH0__Msk);
+10028518:	0a52      	lsrs	r2, r2, #9
+1002851a:	0252      	lsls	r2, r2, #9
+    reg = (reg | (PWM_RAMP0_TSWITCH0__TSWITCH0__Shift((uint32_t)bf_value)));
+1002851c:	05db      	lsls	r3, r3, #23
+1002851e:	0ddb      	lsrs	r3, r3, #23
+10028520:	4313      	orrs	r3, r2
+    *addr = val;
+10028522:	600b      	str	r3, [r1, #0]
+10028524:	e7ee      	b.n	10028504 <frequency_dither_irq_callback+0x90>
+		else if ((user_data.up0_down1[loop] == 1) && (current_period <= user_data.period_min[loop]))
+10028526:	2a01      	cmp	r2, #1
+10028528:	d0d4      	beq.n	100284d4 <frequency_dither_irq_callback+0x60>
+			current_period--;
+1002852a:	3b01      	subs	r3, #1
+1002852c:	e7e0      	b.n	100284f0 <frequency_dither_irq_callback+0x7c>
+1002852e:	46c0      	nop			; (mov r8, r8)
+10028530:	20063a6c 	.word	0x20063a6c
+10028534:	70002c2c 	.word	0x70002c2c
+10028538:	70002c40 	.word	0x70002c40
+
+1002853c <ramp_switching_frequency_pcmc_startup_enable>:
+/**
+ * Function to enable the ramp_switching_frequency_pcmc_startup feature
+ * @param loop regulation loop to operate on.
+ */
+void ramp_switching_frequency_pcmc_startup_enable(PMBUS_PAGE_t loop)
+{
+1002853c:	b5f0      	push	{r4, r5, r6, r7, lr}
+1002853e:	46c6      	mov	lr, r8
+10028540:	b500      	push	{lr}
+10028542:	b082      	sub	sp, #8
+10028544:	0004      	movs	r4, r0
+	uint32_t mode_control;
+	uint32_t enable_fsw_ramp = (PMBUS_Get_Command_Byte(loop, PMBUS_CMDCODE_MFR_SS_RAMP_FSW))&1;
+10028546:	21d5      	movs	r1, #213	; 0xd5
+10028548:	f7d9 f84a 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+1002854c:	9001      	str	r0, [sp, #4]
+
+	uint32_t prebias_voltage = (uint32_t)Telemetry_get(loop, VOUT_TELEM);  // PMBUS_Q_EXP format
+1002854e:	2100      	movs	r1, #0
+10028550:	0020      	movs	r0, r4
+10028552:	f7e1 fcf1 	bl	10009f38 <Telemetry_drv_init+0x47>
+10028556:	9000      	str	r0, [sp, #0]
+ * @param idp index of peripheral
+ * @return base address of peripheral's instance
+ */
+__TELEM_INLINE uint32_t* __TELEM_BASE_PTR(telem_idx_t idp)
+{
+    return (uint32_t*)(TELEM_BASE + (uint32_t)((uint32_t)idp * TELEM_STRIDE));
+10028558:	4b44      	ldr	r3, [pc, #272]	; (1002866c <ramp_switching_frequency_pcmc_startup_enable+0x130>)
+1002855a:	18e3      	adds	r3, r4, r3
+1002855c:	029b      	lsls	r3, r3, #10
+    return *addr;
+1002855e:	6adb      	ldr	r3, [r3, #44]	; 0x2c
+10028560:	4698      	mov	r8, r3
+	uint32_t vin = (uint32_t)TELEM_TLM_VIN_LPF__GET((telem_idx_t)loop); //u7.4
+
+	// get the transformer scale in -10 Q format
+	uint32_t transformer_scale = PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_MFR_TRANSFORMER_SCALE);
+10028562:	21ce      	movs	r1, #206	; 0xce
+10028564:	0020      	movs	r0, r4
+10028566:	f7d9 f877 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+1002856a:	0ac3      	lsrs	r3, r0, #11
+1002856c:	b29b      	uxth	r3, r3
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+1002856e:	06da      	lsls	r2, r3, #27
+10028570:	d502      	bpl.n	10028578 <ramp_switching_frequency_pcmc_startup_enable+0x3c>
+10028572:	2220      	movs	r2, #32
+10028574:	4252      	negs	r2, r2
+10028576:	4313      	orrs	r3, r2
+10028578:	0542      	lsls	r2, r0, #21
+1002857a:	0d52      	lsrs	r2, r2, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+1002857c:	0541      	lsls	r1, r0, #21
+1002857e:	d501      	bpl.n	10028584 <ramp_switching_frequency_pcmc_startup_enable+0x48>
+10028580:	493b      	ldr	r1, [pc, #236]	; (10028670 <ramp_switching_frequency_pcmc_startup_enable+0x134>)
+10028582:	430a      	orrs	r2, r1
+	int32_t exponent = LINEAR11_TO_EXPONENT((uint16_t)transformer_scale);
+	transformer_scale = (uint32_t)LINEAR11_TO_MANTISSA((uint16_t)transformer_scale);
+	transformer_scale = SHIFT_EXPONENT_UNSIGNED(transformer_scale, exponent + 10);
+10028584:	0019      	movs	r1, r3
+10028586:	310a      	adds	r1, #10
+		exponent = -exponent;
+		value = value >> (exponent);
+	}
+	else
+	{
+		value = value << (exponent);
+10028588:	0015      	movs	r5, r2
+1002858a:	408d      	lsls	r5, r1
+	if ( exponent <= 0)
+1002858c:	2900      	cmp	r1, #0
+1002858e:	dd50      	ble.n	10028632 <ramp_switching_frequency_pcmc_startup_enable+0xf6>
+
+	// figure out the switching frequency:
+	uint32_t switching_freq_khz = PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_FREQUENCY_SWITCH);
+10028590:	2133      	movs	r1, #51	; 0x33
+10028592:	0020      	movs	r0, r4
+10028594:	f7d9 f860 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10028598:	0ac3      	lsrs	r3, r0, #11
+1002859a:	b29b      	uxth	r3, r3
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+1002859c:	06da      	lsls	r2, r3, #27
+1002859e:	d502      	bpl.n	100285a6 <ramp_switching_frequency_pcmc_startup_enable+0x6a>
+100285a0:	2220      	movs	r2, #32
+100285a2:	4252      	negs	r2, r2
+100285a4:	4313      	orrs	r3, r2
+100285a6:	0542      	lsls	r2, r0, #21
+100285a8:	0d52      	lsrs	r2, r2, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100285aa:	0541      	lsls	r1, r0, #21
+100285ac:	d501      	bpl.n	100285b2 <ramp_switching_frequency_pcmc_startup_enable+0x76>
+100285ae:	4930      	ldr	r1, [pc, #192]	; (10028670 <ramp_switching_frequency_pcmc_startup_enable+0x134>)
+100285b0:	430a      	orrs	r2, r1
+		value = value << (exponent);
+100285b2:	0017      	movs	r7, r2
+100285b4:	409f      	lsls	r7, r3
+	if ( exponent <= 0)
+100285b6:	2b00      	cmp	r3, #0
+100285b8:	dd41      	ble.n	1002863e <ramp_switching_frequency_pcmc_startup_enable+0x102>
+	exponent = LINEAR11_TO_EXPONENT((uint16_t)switching_freq_khz); // likely 0 or +1
+	switching_freq_khz = (uint32_t)LINEAR11_TO_MANTISSA((uint16_t)switching_freq_khz);
+	// note this will not work with negative exponents truncation will occur
+	switching_freq_khz = SHIFT_EXPONENT_UNSIGNED(switching_freq_khz, exponent);
+
+	uint32_t min_pw_ns = 10 * (PMBUS_Get_Command_Byte(loop, PMBUS_CMDCODE_MFR_MIN_PW));  // 5ns lsb * 2 for threshold
+100285ba:	21eb      	movs	r1, #235	; 0xeb
+100285bc:	0020      	movs	r0, r4
+100285be:	f7d9 f80f 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+100285c2:	0086      	lsls	r6, r0, #2
+100285c4:	1836      	adds	r6, r6, r0
+100285c6:	0076      	lsls	r6, r6, #1
+	// Pre-bias startup pulse width = Vout_prebias/ (Vin * Transformer_scale) /Frquency_switch
+	uint32_t prebias_pw_ns = SHIFT_EXPONENT_UNSIGNED(vin * transformer_scale, -4);  // result in -10 format
+100285c8:	4641      	mov	r1, r8
+100285ca:	4369      	muls	r1, r5
+		value = value >> (exponent);
+100285cc:	0909      	lsrs	r1, r1, #4
+	prebias_pw_ns = SHIFT_EXPONENT_UNSIGNED(prebias_voltage / prebias_pw_ns, 10);  // result in PMBUS_Q_EXP format
+100285ce:	9800      	ldr	r0, [sp, #0]
+100285d0:	f7d7 ff07 	bl	100003e2 <__aeabi_uidivmod>
+		value = value << (exponent);
+100285d4:	0280      	lsls	r0, r0, #10
+	prebias_pw_ns = 1000000 * (prebias_pw_ns / switching_freq_khz);
+100285d6:	0039      	movs	r1, r7
+100285d8:	f7d7 ff03 	bl	100003e2 <__aeabi_uidivmod>
+100285dc:	4b25      	ldr	r3, [pc, #148]	; (10028674 <ramp_switching_frequency_pcmc_startup_enable+0x138>)
+100285de:	4358      	muls	r0, r3
+		value = value >> (exponent);
+100285e0:	0c00      	lsrs	r0, r0, #16
+100285e2:	2200      	movs	r2, #0
+	prebias_pw_ns = SHIFT_EXPONENT_UNSIGNED(prebias_pw_ns, PMBUS_Q_EXP);
+
+	if (prebias_pw_ns >= min_pw_ns)
+100285e4:	4286      	cmp	r6, r0
+100285e6:	d902      	bls.n	100285ee <ramp_switching_frequency_pcmc_startup_enable+0xb2>
+100285e8:	3201      	adds	r2, #1
+100285ea:	9b01      	ldr	r3, [sp, #4]
+100285ec:	401a      	ands	r2, r3
+	{
+		enable_fsw_ramp = 0;  // disable fsw ramping when prebias > min pw
+	}
+
+	// if just want to always enable in PCMC and save pmbus command:
+	if (loop == PMBUS_PAGE_0)
+100285ee:	2c00      	cmp	r4, #0
+100285f0:	d129      	bne.n	10028646 <ramp_switching_frequency_pcmc_startup_enable+0x10a>
+100285f2:	4b21      	ldr	r3, [pc, #132]	; (10028678 <ramp_switching_frequency_pcmc_startup_enable+0x13c>)
+100285f4:	681b      	ldr	r3, [r3, #0]
+    reg = (reg >> PWM_RAMP_CONFIG__MODE_CONTROL_LOOP0__Pos);
+100285f6:	049b      	lsls	r3, r3, #18
+100285f8:	0f9b      	lsrs	r3, r3, #30
+		mode_control = PWM_RAMP_CONFIG__MODE_CONTROL_LOOP0__GET();
+	else
+		mode_control = PWM_RAMP_CONFIG__MODE_CONTROL_LOOP1__GET();
+
+	// check if in pcmc and we are enabled by bit 1 of PMBUS_CMDCODE_MFR_SS_RAMP_FSW
+	if ((mode_control != 0) && (enable_fsw_ramp!=0))
+100285fa:	2b00      	cmp	r3, #0
+100285fc:	d015      	beq.n	1002862a <ramp_switching_frequency_pcmc_startup_enable+0xee>
+100285fe:	2a00      	cmp	r2, #0
+10028600:	d013      	beq.n	1002862a <ramp_switching_frequency_pcmc_startup_enable+0xee>
+	{
+		// store the initial period to restore later
+		if (loop == PMBUS_PAGE_0)
+10028602:	2c00      	cmp	r4, #0
+10028604:	d124      	bne.n	10028650 <ramp_switching_frequency_pcmc_startup_enable+0x114>
+10028606:	4a1d      	ldr	r2, [pc, #116]	; (1002867c <ramp_switching_frequency_pcmc_startup_enable+0x140>)
+10028608:	6813      	ldr	r3, [r2, #0]
+    reg = (reg & PWM_RAMP0_TSWITCH0__TSWITCH0__Msk);
+1002860a:	05db      	lsls	r3, r3, #23
+1002860c:	0ddb      	lsrs	r3, r3, #23
+		{
+			user_data.fsw_initial_period[0] = PWM_RAMP0_TSWITCH0__TSWITCH0__GET();
+1002860e:	21bc      	movs	r1, #188	; 0xbc
+10028610:	481b      	ldr	r0, [pc, #108]	; (10028680 <ramp_switching_frequency_pcmc_startup_enable+0x144>)
+10028612:	5043      	str	r3, [r0, r1]
+10028614:	6813      	ldr	r3, [r2, #0]
+    reg = (reg & ~PWM_RAMP0_TSWITCH0__TSWITCH0__Msk);
+10028616:	0a5b      	lsrs	r3, r3, #9
+10028618:	025b      	lsls	r3, r3, #9
+    reg = (reg | (PWM_RAMP0_TSWITCH0__TSWITCH0__Shift((uint32_t)bf_value)));
+1002861a:	491a      	ldr	r1, [pc, #104]	; (10028684 <ramp_switching_frequency_pcmc_startup_enable+0x148>)
+1002861c:	430b      	orrs	r3, r1
+    *addr = val;
+1002861e:	6013      	str	r3, [r2, #0]
+		{
+			user_data.fsw_initial_period[1] = PWM_RAMP1_TSWITCH1__TSWITCH1__GET();
+			PWM_RAMP1_TSWITCH1__TSWITCH1__SET(0x1FFU);  // set the switching period to max (lowest fsw)
+		}
+
+		Regulation_setup_fsw_irq(loop, fsw_irq_idx_4, fsw_irq_rate_sel_4);
+10028620:	2203      	movs	r2, #3
+10028622:	2104      	movs	r1, #4
+10028624:	0020      	movs	r0, r4
+10028626:	f7df fab3 	bl	10007b90 <Regulation_set_regulation_event_cb+0x2f>
+	}
+}
+1002862a:	b002      	add	sp, #8
+1002862c:	bc04      	pop	{r2}
+1002862e:	4690      	mov	r8, r2
+10028630:	bdf0      	pop	{r4, r5, r6, r7, pc}
+		exponent = -exponent;
+10028632:	210a      	movs	r1, #10
+10028634:	4249      	negs	r1, r1
+10028636:	1acb      	subs	r3, r1, r3
+		value = value >> (exponent);
+10028638:	40da      	lsrs	r2, r3
+1002863a:	0015      	movs	r5, r2
+1002863c:	e7a8      	b.n	10028590 <ramp_switching_frequency_pcmc_startup_enable+0x54>
+		exponent = -exponent;
+1002863e:	425b      	negs	r3, r3
+		value = value >> (exponent);
+10028640:	40da      	lsrs	r2, r3
+10028642:	0017      	movs	r7, r2
+10028644:	e7b9      	b.n	100285ba <ramp_switching_frequency_pcmc_startup_enable+0x7e>
+    return *addr;
+10028646:	4b0c      	ldr	r3, [pc, #48]	; (10028678 <ramp_switching_frequency_pcmc_startup_enable+0x13c>)
+10028648:	681b      	ldr	r3, [r3, #0]
+    reg = (reg >> PWM_RAMP_CONFIG__MODE_CONTROL_LOOP1__Pos);
+1002864a:	041b      	lsls	r3, r3, #16
+1002864c:	0f9b      	lsrs	r3, r3, #30
+1002864e:	e7d4      	b.n	100285fa <ramp_switching_frequency_pcmc_startup_enable+0xbe>
+10028650:	4a0d      	ldr	r2, [pc, #52]	; (10028688 <ramp_switching_frequency_pcmc_startup_enable+0x14c>)
+10028652:	6813      	ldr	r3, [r2, #0]
+    reg = (reg & PWM_RAMP1_TSWITCH1__TSWITCH1__Msk);
+10028654:	05db      	lsls	r3, r3, #23
+10028656:	0ddb      	lsrs	r3, r3, #23
+			user_data.fsw_initial_period[1] = PWM_RAMP1_TSWITCH1__TSWITCH1__GET();
+10028658:	21c0      	movs	r1, #192	; 0xc0
+1002865a:	4809      	ldr	r0, [pc, #36]	; (10028680 <ramp_switching_frequency_pcmc_startup_enable+0x144>)
+1002865c:	5043      	str	r3, [r0, r1]
+1002865e:	6813      	ldr	r3, [r2, #0]
+    reg = (reg & ~PWM_RAMP1_TSWITCH1__TSWITCH1__Msk);
+10028660:	0a5b      	lsrs	r3, r3, #9
+10028662:	025b      	lsls	r3, r3, #9
+    reg = (reg | (PWM_RAMP1_TSWITCH1__TSWITCH1__Shift((uint32_t)bf_value)));
+10028664:	4907      	ldr	r1, [pc, #28]	; (10028684 <ramp_switching_frequency_pcmc_startup_enable+0x148>)
+10028666:	430b      	orrs	r3, r1
+    *addr = val;
+10028668:	6013      	str	r3, [r2, #0]
+1002866a:	e7d9      	b.n	10028620 <ramp_switching_frequency_pcmc_startup_enable+0xe4>
+1002866c:	001c000d 	.word	0x001c000d
+10028670:	fffff800 	.word	0xfffff800
+10028674:	000f4240 	.word	0x000f4240
+10028678:	70002c00 	.word	0x70002c00
+1002867c:	70002c2c 	.word	0x70002c2c
+10028680:	20063a6c 	.word	0x20063a6c
+10028684:	000001ff 	.word	0x000001ff
+10028688:	70002c40 	.word	0x70002c40
+
+1002868c <ramp_switching_frequency_pcmc_startup_disable>:
+/**
+ * Function to disable the ramp_switching_frequency_pcmc_startup feature
+ * @param loop regulation loop to operate on.
+ */
+void ramp_switching_frequency_pcmc_startup_disable(PMBUS_PAGE_t loop)
+{
+1002868c:	b510      	push	{r4, lr}
+1002868e:	0004      	movs	r4, r0
+	uint32_t mode_control;
+	uint32_t enable_fsw_ramp = (PMBUS_Get_Command_Byte(loop, PMBUS_CMDCODE_MFR_SS_RAMP_FSW))&1;
+10028690:	21d5      	movs	r1, #213	; 0xd5
+10028692:	f7d8 ffa5 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+
+	// if just want to always enable in PCMC and save pmbus command:
+	if (loop == PMBUS_PAGE_0)
+10028696:	2c00      	cmp	r4, #0
+10028698:	d108      	bne.n	100286ac <ramp_switching_frequency_pcmc_startup_disable+0x20>
+    return *addr;
+1002869a:	4b0c      	ldr	r3, [pc, #48]	; (100286cc <ramp_switching_frequency_pcmc_startup_disable+0x40>)
+1002869c:	681b      	ldr	r3, [r3, #0]
+    reg = (reg >> PWM_RAMP_CONFIG__MODE_CONTROL_LOOP0__Pos);
+1002869e:	049b      	lsls	r3, r3, #18
+100286a0:	0f9b      	lsrs	r3, r3, #30
+		mode_control = PWM_RAMP_CONFIG__MODE_CONTROL_LOOP0__GET();
+	else
+		mode_control = PWM_RAMP_CONFIG__MODE_CONTROL_LOOP1__GET();
+
+	// check if in pcmc and we are enabled by bit 1 of PMBUS_CMDCODE_MFR_SS_RAMP_FSW
+	if ((mode_control != 0) && (enable_fsw_ramp!=0))
+100286a2:	2b00      	cmp	r3, #0
+100286a4:	d001      	beq.n	100286aa <ramp_switching_frequency_pcmc_startup_disable+0x1e>
+100286a6:	07c3      	lsls	r3, r0, #31
+100286a8:	d405      	bmi.n	100286b6 <ramp_switching_frequency_pcmc_startup_disable+0x2a>
+
+		// restore the pmbus switching frequency of the loop
+		PMBUS_Inter_Thread_Set_Command((PMBUS_PAGE_W_BROADCAST_t)loop,
+				PMBUS_CMDCODE_FREQUENCY_SWITCH, PMBUS_WRITE);
+	}
+}
+100286aa:	bd10      	pop	{r4, pc}
+100286ac:	4b07      	ldr	r3, [pc, #28]	; (100286cc <ramp_switching_frequency_pcmc_startup_disable+0x40>)
+100286ae:	681b      	ldr	r3, [r3, #0]
+    reg = (reg >> PWM_RAMP_CONFIG__MODE_CONTROL_LOOP1__Pos);
+100286b0:	041b      	lsls	r3, r3, #16
+100286b2:	0f9b      	lsrs	r3, r3, #30
+100286b4:	e7f5      	b.n	100286a2 <ramp_switching_frequency_pcmc_startup_disable+0x16>
+		Regulation_setup_fsw_irq(loop, fsw_irq_idx_4, fsw_irq_rate_sel_disabled);
+100286b6:	2200      	movs	r2, #0
+100286b8:	2104      	movs	r1, #4
+100286ba:	0020      	movs	r0, r4
+100286bc:	f7df fa68 	bl	10007b90 <Regulation_set_regulation_event_cb+0x2f>
+		PMBUS_Inter_Thread_Set_Command((PMBUS_PAGE_W_BROADCAST_t)loop,
+100286c0:	2200      	movs	r2, #0
+100286c2:	2133      	movs	r1, #51	; 0x33
+100286c4:	0020      	movs	r0, r4
+100286c6:	f7d9 f841 	bl	1000174c <PMBUS_Get_Vout_Scale+0x1d>
+}
+100286ca:	e7ee      	b.n	100286aa <ramp_switching_frequency_pcmc_startup_disable+0x1e>
+100286cc:	70002c00 	.word	0x70002c00
+
+100286d0 <ramp_switching_frequency_pcmc_startup_irq_handle>:
+
+void ramp_switching_frequency_pcmc_startup_irq_handle(PMBUS_PAGE_t loop)
+{
+100286d0:	b510      	push	{r4, lr}
+	uint32_t current_period;
+	if (loop == PMBUS_PAGE_0)
+100286d2:	2800      	cmp	r0, #0
+100286d4:	d112      	bne.n	100286fc <ramp_switching_frequency_pcmc_startup_irq_handle+0x2c>
+100286d6:	4b16      	ldr	r3, [pc, #88]	; (10028730 <ramp_switching_frequency_pcmc_startup_irq_handle+0x60>)
+100286d8:	681b      	ldr	r3, [r3, #0]
+    reg = (reg & PWM_RAMP0_TSWITCH0__TSWITCH0__Msk);
+100286da:	05db      	lsls	r3, r3, #23
+100286dc:	0ddb      	lsrs	r3, r3, #23
+		current_period = PWM_RAMP0_TSWITCH0__TSWITCH0__GET();
+	else
+		current_period = PWM_RAMP1_TSWITCH1__TSWITCH1__GET();
+	current_period--;
+100286de:	3b01      	subs	r3, #1
+	// if the current period becomes the same or less than target we stop:
+	if (current_period > user_data.fsw_initial_period[loop])
+100286e0:	22bc      	movs	r2, #188	; 0xbc
+100286e2:	4914      	ldr	r1, [pc, #80]	; (10028734 <ramp_switching_frequency_pcmc_startup_irq_handle+0x64>)
+100286e4:	588a      	ldr	r2, [r1, r2]
+100286e6:	4293      	cmp	r3, r2
+100286e8:	d91e      	bls.n	10028728 <ramp_switching_frequency_pcmc_startup_irq_handle+0x58>
+100286ea:	4911      	ldr	r1, [pc, #68]	; (10028730 <ramp_switching_frequency_pcmc_startup_irq_handle+0x60>)
+100286ec:	680a      	ldr	r2, [r1, #0]
+    reg = (reg & ~PWM_RAMP0_TSWITCH0__TSWITCH0__Msk);
+100286ee:	0a52      	lsrs	r2, r2, #9
+100286f0:	0252      	lsls	r2, r2, #9
+    reg = (reg | (PWM_RAMP0_TSWITCH0__TSWITCH0__Shift((uint32_t)bf_value)));
+100286f2:	05db      	lsls	r3, r3, #23
+100286f4:	0ddb      	lsrs	r3, r3, #23
+100286f6:	4313      	orrs	r3, r2
+    *addr = val;
+100286f8:	600b      	str	r3, [r1, #0]
+		else
+			PWM_RAMP1_TSWITCH1__TSWITCH1__SET(current_period);
+	}
+	else
+		ramp_switching_frequency_pcmc_startup_disable(loop);
+}
+100286fa:	bd10      	pop	{r4, pc}
+    return *addr;
+100286fc:	4b0e      	ldr	r3, [pc, #56]	; (10028738 <ramp_switching_frequency_pcmc_startup_irq_handle+0x68>)
+100286fe:	681b      	ldr	r3, [r3, #0]
+    reg = (reg & PWM_RAMP1_TSWITCH1__TSWITCH1__Msk);
+10028700:	05db      	lsls	r3, r3, #23
+10028702:	0ddb      	lsrs	r3, r3, #23
+	current_period--;
+10028704:	3b01      	subs	r3, #1
+	if (current_period > user_data.fsw_initial_period[loop])
+10028706:	0001      	movs	r1, r0
+10028708:	312e      	adds	r1, #46	; 0x2e
+1002870a:	0089      	lsls	r1, r1, #2
+1002870c:	4a09      	ldr	r2, [pc, #36]	; (10028734 <ramp_switching_frequency_pcmc_startup_irq_handle+0x64>)
+1002870e:	1852      	adds	r2, r2, r1
+10028710:	6852      	ldr	r2, [r2, #4]
+10028712:	4293      	cmp	r3, r2
+10028714:	d908      	bls.n	10028728 <ramp_switching_frequency_pcmc_startup_irq_handle+0x58>
+10028716:	4908      	ldr	r1, [pc, #32]	; (10028738 <ramp_switching_frequency_pcmc_startup_irq_handle+0x68>)
+10028718:	680a      	ldr	r2, [r1, #0]
+    reg = (reg & ~PWM_RAMP1_TSWITCH1__TSWITCH1__Msk);
+1002871a:	0a52      	lsrs	r2, r2, #9
+1002871c:	0252      	lsls	r2, r2, #9
+    reg = (reg | (PWM_RAMP1_TSWITCH1__TSWITCH1__Shift((uint32_t)bf_value)));
+1002871e:	05db      	lsls	r3, r3, #23
+10028720:	0ddb      	lsrs	r3, r3, #23
+10028722:	4313      	orrs	r3, r2
+    *addr = val;
+10028724:	600b      	str	r3, [r1, #0]
+10028726:	e7e8      	b.n	100286fa <ramp_switching_frequency_pcmc_startup_irq_handle+0x2a>
+		ramp_switching_frequency_pcmc_startup_disable(loop);
+10028728:	f7ff ffb0 	bl	1002868c <ramp_switching_frequency_pcmc_startup_disable>
+}
+1002872c:	e7e5      	b.n	100286fa <ramp_switching_frequency_pcmc_startup_irq_handle+0x2a>
+1002872e:	46c0      	nop			; (mov r8, r8)
+10028730:	70002c2c 	.word	0x70002c2c
+10028734:	20063a6c 	.word	0x20063a6c
+10028738:	70002c40 	.word	0x70002c40
+
+1002873c <pmbus_mfr_autogen_init>:
+/*
+ * Initializes all of our pmbus structs that were generated by the script
+ * Function gets called to setup command support array, initialize pointers to command data, and describe commands 
+ */
+void pmbus_mfr_autogen_init(void)
+{
+1002873c:	b5f0      	push	{r4, r5, r6, r7, lr}
+1002873e:	46c6      	mov	lr, r8
+10028740:	b500      	push	{lr}
+
+
+	/* initialize command structure for FAN_CONFIG_1_2. */
+	// FAN_CONFIG_1_2 COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_FAN_CONFIG_1_2] = PMBUS_HANDLE_FAN_CONFIG_1_2;
+10028742:	4a5a      	ldr	r2, [pc, #360]	; (100288ac <pmbus_mfr_autogen_init+0x170>)
+10028744:	20e8      	movs	r0, #232	; 0xe8
+10028746:	4b5a      	ldr	r3, [pc, #360]	; (100288b0 <pmbus_mfr_autogen_init+0x174>)
+10028748:	5013      	str	r3, [r2, r0]
+	//PMBUS_CMD_FAN_CONFIG_1_2.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_FAN_CONFIG_1_2.SUPPORTED = 1;
+	//PMBUS_CMD_FAN_CONFIG_1_2.PROTECTED0 = 0;
+	//PMBUS_CMD_FAN_CONFIG_1_2.PROTECTED1 = 0;
+	//PMBUS_CMD_FAN_CONFIG_1_2.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_FAN_CONFIG_1_2.CMD_CONFIG = 0xc181233a;
+1002874a:	495a      	ldr	r1, [pc, #360]	; (100288b4 <pmbus_mfr_autogen_init+0x178>)
+1002874c:	4b5a      	ldr	r3, [pc, #360]	; (100288b8 <pmbus_mfr_autogen_init+0x17c>)
+1002874e:	600b      	str	r3, [r1, #0]
+	PMBUS_CMD_FAN_CONFIG_1_2.DATA0 = &PMBUS_CMD_FAN_CONFIG_1_2_DATA_LOOP0[0];  // set the pointer to the data array
+10028750:	4b5a      	ldr	r3, [pc, #360]	; (100288bc <pmbus_mfr_autogen_init+0x180>)
+10028752:	608b      	str	r3, [r1, #8]
+	PMBUS_CMD_FAN_CONFIG_1_2.DATA1 = &PMBUS_CMD_FAN_CONFIG_1_2_DATA_LOOP0[0];  // set the pointer to the data array
+10028754:	60cb      	str	r3, [r1, #12]
+	PMBUS_CMD_FAN_CONFIG_1_2_DATA_LOOP1 = &PMBUS_CMD_FAN_CONFIG_1_2_DATA_LOOP0[0];
+10028756:	4c5a      	ldr	r4, [pc, #360]	; (100288c0 <pmbus_mfr_autogen_init+0x184>)
+10028758:	6023      	str	r3, [r4, #0]
+	// RANGE SUPPORT for FAN_CONFIG_1_2 COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_FAN_CONFIG_1_2] = &PMBUS_CMD_FAN_CONFIG_1_2;
+1002875a:	4b5a      	ldr	r3, [pc, #360]	; (100288c4 <pmbus_mfr_autogen_init+0x188>)
+1002875c:	5019      	str	r1, [r3, r0]
+	//PMBUS_CMD_ARRAY_LOOP1[PMBUS_CMDCODE_FAN_CONFIG_1_2] = &PMBUS_CMD_FAN_CONFIG_1_2;
+	//lint -e{778} suppress "Constant expression evaluates to 0 in operation '&'" 
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_FAN_CONFIG_1_2/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_FAN_CONFIG_1_2&31u));
+1002875e:	495a      	ldr	r1, [pc, #360]	; (100288c8 <pmbus_mfr_autogen_init+0x18c>)
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_FAN_CONFIG_1_2/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_FAN_CONFIG_1_2&31u));
+
+	/* initialize command structure for FAN_COMMAND_1. */
+	// FAN_COMMAND_1 COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_FAN_COMMAND_1] = PMBUS_HANDLE_FAN_COMMAND_1;
+10028760:	3004      	adds	r0, #4
+10028762:	4680      	mov	r8, r0
+10028764:	4859      	ldr	r0, [pc, #356]	; (100288cc <pmbus_mfr_autogen_init+0x190>)
+10028766:	4644      	mov	r4, r8
+10028768:	5110      	str	r0, [r2, r4]
+	//PMBUS_CMD_FAN_COMMAND_1.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_FAN_COMMAND_1.SUPPORTED = 1;
+	//PMBUS_CMD_FAN_COMMAND_1.PROTECTED0 = 0;
+	//PMBUS_CMD_FAN_COMMAND_1.PROTECTED1 = 0;
+	//PMBUS_CMD_FAN_COMMAND_1.RANGE_TYPE = (uint8_t) PMBUS_RANGE_LINEAR11_UNSIGNED;
+	PMBUS_CMD_FAN_COMMAND_1.RANGE = &PMBUS_CMD_FAN_COMMAND_1_RANGE[0];
+1002876a:	4859      	ldr	r0, [pc, #356]	; (100288d0 <pmbus_mfr_autogen_init+0x194>)
+1002876c:	4d59      	ldr	r5, [pc, #356]	; (100288d4 <pmbus_mfr_autogen_init+0x198>)
+1002876e:	6045      	str	r5, [r0, #4]
+	PMBUS_CMD_FAN_COMMAND_1_RANGE[0] = 6;
+10028770:	3ce6      	subs	r4, #230	; 0xe6
+10028772:	702c      	strb	r4, [r5, #0]
+	PMBUS_CMD_FAN_COMMAND_1_RANGE[1] = 2;
+10028774:	2702      	movs	r7, #2
+10028776:	706f      	strb	r7, [r5, #1]
+	PMBUS_CMD_FAN_COMMAND_1.CMD_CONFIG = 0xc382233b;
+10028778:	4d57      	ldr	r5, [pc, #348]	; (100288d8 <pmbus_mfr_autogen_init+0x19c>)
+1002877a:	6005      	str	r5, [r0, #0]
+	PMBUS_CMD_FAN_COMMAND_1.DATA0 = &PMBUS_CMD_FAN_COMMAND_1_DATA_LOOP0[0];  // set the pointer to the data array
+1002877c:	4d57      	ldr	r5, [pc, #348]	; (100288dc <pmbus_mfr_autogen_init+0x1a0>)
+1002877e:	6085      	str	r5, [r0, #8]
+	PMBUS_CMD_FAN_COMMAND_1.DATA1 = &PMBUS_CMD_FAN_COMMAND_1_DATA_LOOP0[0];  // set the pointer to the data array
+10028780:	60c5      	str	r5, [r0, #12]
+	PMBUS_CMD_FAN_COMMAND_1_DATA_LOOP1 = &PMBUS_CMD_FAN_COMMAND_1_DATA_LOOP0[0];
+10028782:	4e57      	ldr	r6, [pc, #348]	; (100288e0 <pmbus_mfr_autogen_init+0x1a4>)
+10028784:	6035      	str	r5, [r6, #0]
+	// RANGE SUPPORT for FAN_COMMAND_1 COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_FAN_COMMAND_1] = &PMBUS_CMD_FAN_COMMAND_1;
+10028786:	4645      	mov	r5, r8
+10028788:	5158      	str	r0, [r3, r5]
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_FAN_COMMAND_1/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_FAN_COMMAND_1&31u));
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_FAN_COMMAND_1/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_FAN_COMMAND_1&31u));
+
+	/* initialize command structure for FAN_COMMAND_2. */
+	// FAN_COMMAND_2 COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_FAN_COMMAND_2] = PMBUS_HANDLE_FAN_COMMAND_2;
+1002878a:	26f0      	movs	r6, #240	; 0xf0
+1002878c:	4855      	ldr	r0, [pc, #340]	; (100288e4 <pmbus_mfr_autogen_init+0x1a8>)
+1002878e:	5190      	str	r0, [r2, r6]
+	//PMBUS_CMD_FAN_COMMAND_2.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_FAN_COMMAND_2.SUPPORTED = 1;
+	//PMBUS_CMD_FAN_COMMAND_2.PROTECTED0 = 0;
+	//PMBUS_CMD_FAN_COMMAND_2.PROTECTED1 = 0;
+	//PMBUS_CMD_FAN_COMMAND_2.RANGE_TYPE = (uint8_t) PMBUS_RANGE_LINEAR11_UNSIGNED;
+	PMBUS_CMD_FAN_COMMAND_2.RANGE = &PMBUS_CMD_FAN_COMMAND_2_RANGE[0];
+10028790:	4855      	ldr	r0, [pc, #340]	; (100288e8 <pmbus_mfr_autogen_init+0x1ac>)
+10028792:	4d56      	ldr	r5, [pc, #344]	; (100288ec <pmbus_mfr_autogen_init+0x1b0>)
+10028794:	6045      	str	r5, [r0, #4]
+	PMBUS_CMD_FAN_COMMAND_2_RANGE[0] = 6;
+10028796:	702c      	strb	r4, [r5, #0]
+	PMBUS_CMD_FAN_COMMAND_2_RANGE[1] = 2;
+10028798:	706f      	strb	r7, [r5, #1]
+	PMBUS_CMD_FAN_COMMAND_2.CMD_CONFIG = 0xc382233c;
+1002879a:	4d55      	ldr	r5, [pc, #340]	; (100288f0 <pmbus_mfr_autogen_init+0x1b4>)
+1002879c:	6005      	str	r5, [r0, #0]
+	PMBUS_CMD_FAN_COMMAND_2.DATA0 = &PMBUS_CMD_FAN_COMMAND_2_DATA_LOOP0[0];  // set the pointer to the data array
+1002879e:	4d55      	ldr	r5, [pc, #340]	; (100288f4 <pmbus_mfr_autogen_init+0x1b8>)
+100287a0:	6085      	str	r5, [r0, #8]
+	PMBUS_CMD_FAN_COMMAND_2.DATA1 = &PMBUS_CMD_FAN_COMMAND_2_DATA_LOOP0[0];  // set the pointer to the data array
+100287a2:	60c5      	str	r5, [r0, #12]
+	PMBUS_CMD_FAN_COMMAND_2_DATA_LOOP1 = &PMBUS_CMD_FAN_COMMAND_2_DATA_LOOP0[0];
+100287a4:	4f54      	ldr	r7, [pc, #336]	; (100288f8 <pmbus_mfr_autogen_init+0x1bc>)
+100287a6:	603d      	str	r5, [r7, #0]
+	// RANGE SUPPORT for FAN_COMMAND_2 COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_FAN_COMMAND_2] = &PMBUS_CMD_FAN_COMMAND_2;
+100287a8:	5198      	str	r0, [r3, r6]
+	//PMBUS_CMD_ARRAY_LOOP1[PMBUS_CMDCODE_FAN_COMMAND_2] = &PMBUS_CMD_FAN_COMMAND_2;
+	//lint -e{778} suppress "Constant expression evaluates to 0 in operation '&'" 
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_FAN_COMMAND_2/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_FAN_COMMAND_2&31u));
+100287aa:	20e0      	movs	r0, #224	; 0xe0
+100287ac:	0540      	lsls	r0, r0, #21
+100287ae:	684d      	ldr	r5, [r1, #4]
+100287b0:	4328      	orrs	r0, r5
+100287b2:	6048      	str	r0, [r1, #4]
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_FAN_COMMAND_2/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_FAN_COMMAND_2&31u));
+
+	/* initialize command structure for MFR_FREQUENCY_DITHER. */
+	// MFR_FREQUENCY_DITHER COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_FREQUENCY_DITHER] = PMBUS_HANDLE_MFR_FREQUENCY_DITHER;
+100287b4:	25c7      	movs	r5, #199	; 0xc7
+100287b6:	00ad      	lsls	r5, r5, #2
+100287b8:	4850      	ldr	r0, [pc, #320]	; (100288fc <pmbus_mfr_autogen_init+0x1c0>)
+100287ba:	5150      	str	r0, [r2, r5]
+	//PMBUS_CMD_MFR_FREQUENCY_DITHER.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_FREQUENCY_DITHER.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_FREQUENCY_DITHER.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_FREQUENCY_DITHER.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_FREQUENCY_DITHER.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_FREQUENCY_DITHER.CMD_CONFIG = 0xc18123c7;
+100287bc:	4850      	ldr	r0, [pc, #320]	; (10028900 <pmbus_mfr_autogen_init+0x1c4>)
+100287be:	4e51      	ldr	r6, [pc, #324]	; (10028904 <pmbus_mfr_autogen_init+0x1c8>)
+100287c0:	6006      	str	r6, [r0, #0]
+	PMBUS_CMD_MFR_FREQUENCY_DITHER.DATA0 = &PMBUS_CMD_MFR_FREQUENCY_DITHER_DATA_LOOP0[0];  // set the pointer to the data array
+100287c2:	4e51      	ldr	r6, [pc, #324]	; (10028908 <pmbus_mfr_autogen_init+0x1cc>)
+100287c4:	6086      	str	r6, [r0, #8]
+	PMBUS_CMD_MFR_FREQUENCY_DITHER.DATA1 = &PMBUS_CMD_MFR_FREQUENCY_DITHER_DATA_LOOP1[0];  // set the pointer to the data array
+100287c6:	4e51      	ldr	r6, [pc, #324]	; (1002890c <pmbus_mfr_autogen_init+0x1d0>)
+100287c8:	60c6      	str	r6, [r0, #12]
+	// RANGE SUPPORT for MFR_FREQUENCY_DITHER COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_FREQUENCY_DITHER] = &PMBUS_CMD_MFR_FREQUENCY_DITHER;
+100287ca:	5158      	str	r0, [r3, r5]
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_FREQUENCY_DITHER/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_FREQUENCY_DITHER&31u));
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_FREQUENCY_DITHER/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_FREQUENCY_DITHER&31u));
+
+	/* initialize command structure for MFR_BOARD_TRIM. */
+	// MFR_BOARD_TRIM COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_BOARD_TRIM] = PMBUS_HANDLE_MFR_BOARD_TRIM;
+100287cc:	3514      	adds	r5, #20
+100287ce:	4850      	ldr	r0, [pc, #320]	; (10028910 <pmbus_mfr_autogen_init+0x1d4>)
+100287d0:	5150      	str	r0, [r2, r5]
+	//PMBUS_CMD_MFR_BOARD_TRIM.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_BOARD_TRIM.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_BOARD_TRIM.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_BOARD_TRIM.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_BOARD_TRIM.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_BOARD_TRIM.CMD_CONFIG = 0xc18223cc;
+100287d2:	4850      	ldr	r0, [pc, #320]	; (10028914 <pmbus_mfr_autogen_init+0x1d8>)
+100287d4:	4e50      	ldr	r6, [pc, #320]	; (10028918 <pmbus_mfr_autogen_init+0x1dc>)
+100287d6:	6006      	str	r6, [r0, #0]
+	PMBUS_CMD_MFR_BOARD_TRIM.DATA0 = &PMBUS_CMD_MFR_BOARD_TRIM_DATA_LOOP0[0];  // set the pointer to the data array
+100287d8:	4e50      	ldr	r6, [pc, #320]	; (1002891c <pmbus_mfr_autogen_init+0x1e0>)
+100287da:	6086      	str	r6, [r0, #8]
+	PMBUS_CMD_MFR_BOARD_TRIM.DATA1 = &PMBUS_CMD_MFR_BOARD_TRIM_DATA_LOOP1[0];  // set the pointer to the data array
+100287dc:	4e50      	ldr	r6, [pc, #320]	; (10028920 <pmbus_mfr_autogen_init+0x1e4>)
+100287de:	60c6      	str	r6, [r0, #12]
+	// RANGE SUPPORT for MFR_BOARD_TRIM COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_BOARD_TRIM] = &PMBUS_CMD_MFR_BOARD_TRIM;
+100287e0:	5158      	str	r0, [r3, r5]
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_BOARD_TRIM/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_BOARD_TRIM&31u));
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_BOARD_TRIM/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_BOARD_TRIM&31u));
+
+	/* initialize command structure for MFR_SNAPSHOT_DATA. */
+	// MFR_SNAPSHOT_DATA COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_SNAPSHOT_DATA] = PMBUS_HANDLE_MFR_SNAPSHOT_DATA;
+100287e2:	3510      	adds	r5, #16
+100287e4:	484f      	ldr	r0, [pc, #316]	; (10028924 <pmbus_mfr_autogen_init+0x1e8>)
+100287e6:	5150      	str	r0, [r2, r5]
+	//PMBUS_CMD_MFR_SNAPSHOT_DATA.NUM_PROTOCOL_BYTES = 3;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_SNAPSHOT_DATA.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_SNAPSHOT_DATA.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_SNAPSHOT_DATA.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_SNAPSHOT_DATA.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_SNAPSHOT_DATA.CMD_CONFIG = 0x41df56d0;
+100287e8:	484f      	ldr	r0, [pc, #316]	; (10028928 <pmbus_mfr_autogen_init+0x1ec>)
+100287ea:	4e50      	ldr	r6, [pc, #320]	; (1002892c <pmbus_mfr_autogen_init+0x1f0>)
+100287ec:	6006      	str	r6, [r0, #0]
+	PMBUS_CMD_MFR_SNAPSHOT_DATA.DATA0 = &PMBUS_CMD_MFR_SNAPSHOT_DATA_DATA_LOOP0[0];  // set the pointer to the data array
+100287ee:	4e50      	ldr	r6, [pc, #320]	; (10028930 <pmbus_mfr_autogen_init+0x1f4>)
+100287f0:	6086      	str	r6, [r0, #8]
+	PMBUS_CMD_MFR_SNAPSHOT_DATA.DATA1 = &PMBUS_CMD_MFR_SNAPSHOT_DATA_DATA_LOOP1[0];  // set the pointer to the data array
+100287f2:	4e50      	ldr	r6, [pc, #320]	; (10028934 <pmbus_mfr_autogen_init+0x1f8>)
+100287f4:	60c6      	str	r6, [r0, #12]
+	// RANGE SUPPORT for MFR_SNAPSHOT_DATA COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_SNAPSHOT_DATA] = &PMBUS_CMD_MFR_SNAPSHOT_DATA;
+100287f6:	5158      	str	r0, [r3, r5]
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_SNAPSHOT_DATA/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_SNAPSHOT_DATA&31u));
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_SNAPSHOT_DATA/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_SNAPSHOT_DATA&31u));
+
+	/* initialize command structure for MFR_VDD_SCALE. */
+	// MFR_VDD_SCALE COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_VDD_SCALE] = PMBUS_HANDLE_MFR_VDD_SCALE;
+100287f8:	3508      	adds	r5, #8
+100287fa:	484f      	ldr	r0, [pc, #316]	; (10028938 <pmbus_mfr_autogen_init+0x1fc>)
+100287fc:	5150      	str	r0, [r2, r5]
+	//PMBUS_CMD_MFR_VDD_SCALE.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_VDD_SCALE.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_VDD_SCALE.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_VDD_SCALE.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_VDD_SCALE.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_VDD_SCALE.CMD_CONFIG = 0xc18223d2;
+100287fe:	484f      	ldr	r0, [pc, #316]	; (1002893c <pmbus_mfr_autogen_init+0x200>)
+10028800:	4e4f      	ldr	r6, [pc, #316]	; (10028940 <pmbus_mfr_autogen_init+0x204>)
+10028802:	6006      	str	r6, [r0, #0]
+	PMBUS_CMD_MFR_VDD_SCALE.DATA0 = &PMBUS_CMD_MFR_VDD_SCALE_DATA_LOOP0[0];  // set the pointer to the data array
+10028804:	4e4f      	ldr	r6, [pc, #316]	; (10028944 <pmbus_mfr_autogen_init+0x208>)
+10028806:	6086      	str	r6, [r0, #8]
+	PMBUS_CMD_MFR_VDD_SCALE.DATA1 = &PMBUS_CMD_MFR_VDD_SCALE_DATA_LOOP1[0];  // set the pointer to the data array
+10028808:	4e4f      	ldr	r6, [pc, #316]	; (10028948 <pmbus_mfr_autogen_init+0x20c>)
+1002880a:	60c6      	str	r6, [r0, #12]
+	// RANGE SUPPORT for MFR_VDD_SCALE COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_VDD_SCALE] = &PMBUS_CMD_MFR_VDD_SCALE;
+1002880c:	5158      	str	r0, [r3, r5]
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_VDD_SCALE/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_VDD_SCALE&31u));
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_VDD_SCALE/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_VDD_SCALE&31u));
+
+	/* initialize command structure for MFR_VIN_SCALE. */
+	// MFR_VIN_SCALE COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_VIN_SCALE] = PMBUS_HANDLE_MFR_VIN_SCALE;
+1002880e:	3504      	adds	r5, #4
+10028810:	484e      	ldr	r0, [pc, #312]	; (1002894c <pmbus_mfr_autogen_init+0x210>)
+10028812:	5150      	str	r0, [r2, r5]
+	//PMBUS_CMD_MFR_VIN_SCALE.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_VIN_SCALE.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_VIN_SCALE.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_VIN_SCALE.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_VIN_SCALE.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_VIN_SCALE.CMD_CONFIG = 0xc18223d3;
+10028814:	484e      	ldr	r0, [pc, #312]	; (10028950 <pmbus_mfr_autogen_init+0x214>)
+10028816:	4e4f      	ldr	r6, [pc, #316]	; (10028954 <pmbus_mfr_autogen_init+0x218>)
+10028818:	6006      	str	r6, [r0, #0]
+	PMBUS_CMD_MFR_VIN_SCALE.DATA0 = &PMBUS_CMD_MFR_VIN_SCALE_DATA_LOOP0[0];  // set the pointer to the data array
+1002881a:	4e4f      	ldr	r6, [pc, #316]	; (10028958 <pmbus_mfr_autogen_init+0x21c>)
+1002881c:	6086      	str	r6, [r0, #8]
+	PMBUS_CMD_MFR_VIN_SCALE.DATA1 = &PMBUS_CMD_MFR_VIN_SCALE_DATA_LOOP1[0];  // set the pointer to the data array
+1002881e:	4e4f      	ldr	r6, [pc, #316]	; (1002895c <pmbus_mfr_autogen_init+0x220>)
+10028820:	60c6      	str	r6, [r0, #12]
+	// RANGE SUPPORT for MFR_VIN_SCALE COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_VIN_SCALE] = &PMBUS_CMD_MFR_VIN_SCALE;
+10028822:	5158      	str	r0, [r3, r5]
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_VIN_SCALE/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_VIN_SCALE&31u));
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_VIN_SCALE/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_VIN_SCALE&31u));
+
+	/* initialize command structure for MFR_FW_CONFIG_UART. */
+	// MFR_FW_CONFIG_UART COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_FW_CONFIG_UART] = PMBUS_HANDLE_MFR_FW_CONFIG_UART;
+10028824:	26d4      	movs	r6, #212	; 0xd4
+10028826:	00b6      	lsls	r6, r6, #2
+10028828:	484d      	ldr	r0, [pc, #308]	; (10028960 <pmbus_mfr_autogen_init+0x224>)
+1002882a:	5190      	str	r0, [r2, r6]
+	//PMBUS_CMD_MFR_FW_CONFIG_UART.NUM_PROTOCOL_BYTES = 3;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_FW_CONFIG_UART.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_FW_CONFIG_UART.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_FW_CONFIG_UART.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_FW_CONFIG_UART.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_FW_CONFIG_UART.CMD_CONFIG = 0xc1c856d4;
+1002882c:	484d      	ldr	r0, [pc, #308]	; (10028964 <pmbus_mfr_autogen_init+0x228>)
+1002882e:	4d4e      	ldr	r5, [pc, #312]	; (10028968 <pmbus_mfr_autogen_init+0x22c>)
+10028830:	6005      	str	r5, [r0, #0]
+	PMBUS_CMD_MFR_FW_CONFIG_UART.DATA0 = &PMBUS_CMD_MFR_FW_CONFIG_UART_DATA_LOOP0[0];  // set the pointer to the data array
+10028832:	4d4e      	ldr	r5, [pc, #312]	; (1002896c <pmbus_mfr_autogen_init+0x230>)
+10028834:	6085      	str	r5, [r0, #8]
+	PMBUS_CMD_MFR_FW_CONFIG_UART.DATA1 = &PMBUS_CMD_MFR_FW_CONFIG_UART_DATA_LOOP0[0];  // set the pointer to the data array
+10028836:	60c5      	str	r5, [r0, #12]
+	PMBUS_CMD_MFR_FW_CONFIG_UART_DATA_LOOP1 = &PMBUS_CMD_MFR_FW_CONFIG_UART_DATA_LOOP0[0];
+10028838:	4f4d      	ldr	r7, [pc, #308]	; (10028970 <pmbus_mfr_autogen_init+0x234>)
+1002883a:	603d      	str	r5, [r7, #0]
+	// RANGE SUPPORT for MFR_FW_CONFIG_UART COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_FW_CONFIG_UART] = &PMBUS_CMD_MFR_FW_CONFIG_UART;
+1002883c:	5198      	str	r0, [r3, r6]
+	//PMBUS_CMD_MFR_SS_RAMP_FSW.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_SS_RAMP_FSW.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_SS_RAMP_FSW.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_SS_RAMP_FSW.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_SS_RAMP_FSW.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_SS_RAMP_FSW.CMD_CONFIG = 0xc18123d5;
+1002883e:	484d      	ldr	r0, [pc, #308]	; (10028974 <pmbus_mfr_autogen_init+0x238>)
+10028840:	4d4d      	ldr	r5, [pc, #308]	; (10028978 <pmbus_mfr_autogen_init+0x23c>)
+10028842:	6005      	str	r5, [r0, #0]
+	PMBUS_CMD_MFR_SS_RAMP_FSW.DATA0 = &PMBUS_CMD_MFR_SS_RAMP_FSW_DATA_LOOP0[0];  // set the pointer to the data array
+10028844:	4d4d      	ldr	r5, [pc, #308]	; (1002897c <pmbus_mfr_autogen_init+0x240>)
+10028846:	6085      	str	r5, [r0, #8]
+	PMBUS_CMD_MFR_SS_RAMP_FSW.DATA1 = &PMBUS_CMD_MFR_SS_RAMP_FSW_DATA_LOOP1[0];  // set the pointer to the data array
+10028848:	4d4d      	ldr	r5, [pc, #308]	; (10028980 <pmbus_mfr_autogen_init+0x244>)
+1002884a:	60c5      	str	r5, [r0, #12]
+	// RANGE SUPPORT for MFR_SS_RAMP_FSW COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_SS_RAMP_FSW] = &PMBUS_CMD_MFR_SS_RAMP_FSW;
+1002884c:	25d5      	movs	r5, #213	; 0xd5
+1002884e:	00ad      	lsls	r5, r5, #2
+10028850:	5158      	str	r0, [r3, r5]
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_SS_RAMP_FSW/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_SS_RAMP_FSW&31u));
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_SS_RAMP_FSW/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_SS_RAMP_FSW&31u));
+
+	/* initialize command structure for MFR_ISHARE_THRESHOLD. */
+	// MFR_ISHARE_THRESHOLD COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_ISHARE_THRESHOLD] = PMBUS_HANDLE_MFR_ISHARE_THRESHOLD;
+10028852:	3618      	adds	r6, #24
+10028854:	484b      	ldr	r0, [pc, #300]	; (10028984 <pmbus_mfr_autogen_init+0x248>)
+10028856:	5190      	str	r0, [r2, r6]
+	//PMBUS_CMD_MFR_ISHARE_THRESHOLD.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_ISHARE_THRESHOLD.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_ISHARE_THRESHOLD.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_ISHARE_THRESHOLD.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_ISHARE_THRESHOLD.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_ISHARE_THRESHOLD.CMD_CONFIG = 0xc18223da;
+10028858:	484b      	ldr	r0, [pc, #300]	; (10028988 <pmbus_mfr_autogen_init+0x24c>)
+1002885a:	4d4c      	ldr	r5, [pc, #304]	; (1002898c <pmbus_mfr_autogen_init+0x250>)
+1002885c:	6005      	str	r5, [r0, #0]
+	PMBUS_CMD_MFR_ISHARE_THRESHOLD.DATA0 = &PMBUS_CMD_MFR_ISHARE_THRESHOLD_DATA_LOOP0[0];  // set the pointer to the data array
+1002885e:	4d4c      	ldr	r5, [pc, #304]	; (10028990 <pmbus_mfr_autogen_init+0x254>)
+10028860:	6085      	str	r5, [r0, #8]
+	PMBUS_CMD_MFR_ISHARE_THRESHOLD.DATA1 = &PMBUS_CMD_MFR_ISHARE_THRESHOLD_DATA_LOOP0[0];  // set the pointer to the data array
+10028862:	60c5      	str	r5, [r0, #12]
+	PMBUS_CMD_MFR_ISHARE_THRESHOLD_DATA_LOOP1 = &PMBUS_CMD_MFR_ISHARE_THRESHOLD_DATA_LOOP0[0];
+10028864:	4f4b      	ldr	r7, [pc, #300]	; (10028994 <pmbus_mfr_autogen_init+0x258>)
+10028866:	603d      	str	r5, [r7, #0]
+	// RANGE SUPPORT for MFR_ISHARE_THRESHOLD COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_ISHARE_THRESHOLD] = &PMBUS_CMD_MFR_ISHARE_THRESHOLD;
+10028868:	5198      	str	r0, [r3, r6]
+	//PMBUS_CMD_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_ISHARE_THRESHOLD] = &PMBUS_CMD_MFR_ISHARE_THRESHOLD;
+	//lint -e{778} suppress "Constant expression evaluates to 0 in operation '&'" 
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_ISHARE_THRESHOLD/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_ISHARE_THRESHOLD&31u));
+1002886a:	484b      	ldr	r0, [pc, #300]	; (10028998 <pmbus_mfr_autogen_init+0x25c>)
+1002886c:	698d      	ldr	r5, [r1, #24]
+1002886e:	4328      	orrs	r0, r5
+10028870:	6188      	str	r0, [r1, #24]
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_ISHARE_THRESHOLD/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_ISHARE_THRESHOLD&31u));
+
+	/* initialize command structure for MFR_ADDED_DROOP_DURING_RAMP. */
+	// MFR_ADDED_DROOP_DURING_RAMP COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_ADDED_DROOP_DURING_RAMP] = PMBUS_HANDLE_MFR_ADDED_DROOP_DURING_RAMP;
+10028872:	25fc      	movs	r5, #252	; 0xfc
+10028874:	00ad      	lsls	r5, r5, #2
+10028876:	4849      	ldr	r0, [pc, #292]	; (1002899c <pmbus_mfr_autogen_init+0x260>)
+10028878:	5150      	str	r0, [r2, r5]
+	//PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP.RANGE_TYPE = (uint8_t) PMBUS_RANGE_LINEAR11_UNSIGNED_ARRAY;
+	PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP.RANGE = &PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP_RANGE[0];
+1002887a:	4a49      	ldr	r2, [pc, #292]	; (100289a0 <pmbus_mfr_autogen_init+0x264>)
+1002887c:	4849      	ldr	r0, [pc, #292]	; (100289a4 <pmbus_mfr_autogen_init+0x268>)
+1002887e:	6050      	str	r0, [r2, #4]
+	PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP_RANGE[0] = 3;
+10028880:	2603      	movs	r6, #3
+10028882:	7006      	strb	r6, [r0, #0]
+	PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP_RANGE[1] = 7;
+10028884:	3604      	adds	r6, #4
+10028886:	7046      	strb	r6, [r0, #1]
+	PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP_RANGE[2] = 4;
+10028888:	3e03      	subs	r6, #3
+1002888a:	7086      	strb	r6, [r0, #2]
+	PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP_RANGE[3] = 6;
+1002888c:	70c4      	strb	r4, [r0, #3]
+	PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP.CMD_CONFIG = 0xc58223fc;
+1002888e:	4846      	ldr	r0, [pc, #280]	; (100289a8 <pmbus_mfr_autogen_init+0x26c>)
+10028890:	6010      	str	r0, [r2, #0]
+	PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP.DATA0 = &PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP_DATA_LOOP0[0];  // set the pointer to the data array
+10028892:	4846      	ldr	r0, [pc, #280]	; (100289ac <pmbus_mfr_autogen_init+0x270>)
+10028894:	6090      	str	r0, [r2, #8]
+	PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP.DATA1 = &PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP_DATA_LOOP1[0];  // set the pointer to the data array
+10028896:	4846      	ldr	r0, [pc, #280]	; (100289b0 <pmbus_mfr_autogen_init+0x274>)
+10028898:	60d0      	str	r0, [r2, #12]
+	// RANGE SUPPORT for MFR_ADDED_DROOP_DURING_RAMP COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_ADDED_DROOP_DURING_RAMP] = &PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP;
+1002889a:	515a      	str	r2, [r3, r5]
+	//PMBUS_CMD_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_ADDED_DROOP_DURING_RAMP] = &PMBUS_CMD_MFR_ADDED_DROOP_DURING_RAMP;
+	//lint -e{778} suppress "Constant expression evaluates to 0 in operation '&'" 
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_ADDED_DROOP_DURING_RAMP/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_ADDED_DROOP_DURING_RAMP&31u));
+1002889c:	2380      	movs	r3, #128	; 0x80
+1002889e:	055b      	lsls	r3, r3, #21
+100288a0:	69ca      	ldr	r2, [r1, #28]
+100288a2:	4313      	orrs	r3, r2
+100288a4:	61cb      	str	r3, [r1, #28]
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_ADDED_DROOP_DURING_RAMP/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_ADDED_DROOP_DURING_RAMP&31u));
+
+}
+100288a6:	bc04      	pop	{r2}
+100288a8:	4690      	mov	r8, r2
+100288aa:	bdf0      	pop	{r4, r5, r6, r7, pc}
+100288ac:	2005d954 	.word	0x2005d954
+100288b0:	100289b5 	.word	0x100289b5
+100288b4:	2006396c 	.word	0x2006396c
+100288b8:	c181233a 	.word	0xc181233a
+100288bc:	200639b4 	.word	0x200639b4
+100288c0:	20063980 	.word	0x20063980
+100288c4:	2005d534 	.word	0x2005d534
+100288c8:	2005d934 	.word	0x2005d934
+100288cc:	10028a29 	.word	0x10028a29
+100288d0:	20063a0c 	.word	0x20063a0c
+100288d4:	200639ec 	.word	0x200639ec
+100288d8:	c382233b 	.word	0xc382233b
+100288dc:	200639cc 	.word	0x200639cc
+100288e0:	200639f4 	.word	0x200639f4
+100288e4:	10028ab9 	.word	0x10028ab9
+100288e8:	20063934 	.word	0x20063934
+100288ec:	20063a48 	.word	0x20063a48
+100288f0:	c382233c 	.word	0xc382233c
+100288f4:	200639b8 	.word	0x200639b8
+100288f8:	2006397c 	.word	0x2006397c
+100288fc:	10028b49 	.word	0x10028b49
+10028900:	20063a2c 	.word	0x20063a2c
+10028904:	c18123c7 	.word	0xc18123c7
+10028908:	20063a40 	.word	0x20063a40
+1002890c:	200639f8 	.word	0x200639f8
+10028910:	10028c0d 	.word	0x10028c0d
+10028914:	20063a1c 	.word	0x20063a1c
+10028918:	c18223cc 	.word	0xc18223cc
+1002891c:	20063954 	.word	0x20063954
+10028920:	20063a50 	.word	0x20063a50
+10028924:	10028ead 	.word	0x10028ead
+10028928:	20063944 	.word	0x20063944
+1002892c:	41df56d0 	.word	0x41df56d0
+10028930:	20063994 	.word	0x20063994
+10028934:	20063904 	.word	0x20063904
+10028938:	10028d85 	.word	0x10028d85
+1002893c:	20063984 	.word	0x20063984
+10028940:	c18223d2 	.word	0xc18223d2
+10028944:	20063968 	.word	0x20063968
+10028948:	200639d8 	.word	0x200639d8
+1002894c:	10028da9 	.word	0x10028da9
+10028950:	20063a54 	.word	0x20063a54
+10028954:	c18223d3 	.word	0xc18223d3
+10028958:	200639d0 	.word	0x200639d0
+1002895c:	200639e0 	.word	0x200639e0
+10028960:	10028dcd 	.word	0x10028dcd
+10028964:	20063924 	.word	0x20063924
+10028968:	c1c856d4 	.word	0xc1c856d4
+1002896c:	200639e4 	.word	0x200639e4
+10028970:	20063a64 	.word	0x20063a64
+10028974:	200639fc 	.word	0x200639fc
+10028978:	c18123d5 	.word	0xc18123d5
+1002897c:	200639d4 	.word	0x200639d4
+10028980:	20063a4c 	.word	0x20063a4c
+10028984:	10028d0d 	.word	0x10028d0d
+10028988:	200639bc 	.word	0x200639bc
+1002898c:	c18223da 	.word	0xc18223da
+10028990:	20063a44 	.word	0x20063a44
+10028994:	20063a68 	.word	0x20063a68
+10028998:	043d1080 	.word	0x043d1080
+1002899c:	10028d81 	.word	0x10028d81
+100289a0:	20063958 	.word	0x20063958
+100289a4:	200639f0 	.word	0x200639f0
+100289a8:	c58223fc 	.word	0xc58223fc
+100289ac:	200639dc 	.word	0x200639dc
+100289b0:	20063a3c 	.word	0x20063a3c
+
+100289b4 <PMBUS_HANDLE_FAN_CONFIG_1_2>:
+ *
+ * @param page Selects the pmbus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void PMBUS_HANDLE_FAN_CONFIG_1_2(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+100289b4:	b570      	push	{r4, r5, r6, lr}
+	if ((direction == PMBUS_WRITE)||(direction == OTP_RESTORE))
+100289b6:	2304      	movs	r3, #4
+100289b8:	4399      	bics	r1, r3
+100289ba:	d000      	beq.n	100289be <PMBUS_HANDLE_FAN_CONFIG_1_2+0xa>
+		COMMON_EN_REG3__EN_FAN1__SET(((data&0x80u)==0x80u) ? 1 : 0);  // bit 7 fan 1
+		COMMON_EN_REG3__EN_FAN2__SET(((data&0x08u)==0x08u) ? 1 : 0);  // bit 3 fan 2
+		FAN_FAN_CONFIG__FAN_TACH_PPR__SET(FAN1, (data&0x30u)>>4);
+		FAN_FAN_CONFIG__FAN_TACH_PPR__SET(FAN2, (data&0x3u));
+	}
+}
+100289bc:	bd70      	pop	{r4, r5, r6, pc}
+		uint32_t data = PMBUS_Get_Command_Byte(page, PMBUS_CMDCODE_FAN_CONFIG_1_2);
+100289be:	313a      	adds	r1, #58	; 0x3a
+100289c0:	f7d8 fe0e 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+100289c4:	0002      	movs	r2, r0
+    return *addr;
+100289c6:	4912      	ldr	r1, [pc, #72]	; (10028a10 <PMBUS_HANDLE_FAN_CONFIG_1_2+0x5c>)
+100289c8:	680b      	ldr	r3, [r1, #0]
+ * @param bf_value new value for EN_REG3.EN_FAN1
+ */
+__COMMON_INLINE void COMMON_EN_REG3__EN_FAN1__SET(uint32_t bf_value)
+{
+    uint32_t reg = COMMON_EN_REG3__GET();
+    reg = (reg & ~COMMON_EN_REG3__EN_FAN1__Msk);
+100289ca:	4812      	ldr	r0, [pc, #72]	; (10028a14 <PMBUS_HANDLE_FAN_CONFIG_1_2+0x60>)
+100289cc:	4018      	ands	r0, r3
+		COMMON_EN_REG3__EN_FAN1__SET(((data&0x80u)==0x80u) ? 1 : 0);  // bit 7 fan 1
+100289ce:	b253      	sxtb	r3, r2
+100289d0:	0fdb      	lsrs	r3, r3, #31
+    reg = (reg | (COMMON_EN_REG3__EN_FAN1__Shift((uint32_t)bf_value)));
+100289d2:	025b      	lsls	r3, r3, #9
+100289d4:	4303      	orrs	r3, r0
+    *addr = val;
+100289d6:	600b      	str	r3, [r1, #0]
+    return *addr;
+100289d8:	680b      	ldr	r3, [r1, #0]
+    reg = (reg & ~COMMON_EN_REG3__EN_FAN2__Msk);
+100289da:	480f      	ldr	r0, [pc, #60]	; (10028a18 <PMBUS_HANDLE_FAN_CONFIG_1_2+0x64>)
+100289dc:	4018      	ands	r0, r3
+		COMMON_EN_REG3__EN_FAN2__SET(((data&0x08u)==0x08u) ? 1 : 0);  // bit 3 fan 2
+100289de:	0713      	lsls	r3, r2, #28
+100289e0:	0fdb      	lsrs	r3, r3, #31
+    reg = (reg | (COMMON_EN_REG3__EN_FAN2__Shift((uint32_t)bf_value)));
+100289e2:	029b      	lsls	r3, r3, #10
+100289e4:	4303      	orrs	r3, r0
+    *addr = val;
+100289e6:	600b      	str	r3, [r1, #0]
+    return *addr;
+100289e8:	480c      	ldr	r0, [pc, #48]	; (10028a1c <PMBUS_HANDLE_FAN_CONFIG_1_2+0x68>)
+100289ea:	6801      	ldr	r1, [r0, #0]
+ * @param bf_value new value for FAN_CONFIG.FAN_TACH_PPR
+ */
+__FAN_INLINE void FAN_FAN_CONFIG__FAN_TACH_PPR__SET(fan_idx_t idp, uint32_t bf_value)
+{
+    uint32_t reg = FAN_FAN_CONFIG__GET(idp);
+    reg = (reg & ~FAN_FAN_CONFIG__FAN_TACH_PPR__Msk);
+100289ec:	4c0c      	ldr	r4, [pc, #48]	; (10028a20 <PMBUS_HANDLE_FAN_CONFIG_1_2+0x6c>)
+100289ee:	4021      	ands	r1, r4
+    reg = (reg | (FAN_FAN_CONFIG__FAN_TACH_PPR__Shift((uint32_t)bf_value)));
+100289f0:	0593      	lsls	r3, r2, #22
+100289f2:	25c0      	movs	r5, #192	; 0xc0
+100289f4:	052d      	lsls	r5, r5, #20
+100289f6:	402b      	ands	r3, r5
+100289f8:	430b      	orrs	r3, r1
+    *addr = val;
+100289fa:	6003      	str	r3, [r0, #0]
+    return *addr;
+100289fc:	4909      	ldr	r1, [pc, #36]	; (10028a24 <PMBUS_HANDLE_FAN_CONFIG_1_2+0x70>)
+100289fe:	6808      	ldr	r0, [r1, #0]
+    reg = (reg & ~FAN_FAN_CONFIG__FAN_TACH_PPR__Msk);
+10028a00:	4004      	ands	r4, r0
+		FAN_FAN_CONFIG__FAN_TACH_PPR__SET(FAN2, (data&0x3u));
+10028a02:	2003      	movs	r0, #3
+10028a04:	4010      	ands	r0, r2
+    reg = (reg | (FAN_FAN_CONFIG__FAN_TACH_PPR__Shift((uint32_t)bf_value)));
+10028a06:	0680      	lsls	r0, r0, #26
+10028a08:	4320      	orrs	r0, r4
+    *addr = val;
+10028a0a:	6008      	str	r0, [r1, #0]
+}
+10028a0c:	e7d6      	b.n	100289bc <PMBUS_HANDLE_FAN_CONFIG_1_2+0x8>
+10028a0e:	46c0      	nop			; (mov r8, r8)
+10028a10:	70003054 	.word	0x70003054
+10028a14:	fffffdff 	.word	0xfffffdff
+10028a18:	fffffbff 	.word	0xfffffbff
+10028a1c:	70004400 	.word	0x70004400
+10028a20:	f3ffffff 	.word	0xf3ffffff
+10028a24:	70004800 	.word	0x70004800
+
+10028a28 <PMBUS_HANDLE_FAN_COMMAND_1>:
+ * Linear11 format fan1 command of either duty or rpm depending on fan config
+ * @param page Selects the pmbus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void PMBUS_HANDLE_FAN_COMMAND_1(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+10028a28:	b570      	push	{r4, r5, r6, lr}
+10028a2a:	0004      	movs	r4, r0
+	if ((direction == PMBUS_WRITE)||(direction == OTP_RESTORE))
+10028a2c:	2304      	movs	r3, #4
+10028a2e:	4399      	bics	r1, r3
+10028a30:	d000      	beq.n	10028a34 <PMBUS_HANDLE_FAN_COMMAND_1+0xc>
+			if (data>0xff) data = 0xff; // cap at max
+			FAN_FAN_DUTY__SET(FAN1, data);
+
+		}
+	}
+}
+10028a32:	bd70      	pop	{r4, r5, r6, pc}
+		uint32_t config = PMBUS_Get_Command_Byte(page, PMBUS_CMDCODE_FAN_CONFIG_1_2);
+10028a34:	313a      	adds	r1, #58	; 0x3a
+10028a36:	f7d8 fdd3 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+10028a3a:	0005      	movs	r5, r0
+		uint32_t data = PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_FAN_COMMAND_1);
+10028a3c:	213b      	movs	r1, #59	; 0x3b
+10028a3e:	0020      	movs	r0, r4
+10028a40:	f7d8 fe0a 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10028a44:	0ac3      	lsrs	r3, r0, #11
+10028a46:	b29b      	uxth	r3, r3
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10028a48:	06da      	lsls	r2, r3, #27
+10028a4a:	d502      	bpl.n	10028a52 <PMBUS_HANDLE_FAN_COMMAND_1+0x2a>
+10028a4c:	2220      	movs	r2, #32
+10028a4e:	4252      	negs	r2, r2
+10028a50:	4313      	orrs	r3, r2
+10028a52:	0542      	lsls	r2, r0, #21
+10028a54:	0d52      	lsrs	r2, r2, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10028a56:	0541      	lsls	r1, r0, #21
+10028a58:	d501      	bpl.n	10028a5e <PMBUS_HANDLE_FAN_COMMAND_1+0x36>
+10028a5a:	4914      	ldr	r1, [pc, #80]	; (10028aac <PMBUS_HANDLE_FAN_COMMAND_1+0x84>)
+10028a5c:	430a      	orrs	r2, r1
+		if ((config&0x40u)==0x40u)  // fan1 is commanded in RPM
+10028a5e:	0669      	lsls	r1, r5, #25
+10028a60:	d512      	bpl.n	10028a88 <PMBUS_HANDLE_FAN_COMMAND_1+0x60>
+			data = (uint32_t)SHIFT_EXPONENT((int32_t)data,(exponent-PMBUS_Q_EXP));  // convert to PMBUS_Q_EXP for division
+10028a62:	0019      	movs	r1, r3
+10028a64:	3110      	adds	r1, #16
+		value = value << (exponent);
+10028a66:	0010      	movs	r0, r2
+10028a68:	4088      	lsls	r0, r1
+	if ( exponent <= 0)
+10028a6a:	2900      	cmp	r1, #0
+10028a6c:	dd06      	ble.n	10028a7c <PMBUS_HANDLE_FAN_COMMAND_1+0x54>
+			data = (uint32_t)SHIFT_EXPONENT((int32_t)(data/65535),(PMBUS_Q_EXP+8));  // convert to -8 format for register
+10028a6e:	4910      	ldr	r1, [pc, #64]	; (10028ab0 <PMBUS_HANDLE_FAN_COMMAND_1+0x88>)
+10028a70:	f7d7 fcb7 	bl	100003e2 <__aeabi_uidivmod>
+		value = value >> (exponent);
+10028a74:	1200      	asrs	r0, r0, #8
+10028a76:	4b0f      	ldr	r3, [pc, #60]	; (10028ab4 <PMBUS_HANDLE_FAN_COMMAND_1+0x8c>)
+10028a78:	6018      	str	r0, [r3, #0]
+10028a7a:	e7da      	b.n	10028a32 <PMBUS_HANDLE_FAN_COMMAND_1+0xa>
+		exponent = -exponent;
+10028a7c:	2110      	movs	r1, #16
+10028a7e:	4249      	negs	r1, r1
+10028a80:	1acb      	subs	r3, r1, r3
+		value = value >> (exponent);
+10028a82:	411a      	asrs	r2, r3
+10028a84:	0010      	movs	r0, r2
+10028a86:	e7f2      	b.n	10028a6e <PMBUS_HANDLE_FAN_COMMAND_1+0x46>
+			data = (uint32_t)SHIFT_EXPONENT((int32_t)data,(exponent+8));  // convert to U0.8
+10028a88:	0018      	movs	r0, r3
+10028a8a:	3008      	adds	r0, #8
+		value = value << (exponent);
+10028a8c:	0011      	movs	r1, r2
+10028a8e:	4081      	lsls	r1, r0
+	if ( exponent <= 0)
+10028a90:	2800      	cmp	r0, #0
+10028a92:	dd05      	ble.n	10028aa0 <PMBUS_HANDLE_FAN_COMMAND_1+0x78>
+10028a94:	29ff      	cmp	r1, #255	; 0xff
+10028a96:	d900      	bls.n	10028a9a <PMBUS_HANDLE_FAN_COMMAND_1+0x72>
+10028a98:	21ff      	movs	r1, #255	; 0xff
+10028a9a:	4a06      	ldr	r2, [pc, #24]	; (10028ab4 <PMBUS_HANDLE_FAN_COMMAND_1+0x8c>)
+10028a9c:	6011      	str	r1, [r2, #0]
+}
+10028a9e:	e7c8      	b.n	10028a32 <PMBUS_HANDLE_FAN_COMMAND_1+0xa>
+		exponent = -exponent;
+10028aa0:	2108      	movs	r1, #8
+10028aa2:	4249      	negs	r1, r1
+10028aa4:	1acb      	subs	r3, r1, r3
+		value = value >> (exponent);
+10028aa6:	411a      	asrs	r2, r3
+10028aa8:	0011      	movs	r1, r2
+10028aaa:	e7f3      	b.n	10028a94 <PMBUS_HANDLE_FAN_COMMAND_1+0x6c>
+10028aac:	fffff800 	.word	0xfffff800
+10028ab0:	0000ffff 	.word	0x0000ffff
+10028ab4:	70004404 	.word	0x70004404
+
+10028ab8 <PMBUS_HANDLE_FAN_COMMAND_2>:
+ * Linear11 format fan2 command of either duty or rpm depending on fan config
+ * @param page Selects the pmbus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void PMBUS_HANDLE_FAN_COMMAND_2(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+10028ab8:	b570      	push	{r4, r5, r6, lr}
+10028aba:	0004      	movs	r4, r0
+	if ((direction == PMBUS_WRITE)||(direction == OTP_RESTORE))
+10028abc:	2304      	movs	r3, #4
+10028abe:	4399      	bics	r1, r3
+10028ac0:	d000      	beq.n	10028ac4 <PMBUS_HANDLE_FAN_COMMAND_2+0xc>
+			if (data>0xff) data = 0xff; // cap at max
+			FAN_FAN_DUTY__SET(FAN2, data);
+
+		}
+	}
+}
+10028ac2:	bd70      	pop	{r4, r5, r6, pc}
+		uint32_t config = PMBUS_Get_Command_Byte(page, PMBUS_CMDCODE_FAN_CONFIG_1_2);
+10028ac4:	313a      	adds	r1, #58	; 0x3a
+10028ac6:	f7d8 fd8b 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+10028aca:	0005      	movs	r5, r0
+		uint32_t data = PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_FAN_COMMAND_2);
+10028acc:	213c      	movs	r1, #60	; 0x3c
+10028ace:	0020      	movs	r0, r4
+10028ad0:	f7d8 fdc2 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10028ad4:	0ac3      	lsrs	r3, r0, #11
+10028ad6:	b29b      	uxth	r3, r3
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10028ad8:	06da      	lsls	r2, r3, #27
+10028ada:	d502      	bpl.n	10028ae2 <PMBUS_HANDLE_FAN_COMMAND_2+0x2a>
+10028adc:	2220      	movs	r2, #32
+10028ade:	4252      	negs	r2, r2
+10028ae0:	4313      	orrs	r3, r2
+10028ae2:	0542      	lsls	r2, r0, #21
+10028ae4:	0d52      	lsrs	r2, r2, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10028ae6:	0541      	lsls	r1, r0, #21
+10028ae8:	d501      	bpl.n	10028aee <PMBUS_HANDLE_FAN_COMMAND_2+0x36>
+10028aea:	4914      	ldr	r1, [pc, #80]	; (10028b3c <PMBUS_HANDLE_FAN_COMMAND_2+0x84>)
+10028aec:	430a      	orrs	r2, r1
+		if ((config&0x4u)==0x4u)  // fan2 is commanded in RPM
+10028aee:	0769      	lsls	r1, r5, #29
+10028af0:	d512      	bpl.n	10028b18 <PMBUS_HANDLE_FAN_COMMAND_2+0x60>
+			data = (uint32_t)SHIFT_EXPONENT((int32_t)data,(exponent-PMBUS_Q_EXP));  // convert to PMBUS_Q_EXP for division
+10028af2:	0019      	movs	r1, r3
+10028af4:	3110      	adds	r1, #16
+		value = value << (exponent);
+10028af6:	0010      	movs	r0, r2
+10028af8:	4088      	lsls	r0, r1
+	if ( exponent <= 0)
+10028afa:	2900      	cmp	r1, #0
+10028afc:	dd06      	ble.n	10028b0c <PMBUS_HANDLE_FAN_COMMAND_2+0x54>
+			data = (uint32_t)SHIFT_EXPONENT((int32_t)(data/65535),(PMBUS_Q_EXP+8));  // convert to -8 format for register
+10028afe:	4910      	ldr	r1, [pc, #64]	; (10028b40 <PMBUS_HANDLE_FAN_COMMAND_2+0x88>)
+10028b00:	f7d7 fc6f 	bl	100003e2 <__aeabi_uidivmod>
+		value = value >> (exponent);
+10028b04:	1200      	asrs	r0, r0, #8
+10028b06:	4b0f      	ldr	r3, [pc, #60]	; (10028b44 <PMBUS_HANDLE_FAN_COMMAND_2+0x8c>)
+10028b08:	6018      	str	r0, [r3, #0]
+10028b0a:	e7da      	b.n	10028ac2 <PMBUS_HANDLE_FAN_COMMAND_2+0xa>
+		exponent = -exponent;
+10028b0c:	2110      	movs	r1, #16
+10028b0e:	4249      	negs	r1, r1
+10028b10:	1acb      	subs	r3, r1, r3
+		value = value >> (exponent);
+10028b12:	411a      	asrs	r2, r3
+10028b14:	0010      	movs	r0, r2
+10028b16:	e7f2      	b.n	10028afe <PMBUS_HANDLE_FAN_COMMAND_2+0x46>
+			data = (uint32_t)SHIFT_EXPONENT((int32_t)data,(exponent+8));  // convert to U0.8
+10028b18:	0018      	movs	r0, r3
+10028b1a:	3008      	adds	r0, #8
+		value = value << (exponent);
+10028b1c:	0011      	movs	r1, r2
+10028b1e:	4081      	lsls	r1, r0
+	if ( exponent <= 0)
+10028b20:	2800      	cmp	r0, #0
+10028b22:	dd05      	ble.n	10028b30 <PMBUS_HANDLE_FAN_COMMAND_2+0x78>
+10028b24:	29ff      	cmp	r1, #255	; 0xff
+10028b26:	d900      	bls.n	10028b2a <PMBUS_HANDLE_FAN_COMMAND_2+0x72>
+10028b28:	21ff      	movs	r1, #255	; 0xff
+10028b2a:	4a06      	ldr	r2, [pc, #24]	; (10028b44 <PMBUS_HANDLE_FAN_COMMAND_2+0x8c>)
+10028b2c:	6011      	str	r1, [r2, #0]
+}
+10028b2e:	e7c8      	b.n	10028ac2 <PMBUS_HANDLE_FAN_COMMAND_2+0xa>
+		exponent = -exponent;
+10028b30:	2108      	movs	r1, #8
+10028b32:	4249      	negs	r1, r1
+10028b34:	1acb      	subs	r3, r1, r3
+		value = value >> (exponent);
+10028b36:	411a      	asrs	r2, r3
+10028b38:	0011      	movs	r1, r2
+10028b3a:	e7f3      	b.n	10028b24 <PMBUS_HANDLE_FAN_COMMAND_2+0x6c>
+10028b3c:	fffff800 	.word	0xfffff800
+10028b40:	0000ffff 	.word	0x0000ffff
+10028b44:	70004804 	.word	0x70004804
+
+10028b48 <PMBUS_HANDLE_MFR_FREQUENCY_DITHER>:
+ * [3:0] > percentage. Percentage of frequency to modulate by. +/-15% max
+ * @param page Selects the pmbus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void PMBUS_HANDLE_MFR_FREQUENCY_DITHER(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+10028b48:	b570      	push	{r4, r5, r6, lr}
+10028b4a:	0004      	movs	r4, r0
+	if ((direction == PMBUS_WRITE)||(direction == OTP_RESTORE))
+10028b4c:	2304      	movs	r3, #4
+10028b4e:	4399      	bics	r1, r3
+10028b50:	d000      	beq.n	10028b54 <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0xc>
+
+		user_data.period_max[page] = period + delta;
+		if (user_data.period_max[page] > 0x1fff) user_data.period_max[page] = 0x1ff;
+		user_data.period_min[page] = period - delta;
+	}
+}
+10028b52:	bd70      	pop	{r4, r5, r6, pc}
+		user_data.control[page] = PMBUS_Get_Command_Byte(page, PMBUS_CMDCODE_MFR_FREQUENCY_DITHER);
+10028b54:	31c7      	adds	r1, #199	; 0xc7
+10028b56:	f7d8 fd43 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+10028b5a:	0002      	movs	r2, r0
+10028b5c:	4b26      	ldr	r3, [pc, #152]	; (10028bf8 <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0xb0>)
+10028b5e:	191b      	adds	r3, r3, r4
+10028b60:	3384      	adds	r3, #132	; 0x84
+10028b62:	7018      	strb	r0, [r3, #0]
+		percentage = (uint32_t)SHIFT_EXPONENT((int32_t)percentage, (-PMBUS_Q_EXP));  // move to PMBUS_Q_EXP format
+10028b64:	200f      	movs	r0, #15
+10028b66:	4010      	ands	r0, r2
+		value = value << (exponent);
+10028b68:	0400      	lsls	r0, r0, #16
+		percentage = percentage/100;  // convert from percentage to fractional number in PMBUS_Q_EXP format
+10028b6a:	2164      	movs	r1, #100	; 0x64
+10028b6c:	f7d7 fc39 	bl	100003e2 <__aeabi_uidivmod>
+10028b70:	0005      	movs	r5, r0
+		data = PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_FREQUENCY_SWITCH);
+10028b72:	2133      	movs	r1, #51	; 0x33
+10028b74:	0020      	movs	r0, r4
+10028b76:	f7d8 fd6f 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10028b7a:	0543      	lsls	r3, r0, #21
+10028b7c:	0d5b      	lsrs	r3, r3, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10028b7e:	0542      	lsls	r2, r0, #21
+10028b80:	d42a      	bmi.n	10028bd8 <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0x90>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+10028b82:	001a      	movs	r2, r3
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10028b84:	0ac0      	lsrs	r0, r0, #11
+10028b86:	b280      	uxth	r0, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10028b88:	06c3      	lsls	r3, r0, #27
+10028b8a:	d502      	bpl.n	10028b92 <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0x4a>
+10028b8c:	2320      	movs	r3, #32
+10028b8e:	425b      	negs	r3, r3
+10028b90:	4318      	orrs	r0, r3
+		value = value << (exponent);
+10028b92:	0011      	movs	r1, r2
+10028b94:	4081      	lsls	r1, r0
+	if ( exponent <= 0)
+10028b96:	2800      	cmp	r0, #0
+10028b98:	dd21      	ble.n	10028bde <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0x96>
+		freq_khz = (uint16_t)SHIFT_EXPONENT((int32_t)freq_khz, (exponent));
+10028b9a:	0409      	lsls	r1, r1, #16
+10028b9c:	0c09      	lsrs	r1, r1, #16
+		period = 1000000/(freq_khz*SWITCHING_PERIOD_LSB_NS);
+10028b9e:	008b      	lsls	r3, r1, #2
+10028ba0:	1859      	adds	r1, r3, r1
+10028ba2:	0089      	lsls	r1, r1, #2
+10028ba4:	4815      	ldr	r0, [pc, #84]	; (10028bfc <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0xb4>)
+10028ba6:	f7d7 fc1c 	bl	100003e2 <__aeabi_uidivmod>
+10028baa:	4b15      	ldr	r3, [pc, #84]	; (10028c00 <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0xb8>)
+10028bac:	4298      	cmp	r0, r3
+10028bae:	d900      	bls.n	10028bb2 <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0x6a>
+10028bb0:	0018      	movs	r0, r3
+		delta = (uint32_t)SHIFT_EXPONENT((int32_t)(period*percentage), (PMBUS_Q_EXP));
+10028bb2:	4345      	muls	r5, r0
+		value = value >> (exponent);
+10028bb4:	142d      	asrs	r5, r5, #16
+		user_data.period_max[page] = period + delta;
+10028bb6:	182b      	adds	r3, r5, r0
+		if (user_data.period_max[page] > 0x1fff) user_data.period_max[page] = 0x1ff;
+10028bb8:	4a12      	ldr	r2, [pc, #72]	; (10028c04 <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0xbc>)
+10028bba:	4293      	cmp	r3, r2
+10028bbc:	d813      	bhi.n	10028be6 <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0x9e>
+		user_data.period_max[page] = period + delta;
+10028bbe:	0021      	movs	r1, r4
+10028bc0:	311a      	adds	r1, #26
+10028bc2:	0089      	lsls	r1, r1, #2
+10028bc4:	4a0c      	ldr	r2, [pc, #48]	; (10028bf8 <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0xb0>)
+10028bc6:	1852      	adds	r2, r2, r1
+10028bc8:	6053      	str	r3, [r2, #4]
+		user_data.period_min[page] = period - delta;
+10028bca:	341c      	adds	r4, #28
+10028bcc:	00a4      	lsls	r4, r4, #2
+10028bce:	4b0a      	ldr	r3, [pc, #40]	; (10028bf8 <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0xb0>)
+10028bd0:	191c      	adds	r4, r3, r4
+10028bd2:	1b40      	subs	r0, r0, r5
+10028bd4:	6060      	str	r0, [r4, #4]
+}
+10028bd6:	e7bc      	b.n	10028b52 <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0xa>
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10028bd8:	4a0b      	ldr	r2, [pc, #44]	; (10028c08 <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0xc0>)
+10028bda:	431a      	orrs	r2, r3
+10028bdc:	e7d2      	b.n	10028b84 <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0x3c>
+		exponent = -exponent;
+10028bde:	4240      	negs	r0, r0
+		value = value >> (exponent);
+10028be0:	4102      	asrs	r2, r0
+10028be2:	0011      	movs	r1, r2
+10028be4:	e7d9      	b.n	10028b9a <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0x52>
+		if (user_data.period_max[page] > 0x1fff) user_data.period_max[page] = 0x1ff;
+10028be6:	0022      	movs	r2, r4
+10028be8:	321a      	adds	r2, #26
+10028bea:	0092      	lsls	r2, r2, #2
+10028bec:	4b02      	ldr	r3, [pc, #8]	; (10028bf8 <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0xb0>)
+10028bee:	189b      	adds	r3, r3, r2
+10028bf0:	4a03      	ldr	r2, [pc, #12]	; (10028c00 <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0xb8>)
+10028bf2:	605a      	str	r2, [r3, #4]
+10028bf4:	e7e9      	b.n	10028bca <PMBUS_HANDLE_MFR_FREQUENCY_DITHER+0x82>
+10028bf6:	46c0      	nop			; (mov r8, r8)
+10028bf8:	20063a6c 	.word	0x20063a6c
+10028bfc:	000f4240 	.word	0x000f4240
+10028c00:	000001ff 	.word	0x000001ff
+10028c04:	00001fff 	.word	0x00001fff
+10028c08:	fffff800 	.word	0xfffff800
+
+10028c0c <PMBUS_HANDLE_MFR_BOARD_TRIM>:
+ *
+ * @param page Selects the pmbus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void PMBUS_HANDLE_MFR_BOARD_TRIM(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+10028c0c:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+10028c0e:	0004      	movs	r4, r0
+	if ((direction == PMBUS_WRITE)||(direction == OTP_RESTORE))
+10028c10:	2900      	cmp	r1, #0
+10028c12:	d01b      	beq.n	10028c4c <PMBUS_HANDLE_MFR_BOARD_TRIM+0x40>
+10028c14:	2904      	cmp	r1, #4
+10028c16:	d011      	beq.n	10028c3c <PMBUS_HANDLE_MFR_BOARD_TRIM+0x30>
+			uint32_t fine = (data>>11)&0x1f;   //[15:11]	mfr_lo_clk_trim_fine[4:0] U5.0
+			TRIM_LO_TRIM__LO_CLK_TRIM_FINE__SET(fine);
+		}
+		// FIXME: Restore protection here
+	}
+}
+10028c18:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
+		return ((int32_t) (exp & ((1 << (numbits-1)) - 1)));
+10028c1a:	231f      	movs	r3, #31
+10028c1c:	4033      	ands	r3, r6
+10028c1e:	e043      	b.n	10028ca8 <PMBUS_HANDLE_MFR_BOARD_TRIM+0x9c>
+    return *addr;
+10028c20:	4835      	ldr	r0, [pc, #212]	; (10028cf8 <PMBUS_HANDLE_MFR_BOARD_TRIM+0xec>)
+10028c22:	6801      	ldr	r1, [r0, #0]
+ * @param bf_value new value for VSP_OFF_TRIM.VSP2_ADC_OFFSET
+ */
+__TRIM_INLINE void TRIM_VSP_OFF_TRIM__VSP2_ADC_OFFSET__SET(uint32_t bf_value)
+{
+    uint32_t reg = TRIM_VSP_OFF_TRIM__GET();
+    reg = (reg & ~TRIM_VSP_OFF_TRIM__VSP2_ADC_OFFSET__Msk);
+10028c24:	4c35      	ldr	r4, [pc, #212]	; (10028cfc <PMBUS_HANDLE_MFR_BOARD_TRIM+0xf0>)
+10028c26:	4021      	ands	r1, r4
+    reg = (reg | (TRIM_VSP_OFF_TRIM__VSP2_ADC_OFFSET__Shift((uint32_t)bf_value)));
+10028c28:	039b      	lsls	r3, r3, #14
+10028c2a:	24fe      	movs	r4, #254	; 0xfe
+10028c2c:	0364      	lsls	r4, r4, #13
+10028c2e:	4023      	ands	r3, r4
+10028c30:	430b      	orrs	r3, r1
+    *addr = val;
+10028c32:	6003      	str	r3, [r0, #0]
+10028c34:	e042      	b.n	10028cbc <PMBUS_HANDLE_MFR_BOARD_TRIM+0xb0>
+10028c36:	2107      	movs	r1, #7
+10028c38:	4019      	ands	r1, r3
+10028c3a:	e04a      	b.n	10028cd2 <PMBUS_HANDLE_MFR_BOARD_TRIM+0xc6>
+		uint32_t data = PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_MFR_BOARD_TRIM);
+10028c3c:	21cc      	movs	r1, #204	; 0xcc
+10028c3e:	f7d8 fd0b 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10028c42:	0002      	movs	r2, r0
+10028c44:	0005      	movs	r5, r0
+		if ((data&1)!=0)  // if trim is enabled
+10028c46:	07c3      	lsls	r3, r0, #31
+10028c48:	d5e6      	bpl.n	10028c18 <PMBUS_HANDLE_MFR_BOARD_TRIM+0xc>
+10028c4a:	e00b      	b.n	10028c64 <PMBUS_HANDLE_MFR_BOARD_TRIM+0x58>
+		uint32_t data = PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_MFR_BOARD_TRIM);
+10028c4c:	21cc      	movs	r1, #204	; 0xcc
+10028c4e:	f7d8 fd03 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10028c52:	0002      	movs	r2, r0
+10028c54:	0005      	movs	r5, r0
+		if ((data&1)!=0)  // if trim is enabled
+10028c56:	07c3      	lsls	r3, r0, #31
+10028c58:	d5de      	bpl.n	10028c18 <PMBUS_HANDLE_MFR_BOARD_TRIM+0xc>
+			if (((direction == OTP_RESTORE) || (user_data.otp_osc_trim == 0)) && (user_data.board_trim_loaded == 0))
+10028c5a:	23a8      	movs	r3, #168	; 0xa8
+10028c5c:	4928      	ldr	r1, [pc, #160]	; (10028d00 <PMBUS_HANDLE_MFR_BOARD_TRIM+0xf4>)
+10028c5e:	58cb      	ldr	r3, [r1, r3]
+10028c60:	2b00      	cmp	r3, #0
+10028c62:	d117      	bne.n	10028c94 <PMBUS_HANDLE_MFR_BOARD_TRIM+0x88>
+10028c64:	23c4      	movs	r3, #196	; 0xc4
+10028c66:	4926      	ldr	r1, [pc, #152]	; (10028d00 <PMBUS_HANDLE_MFR_BOARD_TRIM+0xf4>)
+10028c68:	5ccb      	ldrb	r3, [r1, r3]
+10028c6a:	2b00      	cmp	r3, #0
+10028c6c:	d112      	bne.n	10028c94 <PMBUS_HANDLE_MFR_BOARD_TRIM+0x88>
+    return *addr;
+10028c6e:	4e22      	ldr	r6, [pc, #136]	; (10028cf8 <PMBUS_HANDLE_MFR_BOARD_TRIM+0xec>)
+10028c70:	6830      	ldr	r0, [r6, #0]
+				user_data.otp_adc_offset[0] = (uint8_t)TRIM_VSP_OFF_TRIM__VSP0_ADC_OFFSET__GET();
+10028c72:	000b      	movs	r3, r1
+ * @return current value of VSP_OFF_TRIM.VSP0_ADC_OFFSET
+ */
+__TRIM_INLINE uint32_t TRIM_VSP_OFF_TRIM__VSP0_ADC_OFFSET__GET(void)
+{
+    uint32_t reg = TRIM_VSP_OFF_TRIM__GET();
+    reg = (reg & TRIM_VSP_OFF_TRIM__VSP0_ADC_OFFSET__Msk);
+10028c74:	217f      	movs	r1, #127	; 0x7f
+10028c76:	4008      	ands	r0, r1
+10028c78:	27ac      	movs	r7, #172	; 0xac
+10028c7a:	55d8      	strb	r0, [r3, r7]
+10028c7c:	6830      	ldr	r0, [r6, #0]
+    reg = (reg >> TRIM_VSP_OFF_TRIM__VSP2_ADC_OFFSET__Pos);
+10028c7e:	0b80      	lsrs	r0, r0, #14
+10028c80:	4001      	ands	r1, r0
+				user_data.otp_adc_offset[1] = (uint8_t)TRIM_VSP_OFF_TRIM__VSP2_ADC_OFFSET__GET();
+10028c82:	20ad      	movs	r0, #173	; 0xad
+10028c84:	5419      	strb	r1, [r3, r0]
+10028c86:	491f      	ldr	r1, [pc, #124]	; (10028d04 <PMBUS_HANDLE_MFR_BOARD_TRIM+0xf8>)
+10028c88:	6808      	ldr	r0, [r1, #0]
+				user_data.otp_osc_trim = TRIM_LO_TRIM__GET();  // store otp value of osc trim
+10028c8a:	21a8      	movs	r1, #168	; 0xa8
+10028c8c:	5058      	str	r0, [r3, r1]
+				user_data.board_trim_loaded = 1;
+10028c8e:	2001      	movs	r0, #1
+10028c90:	311c      	adds	r1, #28
+10028c92:	5458      	strb	r0, [r3, r1]
+			uint32_t offset = user_data.otp_adc_offset[page] + (uint32_t)(TWOS_UNCOMPLEMENT(6, ((data>>1)&0x3f)));
+10028c94:	4b1a      	ldr	r3, [pc, #104]	; (10028d00 <PMBUS_HANDLE_MFR_BOARD_TRIM+0xf4>)
+10028c96:	191b      	adds	r3, r3, r4
+10028c98:	33ac      	adds	r3, #172	; 0xac
+10028c9a:	7818      	ldrb	r0, [r3, #0]
+10028c9c:	086e      	lsrs	r6, r5, #1
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+10028c9e:	066b      	lsls	r3, r5, #25
+10028ca0:	d5bb      	bpl.n	10028c1a <PMBUS_HANDLE_MFR_BOARD_TRIM+0xe>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+10028ca2:	213f      	movs	r1, #63	; 0x3f
+10028ca4:	43b1      	bics	r1, r6
+10028ca6:	43cb      	mvns	r3, r1
+10028ca8:	181b      	adds	r3, r3, r0
+			if (page == PMBUS_PAGE_0)
+10028caa:	2c00      	cmp	r4, #0
+10028cac:	d1b8      	bne.n	10028c20 <PMBUS_HANDLE_MFR_BOARD_TRIM+0x14>
+10028cae:	4c12      	ldr	r4, [pc, #72]	; (10028cf8 <PMBUS_HANDLE_MFR_BOARD_TRIM+0xec>)
+10028cb0:	6820      	ldr	r0, [r4, #0]
+    reg = (reg & ~TRIM_VSP_OFF_TRIM__VSP0_ADC_OFFSET__Msk);
+10028cb2:	217f      	movs	r1, #127	; 0x7f
+10028cb4:	4388      	bics	r0, r1
+    reg = (reg | (TRIM_VSP_OFF_TRIM__VSP0_ADC_OFFSET__Shift((uint32_t)bf_value)));
+10028cb6:	4019      	ands	r1, r3
+10028cb8:	4301      	orrs	r1, r0
+    *addr = val;
+10028cba:	6021      	str	r1, [r4, #0]
+			uint32_t coarse = ((user_data.otp_osc_trim&TRIM_LO_TRIM__LO_CLK_TRIM_COARSE__Msk)
+10028cbc:	23a8      	movs	r3, #168	; 0xa8
+					>> TRIM_LO_TRIM__LO_CLK_TRIM_COARSE__Pos) + (uint32_t)(TWOS_UNCOMPLEMENT(4, ((data>>7)&0xf)));
+10028cbe:	4910      	ldr	r1, [pc, #64]	; (10028d00 <PMBUS_HANDLE_MFR_BOARD_TRIM+0xf4>)
+10028cc0:	58c9      	ldr	r1, [r1, r3]
+10028cc2:	267f      	movs	r6, #127	; 0x7f
+10028cc4:	400e      	ands	r6, r1
+10028cc6:	09eb      	lsrs	r3, r5, #7
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+10028cc8:	0569      	lsls	r1, r5, #21
+10028cca:	d5b4      	bpl.n	10028c36 <PMBUS_HANDLE_MFR_BOARD_TRIM+0x2a>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+10028ccc:	200f      	movs	r0, #15
+10028cce:	4398      	bics	r0, r3
+10028cd0:	43c1      	mvns	r1, r0
+    return *addr;
+10028cd2:	480c      	ldr	r0, [pc, #48]	; (10028d04 <PMBUS_HANDLE_MFR_BOARD_TRIM+0xf8>)
+10028cd4:	6804      	ldr	r4, [r0, #0]
+    reg = (reg & ~TRIM_LO_TRIM__LO_CLK_TRIM_COARSE__Msk);
+10028cd6:	237f      	movs	r3, #127	; 0x7f
+10028cd8:	439c      	bics	r4, r3
+			uint32_t coarse = ((user_data.otp_osc_trim&TRIM_LO_TRIM__LO_CLK_TRIM_COARSE__Msk)
+10028cda:	1989      	adds	r1, r1, r6
+    reg = (reg | (TRIM_LO_TRIM__LO_CLK_TRIM_COARSE__Shift((uint32_t)bf_value)));
+10028cdc:	400b      	ands	r3, r1
+10028cde:	4323      	orrs	r3, r4
+    *addr = val;
+10028ce0:	6003      	str	r3, [r0, #0]
+    return *addr;
+10028ce2:	6803      	ldr	r3, [r0, #0]
+    reg = (reg & ~TRIM_LO_TRIM__LO_CLK_TRIM_FINE__Msk);
+10028ce4:	4908      	ldr	r1, [pc, #32]	; (10028d08 <PMBUS_HANDLE_MFR_BOARD_TRIM+0xfc>)
+10028ce6:	400b      	ands	r3, r1
+    reg = (reg | (TRIM_LO_TRIM__LO_CLK_TRIM_FINE__Shift((uint32_t)bf_value)));
+10028ce8:	00d2      	lsls	r2, r2, #3
+10028cea:	21f8      	movs	r1, #248	; 0xf8
+10028cec:	02c9      	lsls	r1, r1, #11
+10028cee:	400a      	ands	r2, r1
+10028cf0:	431a      	orrs	r2, r3
+    *addr = val;
+10028cf2:	6002      	str	r2, [r0, #0]
+}
+10028cf4:	e790      	b.n	10028c18 <PMBUS_HANDLE_MFR_BOARD_TRIM+0xc>
+10028cf6:	46c0      	nop			; (mov r8, r8)
+10028cf8:	7000000c 	.word	0x7000000c
+10028cfc:	ffe03fff 	.word	0xffe03fff
+10028d00:	20063a6c 	.word	0x20063a6c
+10028d04:	70000004 	.word	0x70000004
+10028d08:	fff83fff 	.word	0xfff83fff
+
+10028d0c <PMBUS_HANDLE_MFR_ISHARE_THRESHOLD>:
+ * Current sharing threshold in linear11 format Amps resolution.
+ * @param page Selects the pmbus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void PMBUS_HANDLE_MFR_ISHARE_THRESHOLD(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+10028d0c:	b510      	push	{r4, lr}
+
+	if ((direction == PMBUS_WRITE)||(direction == OTP_RESTORE))
+10028d0e:	2304      	movs	r3, #4
+10028d10:	4399      	bics	r1, r3
+10028d12:	d000      	beq.n	10028d16 <PMBUS_HANDLE_MFR_ISHARE_THRESHOLD+0xa>
+		// set the adc code absolute value for hysteresis
+		if (data>0xff) data = 0xff;  // cap at register max 255 codes
+		COMMON_ISHARE_DZ__ISHARE_DEAD_ZONE__SET(data);
+	}
+
+}
+10028d14:	bd10      	pop	{r4, pc}
+		uint32_t data = PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_MFR_ISHARE_THRESHOLD);
+10028d16:	31da      	adds	r1, #218	; 0xda
+10028d18:	f7d8 fc9e 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10028d1c:	0ac3      	lsrs	r3, r0, #11
+10028d1e:	b29b      	uxth	r3, r3
+10028d20:	0019      	movs	r1, r3
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10028d22:	06da      	lsls	r2, r3, #27
+10028d24:	d502      	bpl.n	10028d2c <PMBUS_HANDLE_MFR_ISHARE_THRESHOLD+0x20>
+10028d26:	2120      	movs	r1, #32
+10028d28:	4249      	negs	r1, r1
+10028d2a:	4319      	orrs	r1, r3
+10028d2c:	0543      	lsls	r3, r0, #21
+10028d2e:	0d5b      	lsrs	r3, r3, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10028d30:	0542      	lsls	r2, r0, #21
+10028d32:	d417      	bmi.n	10028d64 <PMBUS_HANDLE_MFR_ISHARE_THRESHOLD+0x58>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+10028d34:	001a      	movs	r2, r3
+    return *addr;
+10028d36:	4b0f      	ldr	r3, [pc, #60]	; (10028d74 <PMBUS_HANDLE_MFR_ISHARE_THRESHOLD+0x68>)
+10028d38:	6818      	ldr	r0, [r3, #0]
+    reg = (reg & COMMON_ISHARE__ISHR_SCALE__Msk);
+10028d3a:	231f      	movs	r3, #31
+10028d3c:	4003      	ands	r3, r0
+		data = (uint32_t)SHIFT_EXPONENT((int32_t)(data * cpa), exponent);  // multiply together and shift back down by exponent to get to exp=0
+10028d3e:	435a      	muls	r2, r3
+		value = value << (exponent);
+10028d40:	0013      	movs	r3, r2
+10028d42:	408b      	lsls	r3, r1
+	if ( exponent <= 0)
+10028d44:	2900      	cmp	r1, #0
+10028d46:	dd10      	ble.n	10028d6a <PMBUS_HANDLE_MFR_ISHARE_THRESHOLD+0x5e>
+10028d48:	4a0b      	ldr	r2, [pc, #44]	; (10028d78 <PMBUS_HANDLE_MFR_ISHARE_THRESHOLD+0x6c>)
+10028d4a:	6811      	ldr	r1, [r2, #0]
+ * @param bf_value new value for ISHARE_DZ.ISHARE_DEAD_ZONE
+ */
+__COMMON_INLINE void COMMON_ISHARE_DZ__ISHARE_DEAD_ZONE__SET(uint32_t bf_value)
+{
+    uint32_t reg = COMMON_ISHARE_DZ__GET();
+    reg = (reg & ~COMMON_ISHARE_DZ__ISHARE_DEAD_ZONE__Msk);
+10028d4c:	22ff      	movs	r2, #255	; 0xff
+10028d4e:	4391      	bics	r1, r2
+    reg = (reg | (COMMON_ISHARE_DZ__ISHARE_DEAD_ZONE__Shift((uint32_t)bf_value)));
+10028d50:	001a      	movs	r2, r3
+10028d52:	2bff      	cmp	r3, #255	; 0xff
+10028d54:	d900      	bls.n	10028d58 <PMBUS_HANDLE_MFR_ISHARE_THRESHOLD+0x4c>
+10028d56:	22ff      	movs	r2, #255	; 0xff
+10028d58:	23ff      	movs	r3, #255	; 0xff
+10028d5a:	4013      	ands	r3, r2
+10028d5c:	430b      	orrs	r3, r1
+    *addr = val;
+10028d5e:	4a06      	ldr	r2, [pc, #24]	; (10028d78 <PMBUS_HANDLE_MFR_ISHARE_THRESHOLD+0x6c>)
+10028d60:	6013      	str	r3, [r2, #0]
+}
+10028d62:	e7d7      	b.n	10028d14 <PMBUS_HANDLE_MFR_ISHARE_THRESHOLD+0x8>
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10028d64:	4a05      	ldr	r2, [pc, #20]	; (10028d7c <PMBUS_HANDLE_MFR_ISHARE_THRESHOLD+0x70>)
+10028d66:	431a      	orrs	r2, r3
+10028d68:	e7e5      	b.n	10028d36 <PMBUS_HANDLE_MFR_ISHARE_THRESHOLD+0x2a>
+		exponent = -exponent;
+10028d6a:	4249      	negs	r1, r1
+		value = value >> (exponent);
+10028d6c:	0013      	movs	r3, r2
+10028d6e:	410b      	asrs	r3, r1
+10028d70:	e7ea      	b.n	10028d48 <PMBUS_HANDLE_MFR_ISHARE_THRESHOLD+0x3c>
+10028d72:	46c0      	nop			; (mov r8, r8)
+10028d74:	70003020 	.word	0x70003020
+10028d78:	700030a0 	.word	0x700030a0
+10028d7c:	fffff800 	.word	0xfffff800
+
+10028d80 <PMBUS_HANDLE_MFR_ADDED_DROOP_DURING_RAMP>:
+	// update only if a read:
+	if(direction==PMBUS_WRITE)
+	{
+
+	}
+}
+10028d80:	4770      	bx	lr
+	...
+
+10028d84 <PMBUS_HANDLE_MFR_VDD_SCALE>:
+
+void PMBUS_HANDLE_MFR_VDD_SCALE(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+10028d84:	b510      	push	{r4, lr}
+10028d86:	0004      	movs	r4, r0
+	if ((direction == PMBUS_WRITE)||(direction == OTP_RESTORE))
+10028d88:	2304      	movs	r3, #4
+10028d8a:	4399      	bics	r1, r3
+10028d8c:	d000      	beq.n	10028d90 <PMBUS_HANDLE_MFR_VDD_SCALE+0xc>
+	{
+		uint32_t scale = (PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_MFR_VDD_SCALE));
+		REGULATION_APP.vdd_scale_factor[page] = scale;
+	}
+}
+10028d8e:	bd10      	pop	{r4, pc}
+		uint32_t scale = (PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_MFR_VDD_SCALE));
+10028d90:	31d2      	adds	r1, #210	; 0xd2
+10028d92:	f7d8 fc61 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+		REGULATION_APP.vdd_scale_factor[page] = scale;
+10028d96:	3412      	adds	r4, #18
+10028d98:	00a4      	lsls	r4, r4, #2
+10028d9a:	4b02      	ldr	r3, [pc, #8]	; (10028da4 <PMBUS_HANDLE_MFR_VDD_SCALE+0x20>)
+10028d9c:	191c      	adds	r4, r3, r4
+		uint32_t scale = (PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_MFR_VDD_SCALE));
+10028d9e:	6060      	str	r0, [r4, #4]
+}
+10028da0:	e7f5      	b.n	10028d8e <PMBUS_HANDLE_MFR_VDD_SCALE+0xa>
+10028da2:	46c0      	nop			; (mov r8, r8)
+10028da4:	2005ea54 	.word	0x2005ea54
+
+10028da8 <PMBUS_HANDLE_MFR_VIN_SCALE>:
+
+void PMBUS_HANDLE_MFR_VIN_SCALE(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+10028da8:	b510      	push	{r4, lr}
+10028daa:	0004      	movs	r4, r0
+	if ((direction == PMBUS_WRITE)||(direction == OTP_RESTORE))
+10028dac:	2304      	movs	r3, #4
+10028dae:	4399      	bics	r1, r3
+10028db0:	d000      	beq.n	10028db4 <PMBUS_HANDLE_MFR_VIN_SCALE+0xc>
+	{
+		uint32_t scale = (PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_MFR_VIN_SCALE));
+		REGULATION_APP.vin_scale_factor[page] = scale;
+	}
+}
+10028db2:	bd10      	pop	{r4, pc}
+		uint32_t scale = (PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_MFR_VIN_SCALE));
+10028db4:	31d3      	adds	r1, #211	; 0xd3
+10028db6:	f7d8 fc4f 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+		REGULATION_APP.vin_scale_factor[page] = scale;
+10028dba:	3414      	adds	r4, #20
+10028dbc:	00a4      	lsls	r4, r4, #2
+10028dbe:	4b02      	ldr	r3, [pc, #8]	; (10028dc8 <PMBUS_HANDLE_MFR_VIN_SCALE+0x20>)
+10028dc0:	191c      	adds	r4, r3, r4
+		uint32_t scale = (PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_MFR_VIN_SCALE));
+10028dc2:	6060      	str	r0, [r4, #4]
+}
+10028dc4:	e7f5      	b.n	10028db2 <PMBUS_HANDLE_MFR_VIN_SCALE+0xa>
+10028dc6:	46c0      	nop			; (mov r8, r8)
+10028dc8:	2005ea54 	.word	0x2005ea54
+
+10028dcc <PMBUS_HANDLE_MFR_FW_CONFIG_UART>:
+
+void PMBUS_HANDLE_MFR_FW_CONFIG_UART(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+10028dcc:	b510      	push	{r4, lr}
+10028dce:	000c      	movs	r4, r1
+	int32_t status;
+	if ((direction == PMBUS_WRITE)||(direction == OTP_RESTORE))
+10028dd0:	2304      	movs	r3, #4
+10028dd2:	000a      	movs	r2, r1
+10028dd4:	439a      	bics	r2, r3
+10028dd6:	d124      	bne.n	10028e22 <PMBUS_HANDLE_MFR_FW_CONFIG_UART+0x56>
+ * @param cmd Selects the pmbus command to operate on.
+ * @return Returns the pointer to the uint8_t data array.
+ */
+__DRIVER_COMMON_INLINE uint8_t * PMBUS_GET_DATA_ARRAY_POINTER(PMBUS_PAGE_t loop, uint8_t cmd)  // worth 5k code size to inline
+{
+	if (loop==PMBUS_PAGE_0)
+10028dd8:	2800      	cmp	r0, #0
+10028dda:	d123      	bne.n	10028e24 <PMBUS_HANDLE_MFR_FW_CONFIG_UART+0x58>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA0;
+10028ddc:	23d4      	movs	r3, #212	; 0xd4
+10028dde:	009b      	lsls	r3, r3, #2
+10028de0:	4a1d      	ldr	r2, [pc, #116]	; (10028e58 <PMBUS_HANDLE_MFR_FW_CONFIG_UART+0x8c>)
+10028de2:	58d3      	ldr	r3, [r2, r3]
+10028de4:	689b      	ldr	r3, [r3, #8]
+		{
+			uint32_t control, arg;
+			uint8_t * data_p = PMBUS_GET_DATA_ARRAY_POINTER(page, PMBUS_CMDCODE_MFR_FW_CONFIG_UART);
+			if (data_p!=NULL)
+10028de6:	2b00      	cmp	r3, #0
+10028de8:	d01b      	beq.n	10028e22 <PMBUS_HANDLE_MFR_FW_CONFIG_UART+0x56>
+				control = (uint32_t)data_p[3] << 24
+						| (uint32_t)data_p[2] << 16
+						| (uint32_t)data_p[1] << 8
+						| (uint32_t)data_p[0];
+
+				arg = (uint32_t)data_p[7] << 24
+10028dea:	79d9      	ldrb	r1, [r3, #7]
+10028dec:	0609      	lsls	r1, r1, #24
+					| (uint32_t)data_p[6] << 16
+10028dee:	799a      	ldrb	r2, [r3, #6]
+10028df0:	0412      	lsls	r2, r2, #16
+10028df2:	4311      	orrs	r1, r2
+					| (uint32_t)data_p[5] << 8
+					| (uint32_t)data_p[4];
+10028df4:	791a      	ldrb	r2, [r3, #4]
+				arg = (uint32_t)data_p[7] << 24
+10028df6:	4311      	orrs	r1, r2
+					| (uint32_t)data_p[5] << 8
+10028df8:	795a      	ldrb	r2, [r3, #5]
+10028dfa:	0212      	lsls	r2, r2, #8
+				arg = (uint32_t)data_p[7] << 24
+10028dfc:	4311      	orrs	r1, r2
+				control = (uint32_t)data_p[3] << 24
+10028dfe:	78d8      	ldrb	r0, [r3, #3]
+10028e00:	0600      	lsls	r0, r0, #24
+						| (uint32_t)data_p[2] << 16
+10028e02:	789a      	ldrb	r2, [r3, #2]
+10028e04:	0412      	lsls	r2, r2, #16
+10028e06:	4310      	orrs	r0, r2
+						| (uint32_t)data_p[0];
+10028e08:	781a      	ldrb	r2, [r3, #0]
+				control = (uint32_t)data_p[3] << 24
+10028e0a:	4310      	orrs	r0, r2
+						| (uint32_t)data_p[1] << 8
+10028e0c:	785b      	ldrb	r3, [r3, #1]
+10028e0e:	021b      	lsls	r3, r3, #8
+				control = (uint32_t)data_p[3] << 24
+10028e10:	4318      	orrs	r0, r3
+				status = UARTdrv->Control(control, arg);
+10028e12:	4b12      	ldr	r3, [pc, #72]	; (10028e5c <PMBUS_HANDLE_MFR_FW_CONFIG_UART+0x90>)
+10028e14:	681b      	ldr	r3, [r3, #0]
+10028e16:	6a9b      	ldr	r3, [r3, #40]	; 0x28
+10028e18:	4798      	blx	r3
+				if (status != DRIVER_OK)
+10028e1a:	2800      	cmp	r0, #0
+10028e1c:	d108      	bne.n	10028e30 <PMBUS_HANDLE_MFR_FW_CONFIG_UART+0x64>
+				{
+					USER_Log_Error(PROGRAM_COUNTER, PMBUS_STATUS_CML_PROCESSOR_FAULT);
+				}
+				if (direction == PMBUS_WRITE)
+10028e1e:	2c00      	cmp	r4, #0
+10028e20:	d00c      	beq.n	10028e3c <PMBUS_HANDLE_MFR_FW_CONFIG_UART+0x70>
+						USER_Log_Error(PROGRAM_COUNTER, PMBUS_STATUS_CML_PROCESSOR_FAULT);
+					}
+				}
+			}
+		}
+}
+10028e22:	bd10      	pop	{r4, pc}
+	else //if (loop==PMBUS_PAGE_1)
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA1;
+10028e24:	23d4      	movs	r3, #212	; 0xd4
+10028e26:	009b      	lsls	r3, r3, #2
+10028e28:	4a0b      	ldr	r2, [pc, #44]	; (10028e58 <PMBUS_HANDLE_MFR_FW_CONFIG_UART+0x8c>)
+10028e2a:	58d3      	ldr	r3, [r2, r3]
+10028e2c:	68db      	ldr	r3, [r3, #12]
+10028e2e:	e7da      	b.n	10028de6 <PMBUS_HANDLE_MFR_FW_CONFIG_UART+0x1a>
+					USER_Log_Error(PROGRAM_COUNTER, PMBUS_STATUS_CML_PROCESSOR_FAULT);
+10028e30:	2103      	movs	r1, #3
+10028e32:	2001      	movs	r0, #1
+10028e34:	4240      	negs	r0, r0
+10028e36:	f000 f8e9 	bl	1002900c <USER_Log_Error>
+10028e3a:	e7f0      	b.n	10028e1e <PMBUS_HANDLE_MFR_FW_CONFIG_UART+0x52>
+					status = UARTdrv->Receive(&dest_buf[0], N_ROWS);
+10028e3c:	4b07      	ldr	r3, [pc, #28]	; (10028e5c <PMBUS_HANDLE_MFR_FW_CONFIG_UART+0x90>)
+10028e3e:	681b      	ldr	r3, [r3, #0]
+10028e40:	699b      	ldr	r3, [r3, #24]
+10028e42:	2180      	movs	r1, #128	; 0x80
+10028e44:	4806      	ldr	r0, [pc, #24]	; (10028e60 <PMBUS_HANDLE_MFR_FW_CONFIG_UART+0x94>)
+10028e46:	4798      	blx	r3
+					if (status != DRIVER_OK)
+10028e48:	2800      	cmp	r0, #0
+10028e4a:	d0ea      	beq.n	10028e22 <PMBUS_HANDLE_MFR_FW_CONFIG_UART+0x56>
+						USER_Log_Error(PROGRAM_COUNTER, PMBUS_STATUS_CML_PROCESSOR_FAULT);
+10028e4c:	2103      	movs	r1, #3
+10028e4e:	2001      	movs	r0, #1
+10028e50:	4240      	negs	r0, r0
+10028e52:	f000 f8db 	bl	1002900c <USER_Log_Error>
+}
+10028e56:	e7e4      	b.n	10028e22 <PMBUS_HANDLE_MFR_FW_CONFIG_UART+0x56>
+10028e58:	2005d534 	.word	0x2005d534
+10028e5c:	20063800 	.word	0x20063800
+10028e60:	20063884 	.word	0x20063884
+
+10028e64 <patch_PMBUS_HANDLE_MFR_FIRMWARE_COMMAND>:
+ * This is an example of how to add new firmware commands to MFR_FIRMWARE_COMMAND PMBus command
+ * @param page Selects the PMBus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void patch_PMBUS_HANDLE_MFR_FIRMWARE_COMMAND(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+10028e64:	b570      	push	{r4, r5, r6, lr}
+10028e66:	0005      	movs	r5, r0
+10028e68:	000c      	movs	r4, r1
+	PMBUS_HANDLE_MFR_FIRMWARE_COMMAND(page, direction); // first call the ROM handle
+10028e6a:	f7e3 ff0b 	bl	1000cc84 <PMBUS_HANDLE_MFR_DISABLE_SECURITY_ONCE+0xc3>
+
+	// Now add new code here:
+	if (direction == PMBUS_WRITE)
+10028e6e:	2c00      	cmp	r4, #0
+10028e70:	d000      	beq.n	10028e74 <patch_PMBUS_HANDLE_MFR_FIRMWARE_COMMAND+0x10>
+			// set the output data in MFR_FIRMWARE_COMMAND_DATA
+			PMBUS_Set_Command_Dword((PMBUS_PAGE_W_BROADCAST_t)page, PMBUS_CMDCODE_MFR_FIRMWARE_COMMAND_DATA, output_data);
+		}
+
+	}
+}
+10028e72:	bd70      	pop	{r4, r5, r6, pc}
+		uint8_t command = PMBUS_Get_Command_Byte(page, PMBUS_CMDCODE_MFR_FIRMWARE_COMMAND);
+10028e74:	21fe      	movs	r1, #254	; 0xfe
+10028e76:	0028      	movs	r0, r5
+10028e78:	f7d8 fbb2 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+		if((PMBUS_MFR_FIRMWARE_COMMAND_SET_e)command  == PMBUS_MFR_FIRMWARE_COMMAND_END_OF_ENUM)
+10028e7c:	281a      	cmp	r0, #26
+10028e7e:	d1f8      	bne.n	10028e72 <patch_PMBUS_HANDLE_MFR_FIRMWARE_COMMAND+0xe>
+			output_data |= (uart_info.status.rx_overflow &1) << 3;
+10028e80:	232c      	movs	r3, #44	; 0x2c
+10028e82:	4a09      	ldr	r2, [pc, #36]	; (10028ea8 <patch_PMBUS_HANDLE_MFR_FIRMWARE_COMMAND+0x44>)
+10028e84:	5cd3      	ldrb	r3, [r2, r3]
+			output_data |= (uart_info.status.rx_break &1) << 4;
+10028e86:	2218      	movs	r2, #24
+10028e88:	401a      	ands	r2, r3
+			output_data |= (uart_info.status.tx_busy &1) << 0;
+10028e8a:	07d9      	lsls	r1, r3, #31
+10028e8c:	0fc9      	lsrs	r1, r1, #31
+			output_data |= (uart_info.status.rx_break &1) << 4;
+10028e8e:	4311      	orrs	r1, r2
+			output_data |= (uart_info.status.rx_framing_error &1) << 5;
+10028e90:	2220      	movs	r2, #32
+10028e92:	401a      	ands	r2, r3
+10028e94:	430a      	orrs	r2, r1
+			output_data |= (uart_info.status.rx_parity_error &1) << 6;
+10028e96:	2140      	movs	r1, #64	; 0x40
+10028e98:	400b      	ands	r3, r1
+10028e9a:	431a      	orrs	r2, r3
+			PMBUS_Set_Command_Dword((PMBUS_PAGE_W_BROADCAST_t)page, PMBUS_CMDCODE_MFR_FIRMWARE_COMMAND_DATA, output_data);
+10028e9c:	31bd      	adds	r1, #189	; 0xbd
+10028e9e:	0028      	movs	r0, r5
+10028ea0:	f7d8 fce6 	bl	10001870 <PMBUS_Set_Command_Byte+0x37>
+}
+10028ea4:	e7e5      	b.n	10028e72 <patch_PMBUS_HANDLE_MFR_FIRMWARE_COMMAND+0xe>
+10028ea6:	46c0      	nop			; (mov r8, r8)
+10028ea8:	2006153c 	.word	0x2006153c
+
+10028eac <PMBUS_HANDLE_MFR_SNAPSHOT_DATA>:
+
+void PMBUS_HANDLE_MFR_SNAPSHOT_DATA(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+
+}
+10028eac:	4770      	bx	lr
+
+10028eae <TON_RISE_VID_REACHED>:
+
+
+}
+#ifdef en_ishare
+void TON_RISE_VID_REACHED(PMBUS_PAGE_t loop)
+{
+10028eae:	b510      	push	{r4, lr}
+	added_droop_enable(loop);
+10028eb0:	f7ff fa62 	bl	10028378 <added_droop_enable>
+}
+10028eb4:	bd10      	pop	{r4, pc}
+
+10028eb6 <TON_DELAY_ENABLE>:
+
+void TON_DELAY_ENABLE(PMBUS_PAGE_t loop){
+10028eb6:	b510      	push	{r4, lr}
+
+#ifdef ramp_switching_frequency_pcmc_startup
+	ramp_switching_frequency_pcmc_startup_enable(loop);
+10028eb8:	f7ff fb40 	bl	1002853c <ramp_switching_frequency_pcmc_startup_enable>
+#endif
+
+}
+10028ebc:	bd10      	pop	{r4, pc}
+
+10028ebe <TON_RISE_ENABLE>:
+
+void TON_RISE_ENABLE(PMBUS_PAGE_t loop)
+{
+10028ebe:	b510      	push	{r4, lr}
+#ifdef en_ishare
+	enable_ishare(loop);
+10028ec0:	f7ff f8e4 	bl	1002808c <enable_ishare>
+#endif
+}
+10028ec4:	bd10      	pop	{r4, pc}
+
+10028ec6 <AT_TARGET_ENABLE>:
+#endif
+void AT_TARGET_ENABLE(PMBUS_PAGE_t loop)
+{
+10028ec6:	b510      	push	{r4, lr}
+#ifdef frequency_dither
+	frequency_dither_enable(loop);
+10028ec8:	f7ff faa8 	bl	1002841c <frequency_dither_enable>
+#endif
+}
+10028ecc:	bd10      	pop	{r4, pc}
+	...
+
+10028ed0 <AT_SHUTDOWN>:
+
+void AT_SHUTDOWN(PMBUS_PAGE_t loop)
+{
+10028ed0:	b510      	push	{r4, lr}
+10028ed2:	0004      	movs	r4, r0
+#ifdef ramp_switching_frequency_pcmc_startup
+	ramp_switching_frequency_pcmc_startup_disable(loop);
+10028ed4:	f7ff fbda 	bl	1002868c <ramp_switching_frequency_pcmc_startup_disable>
+#endif
+
+#ifdef en_ishare
+	disable_ishare(loop);
+10028ed8:	0020      	movs	r0, r4
+10028eda:	f7ff f9a3 	bl	10028224 <disable_ishare>
+    return (uint32_t*)(VCONTROL_BASE + (uint32_t)((uint32_t)idp * VCONTROL_STRIDE));
+10028ede:	4b04      	ldr	r3, [pc, #16]	; (10028ef0 <AT_SHUTDOWN+0x20>)
+10028ee0:	469c      	mov	ip, r3
+10028ee2:	4464      	add	r4, ip
+10028ee4:	02a4      	lsls	r4, r4, #10
+    return *addr;
+10028ee6:	6963      	ldr	r3, [r4, #20]
+    reg = (reg & ~VCONTROL_VC_VRAMP3__VC_VCONTROL_DELTA__Msk);
+10028ee8:	0b5b      	lsrs	r3, r3, #13
+10028eea:	035b      	lsls	r3, r3, #13
+    *addr = val;
+10028eec:	6163      	str	r3, [r4, #20]
+#endif
+
+	VCONTROL_VC_VRAMP3__VC_VCONTROL_DELTA__SET((vcontrol_idx_t) loop, 0);
+}
+10028eee:	bd10      	pop	{r4, pc}
+10028ef0:	001c0005 	.word	0x001c0005
+
+10028ef4 <Telemetry_IRQ_VIN_HANDLE>:
+/**
+ * Callback function for generic telemetry interrupt on VIN source.
+ * Can be used to adjust deadtime or pid settings based on changes in VIN
+ * @param Telemetry_type @ref Telemetry_IRQ_TYPE_t telemetry type to operate on
+ */
+void Telemetry_IRQ_VIN_HANDLE(Telemetry_IRQ_TYPE_t Telemetry_type) {
+10028ef4:	b510      	push	{r4, lr}
+10028ef6:	b082      	sub	sp, #8
+ * @return pointer to _FAULT_s struct from array
+ */
+__TLMCOM_INLINE _Telemetry_s * Telemetry_GET_ARRAY_POINTER(Telemetry_IRQ_TYPE_t Telemetry_type)
+{
+	// if fault type is 0-31 it is a loop fault which index in the array from 0-31 for loop0 and 32-63 for loop1
+	if (Telemetry_type < Telemetry_IRQ_TYPE__END_OF_Telemetry_IRQ_TYPES)
+10028ef8:	280f      	cmp	r0, #15
+10028efa:	d801      	bhi.n	10028f00 <Telemetry_IRQ_VIN_HANDLE+0xc>
+	}
+	else {
+		//Hysteresis threshold
+	}
+
+}
+10028efc:	b002      	add	sp, #8
+10028efe:	bd10      	pop	{r4, pc}
+		return (&Telemetry_ARRAY[Telemetry_type]);
+
+	}
+	else // in the fw faults and hw common cases we are using the fault types above 32 so just add 32 to the type to get an index between 64-95
+	{
+		LOG_ERROR_TYPE(TELEMETRY, WARNING, ILLEGAL_PARAMETER);
+10028f00:	466a      	mov	r2, sp
+10028f02:	4b04      	ldr	r3, [pc, #16]	; (10028f14 <Telemetry_IRQ_VIN_HANDLE+0x20>)
+10028f04:	4669      	mov	r1, sp
+10028f06:	cb11      	ldmia	r3!, {r0, r4}
+10028f08:	c111      	stmia	r1!, {r0, r4}
+10028f0a:	2101      	movs	r1, #1
+10028f0c:	2009      	movs	r0, #9
+10028f0e:	f7d9 fff5 	bl	10002efc <log_buffer_reset+0x2f>
+10028f12:	e7f3      	b.n	10028efc <Telemetry_IRQ_VIN_HANDLE+0x8>
+10028f14:	10029198 	.word	0x10029198
+
+10028f18 <regulation_sm_callbacks_init>:
+{
+10028f18:	b530      	push	{r4, r5, lr}
+10028f1a:	b085      	sub	sp, #20
+	Regulation_set_regulation_event_cb(REGULATION_STATE_AT_TARGET_VID, REGULATION_CONTROLS_ENABLE,
+10028f1c:	4a30      	ldr	r2, [pc, #192]	; (10028fe0 <regulation_sm_callbacks_init+0xc8>)
+10028f1e:	2109      	movs	r1, #9
+10028f20:	2003      	movs	r0, #3
+10028f22:	f7de fe1d 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_TOFF_FALL, REGULATION_CONTROLS_SHUTDOWN,
+10028f26:	4c2f      	ldr	r4, [pc, #188]	; (10028fe4 <regulation_sm_callbacks_init+0xcc>)
+10028f28:	0022      	movs	r2, r4
+10028f2a:	2102      	movs	r1, #2
+10028f2c:	2005      	movs	r0, #5
+10028f2e:	f7de fe17 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_TOFF_FALL, REGULATION_CONTROLS_SHUTDOWN_IMMEDIATE,
+10028f32:	0022      	movs	r2, r4
+10028f34:	2101      	movs	r1, #1
+10028f36:	2005      	movs	r0, #5
+10028f38:	f7de fe12 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_TON_RISE, REGULATION_CONTROLS_ENABLE,
+10028f3c:	4a2a      	ldr	r2, [pc, #168]	; (10028fe8 <regulation_sm_callbacks_init+0xd0>)
+10028f3e:	2109      	movs	r1, #9
+10028f40:	2002      	movs	r0, #2
+10028f42:	f7de fe0d 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_TON_DELAY, REGULATION_CONTROLS_TON_TOFF_DELAY_TIMER,
+10028f46:	4a29      	ldr	r2, [pc, #164]	; (10028fec <regulation_sm_callbacks_init+0xd4>)
+10028f48:	2106      	movs	r1, #6
+10028f4a:	2001      	movs	r0, #1
+10028f4c:	f7de fe08 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_OFF, REGULATION_CONTROLS_SHUTDOWN,
+10028f50:	4c27      	ldr	r4, [pc, #156]	; (10028ff0 <regulation_sm_callbacks_init+0xd8>)
+10028f52:	0022      	movs	r2, r4
+10028f54:	2102      	movs	r1, #2
+10028f56:	2000      	movs	r0, #0
+10028f58:	f7de fe02 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_OFF, REGULATION_CONTROLS_SHUTDOWN_IMMEDIATE,
+10028f5c:	0022      	movs	r2, r4
+10028f5e:	2101      	movs	r1, #1
+10028f60:	2000      	movs	r0, #0
+10028f62:	f7de fdfd 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_TON_RISE, REGULATION_CONTROLS_VID_REACHED,
+10028f66:	4a23      	ldr	r2, [pc, #140]	; (10028ff4 <regulation_sm_callbacks_init+0xdc>)
+10028f68:	210b      	movs	r1, #11
+10028f6a:	2002      	movs	r0, #2
+10028f6c:	f7de fdf8 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_fsw_irq_event_cb(fsw_irq_idx_2, remove_added_droop_irq_callback);
+10028f70:	4921      	ldr	r1, [pc, #132]	; (10028ff8 <regulation_sm_callbacks_init+0xe0>)
+10028f72:	2002      	movs	r0, #2
+10028f74:	f7de fdde 	bl	10007b34 <Regulation_fsw_irq_enable+0x27>
+	Regulation_set_fsw_irq_event_cb(fsw_irq_idx_3, frequency_dither_irq_callback);
+10028f78:	4920      	ldr	r1, [pc, #128]	; (10028ffc <regulation_sm_callbacks_init+0xe4>)
+10028f7a:	2003      	movs	r0, #3
+10028f7c:	f7de fdda 	bl	10007b34 <Regulation_fsw_irq_enable+0x27>
+	Regulation_set_fsw_irq_event_cb(fsw_irq_idx_4, ramp_switching_frequency_pcmc_startup_irq_handle);
+10028f80:	491f      	ldr	r1, [pc, #124]	; (10029000 <regulation_sm_callbacks_init+0xe8>)
+10028f82:	2004      	movs	r0, #4
+10028f84:	f7de fdd6 	bl	10007b34 <Regulation_fsw_irq_enable+0x27>
+	user_data.VIN_Thresh_Exponent = -2;   //Set the threshold exponent
+10028f88:	4d1e      	ldr	r5, [pc, #120]	; (10029004 <regulation_sm_callbacks_init+0xec>)
+10028f8a:	24af      	movs	r4, #175	; 0xaf
+10028f8c:	23fe      	movs	r3, #254	; 0xfe
+10028f8e:	552b      	strb	r3, [r5, r4]
+	Telemetry_Set_Irq_Threshold(TELEM_IRQ7, 96, user_data.VIN_Thresh_Exponent); //24V  in U11.2 - 96
+10028f90:	2202      	movs	r2, #2
+10028f92:	4252      	negs	r2, r2
+10028f94:	2160      	movs	r1, #96	; 0x60
+10028f96:	2007      	movs	r0, #7
+10028f98:	f7e0 fd5e 	bl	10009a58 <Telemetry_Set_Irq_Polarity+0x9b>
+	Telemetry_Set_Irq_Hysteresis_Threshold(TELEM_IRQ7, 80, user_data.VIN_Thresh_Exponent); //20V  in U11.2 - 96
+10028f9c:	572a      	ldrsb	r2, [r5, r4]
+10028f9e:	2150      	movs	r1, #80	; 0x50
+10028fa0:	2007      	movs	r0, #7
+10028fa2:	f7e0 fce5 	bl	10009970 <Telemetry_Sample+0x52b>
+	Telemetry_Setup_Irq(PMBUS_PAGE_0, VIN_0, TELEM_IRQ7, Telemetry_IRQ_VIN_HANDLE);
+10028fa6:	4c18      	ldr	r4, [pc, #96]	; (10029008 <regulation_sm_callbacks_init+0xf0>)
+10028fa8:	0023      	movs	r3, r4
+10028faa:	2207      	movs	r2, #7
+10028fac:	2106      	movs	r1, #6
+10028fae:	2000      	movs	r0, #0
+10028fb0:	f7e0 fd78 	bl	10009aa4 <Telemetry_Set_Irq_Threshold+0x4b>
+	Telemetry_Setup_Irq(PMBUS_PAGE_1, VIN_1, TELEM_IRQ8, Telemetry_IRQ_VIN_HANDLE);
+10028fb4:	0023      	movs	r3, r4
+10028fb6:	2208      	movs	r2, #8
+10028fb8:	2107      	movs	r1, #7
+10028fba:	2001      	movs	r0, #1
+10028fbc:	f7e0 fd72 	bl	10009aa4 <Telemetry_Set_Irq_Threshold+0x4b>
+	FAULTS_SETUP_FAULT(
+10028fc0:	2327      	movs	r3, #39	; 0x27
+10028fc2:	9303      	str	r3, [sp, #12]
+10028fc4:	2300      	movs	r3, #0
+10028fc6:	9302      	str	r3, [sp, #8]
+10028fc8:	2280      	movs	r2, #128	; 0x80
+10028fca:	9201      	str	r2, [sp, #4]
+10028fcc:	9300      	str	r3, [sp, #0]
+10028fce:	3306      	adds	r3, #6
+10028fd0:	3230      	adds	r2, #48	; 0x30
+10028fd2:	2127      	movs	r1, #39	; 0x27
+10028fd4:	2000      	movs	r0, #0
+10028fd6:	f7df f95d 	bl	10008294 <FAULTS_Resolve_Shutdown_Priority+0xa7>
+}
+10028fda:	b005      	add	sp, #20
+10028fdc:	bd30      	pop	{r4, r5, pc}
+10028fde:	46c0      	nop			; (mov r8, r8)
+10028fe0:	10028ec7 	.word	0x10028ec7
+10028fe4:	1002845d 	.word	0x1002845d
+10028fe8:	10028ebf 	.word	0x10028ebf
+10028fec:	10028eb7 	.word	0x10028eb7
+10028ff0:	10028ed1 	.word	0x10028ed1
+10028ff4:	10028eaf 	.word	0x10028eaf
+10028ff8:	100283a1 	.word	0x100283a1
+10028ffc:	10028475 	.word	0x10028475
+10029000:	100286d1 	.word	0x100286d1
+10029004:	20063a6c 	.word	0x20063a6c
+10029008:	10028ef5 	.word	0x10028ef5
+
+1002900c <USER_Log_Error>:
+ * @param program_counter Current program counter logged.  Usually pass PROGRAM_COUNTER
+ * @param cml_status @ref PMBUS_CML_STATUS_e cml error type defined by pmbus spec, value
+ * provided will be used as the bit to set in STATUS_CML pmbus command
+ */
+void USER_Log_Error(uint32_t program_counter, PMBUS_CML_STATUS_e cml_status)
+{
+1002900c:	b510      	push	{r4, lr}
+1002900e:	000a      	movs	r2, r1
+	PMBUS_Log_Error(USER, program_counter, cml_status);
+10029010:	0001      	movs	r1, r0
+10029012:	200f      	movs	r0, #15
+10029014:	f7d8 fbd6 	bl	100017c4 <PMBUS_Inter_Thread_Set_Command+0x77>
+}
+10029018:	bd10      	pop	{r4, pc}
+	...
+
+1002901c <patch_pmbus_mfr_autogen_init>:
+
+void patch_pmbus_mfr_autogen_init(void);
+
+
+void patch_pmbus_mfr_autogen_init(void)
+{
+1002901c:	b510      	push	{r4, lr}
+	pmbus_mfr_autogen_init();
+1002901e:	f7ff fb8d 	bl	1002873c <pmbus_mfr_autogen_init>
+
+	// patch the MFR_FIRMWARE_COMMAND handle:
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_FIRMWARE_COMMAND] = patch_PMBUS_HANDLE_MFR_FIRMWARE_COMMAND;
+10029022:	4903      	ldr	r1, [pc, #12]	; (10029030 <patch_pmbus_mfr_autogen_init+0x14>)
+10029024:	23fe      	movs	r3, #254	; 0xfe
+10029026:	009b      	lsls	r3, r3, #2
+10029028:	4a02      	ldr	r2, [pc, #8]	; (10029034 <patch_pmbus_mfr_autogen_init+0x18>)
+1002902a:	50d1      	str	r1, [r2, r3]
+}
+1002902c:	bd10      	pop	{r4, pc}
+1002902e:	46c0      	nop			; (mov r8, r8)
+10029030:	10028e65 	.word	0x10028e65
+10029034:	2005d954 	.word	0x2005d954
+
+10029038 <user_drv_init>:
+ * Main entry point of the user application.  Good place to set breakpoint when debugging a patch.
+ * This will only get executed a single time prior to configuration loading and before RTOS starts
+ */
+
+void user_drv_init(void)
+{
+10029038:	b510      	push	{r4, lr}
+	memset(&user_data, 0, sizeof(USER_DATA_t));  // ZI the user data
+1002903a:	22c8      	movs	r2, #200	; 0xc8
+1002903c:	2100      	movs	r1, #0
+1002903e:	480a      	ldr	r0, [pc, #40]	; (10029068 <user_drv_init+0x30>)
+10029040:	f000 f860 	bl	10029104 <memset>
+
+	ntc_temp = &user_ntc_temp_lut[0];  // set the ntc lut to rom constant table
+10029044:	4a09      	ldr	r2, [pc, #36]	; (1002906c <user_drv_init+0x34>)
+10029046:	4b0a      	ldr	r3, [pc, #40]	; (10029070 <user_drv_init+0x38>)
+10029048:	601a      	str	r2, [r3, #0]
+
+	// this is the initialization of user pmbus commands autogenerated from pmbus spreadsheet
+	ptr_mfr_specific_init = (mfr_specific_init_ptr) patch_pmbus_mfr_autogen_init;
+1002904a:	4a0a      	ldr	r2, [pc, #40]	; (10029074 <user_drv_init+0x3c>)
+1002904c:	4b0a      	ldr	r3, [pc, #40]	; (10029078 <user_drv_init+0x40>)
+1002904e:	601a      	str	r2, [r3, #0]
+
+	// set the pointer funtion in init of regulation state machine to user callback setup for each state
+	set_module_init_cb(MODULE_REGULATION, regulation_sm_callbacks_init);
+10029050:	490a      	ldr	r1, [pc, #40]	; (1002907c <user_drv_init+0x44>)
+10029052:	2002      	movs	r0, #2
+10029054:	f7db fc4a 	bl	100048ec <scratchpad_semaphore_release+0x33>
+
+	add_on_features_init();
+10029058:	f7ff f80e 	bl	10028078 <add_on_features_init>
+	regulation_sm_callbacks_init();
+1002905c:	f7ff ff5c 	bl	10028f18 <regulation_sm_callbacks_init>
+	patch_pmbus_mfr_autogen_init();
+10029060:	f7ff ffdc 	bl	1002901c <patch_pmbus_mfr_autogen_init>
+
+}
+10029064:	bd10      	pop	{r4, pc}
+10029066:	46c0      	nop			; (mov r8, r8)
+10029068:	20063a6c 	.word	0x20063a6c
+1002906c:	100291a0 	.word	0x100291a0
+10029070:	20061348 	.word	0x20061348
+10029074:	1002901d 	.word	0x1002901d
+10029078:	2005d468 	.word	0x2005d468
+1002907c:	10028f19 	.word	0x10028f19
+
+10029080 <memcpy>:
+10029080:	b5f0      	push	{r4, r5, r6, r7, lr}
+10029082:	0005      	movs	r5, r0
+10029084:	2a0f      	cmp	r2, #15
+10029086:	d92f      	bls.n	100290e8 <memcpy+0x68>
+10029088:	000b      	movs	r3, r1
+1002908a:	4303      	orrs	r3, r0
+1002908c:	079b      	lsls	r3, r3, #30
+1002908e:	d134      	bne.n	100290fa <memcpy+0x7a>
+10029090:	0016      	movs	r6, r2
+10029092:	000c      	movs	r4, r1
+10029094:	0003      	movs	r3, r0
+10029096:	3e10      	subs	r6, #16
+10029098:	0935      	lsrs	r5, r6, #4
+1002909a:	3501      	adds	r5, #1
+1002909c:	012d      	lsls	r5, r5, #4
+1002909e:	1945      	adds	r5, r0, r5
+100290a0:	6827      	ldr	r7, [r4, #0]
+100290a2:	601f      	str	r7, [r3, #0]
+100290a4:	6867      	ldr	r7, [r4, #4]
+100290a6:	605f      	str	r7, [r3, #4]
+100290a8:	68a7      	ldr	r7, [r4, #8]
+100290aa:	609f      	str	r7, [r3, #8]
+100290ac:	68e7      	ldr	r7, [r4, #12]
+100290ae:	3410      	adds	r4, #16
+100290b0:	60df      	str	r7, [r3, #12]
+100290b2:	3310      	adds	r3, #16
+100290b4:	429d      	cmp	r5, r3
+100290b6:	d1f3      	bne.n	100290a0 <memcpy+0x20>
+100290b8:	230f      	movs	r3, #15
+100290ba:	439e      	bics	r6, r3
+100290bc:	3610      	adds	r6, #16
+100290be:	1985      	adds	r5, r0, r6
+100290c0:	1989      	adds	r1, r1, r6
+100290c2:	4013      	ands	r3, r2
+100290c4:	2b03      	cmp	r3, #3
+100290c6:	d91a      	bls.n	100290fe <memcpy+0x7e>
+100290c8:	1f1e      	subs	r6, r3, #4
+100290ca:	2300      	movs	r3, #0
+100290cc:	08b4      	lsrs	r4, r6, #2
+100290ce:	3401      	adds	r4, #1
+100290d0:	00a4      	lsls	r4, r4, #2
+100290d2:	58cf      	ldr	r7, [r1, r3]
+100290d4:	50ef      	str	r7, [r5, r3]
+100290d6:	3304      	adds	r3, #4
+100290d8:	42a3      	cmp	r3, r4
+100290da:	d1fa      	bne.n	100290d2 <memcpy+0x52>
+100290dc:	2403      	movs	r4, #3
+100290de:	43a6      	bics	r6, r4
+100290e0:	1d33      	adds	r3, r6, #4
+100290e2:	4022      	ands	r2, r4
+100290e4:	18c9      	adds	r1, r1, r3
+100290e6:	18ed      	adds	r5, r5, r3
+100290e8:	2a00      	cmp	r2, #0
+100290ea:	d005      	beq.n	100290f8 <memcpy+0x78>
+100290ec:	2300      	movs	r3, #0
+100290ee:	5ccc      	ldrb	r4, [r1, r3]
+100290f0:	54ec      	strb	r4, [r5, r3]
+100290f2:	3301      	adds	r3, #1
+100290f4:	4293      	cmp	r3, r2
+100290f6:	d1fa      	bne.n	100290ee <memcpy+0x6e>
+100290f8:	bdf0      	pop	{r4, r5, r6, r7, pc}
+100290fa:	0005      	movs	r5, r0
+100290fc:	e7f6      	b.n	100290ec <memcpy+0x6c>
+100290fe:	001a      	movs	r2, r3
+10029100:	e7f2      	b.n	100290e8 <memcpy+0x68>
+10029102:	46c0      	nop			; (mov r8, r8)
+
+10029104 <memset>:
+10029104:	b5f0      	push	{r4, r5, r6, r7, lr}
+10029106:	0783      	lsls	r3, r0, #30
+10029108:	d043      	beq.n	10029192 <memset+0x8e>
+1002910a:	1e54      	subs	r4, r2, #1
+1002910c:	2a00      	cmp	r2, #0
+1002910e:	d03f      	beq.n	10029190 <memset+0x8c>
+10029110:	b2ce      	uxtb	r6, r1
+10029112:	0002      	movs	r2, r0
+10029114:	2503      	movs	r5, #3
+10029116:	e002      	b.n	1002911e <memset+0x1a>
+10029118:	001a      	movs	r2, r3
+1002911a:	3c01      	subs	r4, #1
+1002911c:	d338      	bcc.n	10029190 <memset+0x8c>
+1002911e:	1c53      	adds	r3, r2, #1
+10029120:	7016      	strb	r6, [r2, #0]
+10029122:	422b      	tst	r3, r5
+10029124:	d1f8      	bne.n	10029118 <memset+0x14>
+10029126:	2c03      	cmp	r4, #3
+10029128:	d92a      	bls.n	10029180 <memset+0x7c>
+1002912a:	22ff      	movs	r2, #255	; 0xff
+1002912c:	400a      	ands	r2, r1
+1002912e:	0215      	lsls	r5, r2, #8
+10029130:	4315      	orrs	r5, r2
+10029132:	042a      	lsls	r2, r5, #16
+10029134:	4315      	orrs	r5, r2
+10029136:	2c0f      	cmp	r4, #15
+10029138:	d914      	bls.n	10029164 <memset+0x60>
+1002913a:	0027      	movs	r7, r4
+1002913c:	001a      	movs	r2, r3
+1002913e:	3f10      	subs	r7, #16
+10029140:	093e      	lsrs	r6, r7, #4
+10029142:	3601      	adds	r6, #1
+10029144:	0136      	lsls	r6, r6, #4
+10029146:	199e      	adds	r6, r3, r6
+10029148:	6015      	str	r5, [r2, #0]
+1002914a:	6055      	str	r5, [r2, #4]
+1002914c:	6095      	str	r5, [r2, #8]
+1002914e:	60d5      	str	r5, [r2, #12]
+10029150:	3210      	adds	r2, #16
+10029152:	4296      	cmp	r6, r2
+10029154:	d1f8      	bne.n	10029148 <memset+0x44>
+10029156:	220f      	movs	r2, #15
+10029158:	4397      	bics	r7, r2
+1002915a:	3710      	adds	r7, #16
+1002915c:	19db      	adds	r3, r3, r7
+1002915e:	4014      	ands	r4, r2
+10029160:	2c03      	cmp	r4, #3
+10029162:	d90d      	bls.n	10029180 <memset+0x7c>
+10029164:	001a      	movs	r2, r3
+10029166:	1f27      	subs	r7, r4, #4
+10029168:	08be      	lsrs	r6, r7, #2
+1002916a:	3601      	adds	r6, #1
+1002916c:	00b6      	lsls	r6, r6, #2
+1002916e:	199e      	adds	r6, r3, r6
+10029170:	c220      	stmia	r2!, {r5}
+10029172:	42b2      	cmp	r2, r6
+10029174:	d1fc      	bne.n	10029170 <memset+0x6c>
+10029176:	2203      	movs	r2, #3
+10029178:	4397      	bics	r7, r2
+1002917a:	3704      	adds	r7, #4
+1002917c:	19db      	adds	r3, r3, r7
+1002917e:	4014      	ands	r4, r2
+10029180:	2c00      	cmp	r4, #0
+10029182:	d005      	beq.n	10029190 <memset+0x8c>
+10029184:	b2c9      	uxtb	r1, r1
+10029186:	191c      	adds	r4, r3, r4
+10029188:	7019      	strb	r1, [r3, #0]
+1002918a:	3301      	adds	r3, #1
+1002918c:	429c      	cmp	r4, r3
+1002918e:	d1fb      	bne.n	10029188 <memset+0x84>
+10029190:	bdf0      	pop	{r4, r5, r6, r7, pc}
+10029192:	0014      	movs	r4, r2
+10029194:	0003      	movs	r3, r0
+10029196:	e7c6      	b.n	10029126 <memset+0x22>
+10029198:	00000001 	.word	0x00000001
+1002919c:	ffffffff 	.word	0xffffffff
+
+100291a0 <user_ntc_temp_lut>:
+100291a0:	00950095 00950095 00950095 00950095     ................
+100291b0:	00940094 00930093 00920092 00910091     ................
+100291c0:	00900090 008f008f 008e008e 008c008d     ................
+100291d0:	008b008c 008a008b 0089008a 00880089     ................
+100291e0:	00870088 00860087 00850086 00840084     ................
+100291f0:	00830083 00820082 00800081 007f0080     ................
+10029200:	007e007f 007d007e 007c007d 007b007c     ..~.~.}.}.|.|.{.
+10029210:	0079007a 00780079 00770077 00750076     z.y.y.x.w.w.v.u.
+10029220:	00740075 00730074 00720072 00710071     u.t.t.s.r.r.q.q.
+10029230:	006f0070 006e006f 006d006e 006c006d     p.o.o.n.n.m.m.l.
+10029240:	006b006c 006a006b 0069006a 00690069     l.k.k.j.j.i.i.i.
+10029250:	00680068 00670067 00660066 00650065     h.h.g.g.f.f.e.e.
+10029260:	00640065 00630064 00630063 00620062     e.d.d.c.c.c.b.b.
+10029270:	00610061 00600061 005f0060 005f005f     a.a.a.`.`._._._.
+10029280:	005e005e 005d005e 005d005d 005c005c     ^.^.^.].].].\.\.
+10029290:	005b005c 005b005b 005a005a 0059005a     \.[.[.[.Z.Z.Z.Y.
+100292a0:	00590059 00580058 00570058 00570057     Y.Y.X.X.X.W.W.W.
+100292b0:	00560056 00560056 00550055 00540055     V.V.V.V.U.U.U.T.
+100292c0:	00540054 00530053 00530053 00520052     T.T.S.S.S.S.R.R.
+100292d0:	00510052 00510051 00500051 00500050     R.Q.Q.Q.Q.P.P.P.
+100292e0:	004f0050 004f004f 004e004f 004e004e     P.O.O.O.O.N.N.N.
+100292f0:	004d004d 004d004d 004c004c 004c004c     M.M.M.M.L.L.L.L.
+10029300:	004b004b 004b004b 004a004a 004a004a     K.K.K.K.J.J.J.J.
+10029310:	00490049 00490049 00480048 00480048     I.I.I.I.H.H.H.H.
+10029320:	00470048 00470047 00460047 00460046     H.G.G.G.G.F.F.F.
+10029330:	00450046 00450045 00450045 00440044     F.E.E.E.E.E.D.D.
+10029340:	00440044 00430043 00430043 00420042     D.D.C.C.C.C.B.B.
+10029350:	00420042 00410042 00410041 00400041     B.B.B.A.A.A.A.@.
+10029360:	00400040 00400040 003f003f 003f003f     @.@.@.@.?.?.?.?.
+10029370:	003e003f 003e003e 003d003e 003d003d     ?.>.>.>.>.=.=.=.
+10029380:	003d003d 003c003c 003c003c 003b003c     =.=.<.<.<.<.<.;.
+10029390:	003b003b 003b003b 003a003a 003a003a     ;.;.;.;.:.:.:.:.
+100293a0:	00390039 00390039 00380039 00380038     9.9.9.9.9.8.8.8.
+100293b0:	00380038 00370037 00370037 00360037     8.8.7.7.7.7.7.6.
+100293c0:	00360036 00360036 00350035 00350035     6.6.6.6.5.5.5.5.
+100293d0:	00340035 00340034 00340034 00330033     5.4.4.4.4.4.3.3.
+100293e0:	00330033 00320033 00320032 00310032     3.3.3.2.2.2.2.1.
+100293f0:	00310031 00310031 00300030 00300030     1.1.1.1.0.0.0.0.
+10029400:	002f0030 002f002f 002f002f 002e002e     0./././././.....
+10029410:	002e002e 002d002e 002d002d 002d002d     ......-.-.-.-.-.
+10029420:	002c002c 002c002c 002b002c 002b002b     ,.,.,.,.,.+.+.+.
+10029430:	002a002b 002a002a 002a002a 00290029     +.*.*.*.*.*.).).
+10029440:	00290029 00280029 00280028 00280028     ).).).(.(.(.(.(.
+10029450:	00270027 00270027 00260026 00260026     '.'.'.'.&.&.&.&.
+10029460:	00250026 00250025 00240025 00240024     &.%.%.%.%.$.$.$.
+10029470:	00240024 00230023 00230023 00220022     $.$.#.#.#.#.".".
+10029480:	00220022 00210022 00210021 00200021     ".".".!.!.!.!. .
+10029490:	00200020 001f0020 001f001f 001f001f      . . ...........
+100294a0:	001e001e 001e001e 001d001d 001d001d     ................
+100294b0:	001c001c 001c001c 001b001b 001b001b     ................
+100294c0:	001a001a 001a001a 00190019 00180019     ................
+100294d0:	00180018 00170018 00170017 00160017     ................
+100294e0:	00160016 00150015 00150015 00140014     ................
+100294f0:	00130014 00130013 00120012 00120012     ................
+10029500:	00110011 00100011 00100010 000f000f     ................
+10029510:	000e000f 000e000e 000d000d 000c000c     ................
+10029520:	000b000c 000b000b 000a000a 00090009     ................
+10029530:	00080009 00070008 00060007 00060006     ................
+10029540:	00050005 00040004 00030003 00020002     ................
+10029550:	00010001 ffff0000 fffeffff fffdfffe     ................
+10029560:	fffcfffc fffafffb fff9fffa fff7fff8     ................
+10029570:	fff6fff7 fff4fff5 fff2fff3 fff0fff1     ................
+10029580:	ffeeffef ffebffec ffe8ffe9 ffe4ffe6     ................
+10029590:	ffe0ffe2 ffd9ffdd ffd8ffd8 ffd8ffd8     ................

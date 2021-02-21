@@ -1,0 +1,787 @@
+
+.\build\patch/patch.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .bss          000000a8  20063800  20063800  00023800  2**2
+                  ALLOC
+  1 .otp_data     00004000  10020000  10020000  00010000  2**0
+                  ALLOC
+  2 .otp_header   0000001c  10024000  10024000  00010000  2**0
+                  ALLOC
+  3 .txt          00000404  1002401c  1002401c  0001401c  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  4 .otp_patch2   00004000  10024420  10024420  00014420  2**0
+                  ALLOC
+  5 .otp_patch3   00004000  10028420  10028420  00014420  2**0
+                  ALLOC
+  6 .debug_info   000187ef  00000000  00000000  00014420  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 00000fb2  00000000  00000000  0002cc0f  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_loc    00000473  00000000  00000000  0002dbc1  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_aranges 00000108  00000000  00000000  0002e034  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000138  00000000  00000000  0002e13c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_macro  0000a36b  00000000  00000000  0002e274  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_line   00002ce4  00000000  00000000  000385df  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_str    000651e9  00000000  00000000  0003b2c3  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 14 .comment      0000007f  00000000  00000000  000a04ac  2**0
+                  CONTENTS, READONLY
+ 15 .ARM.attributes 00000031  00000000  00000000  000a052b  2**0
+                  CONTENTS, READONLY
+ 16 .debug_frame  0000021c  00000000  00000000  000a055c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .txt:
+
+1002401c <patch_entry>:
+/**
+ * This is the patch entry point, which is called after the patch got
+ * successfully loaded into RAM.
+ */
+void patch_entry(void)
+{
+1002401c:	b510      	push	{r4, lr}
+    // Initialize the .bss and .data section
+    memset(SECTION_BASE_ZI, 0, SECTION_LENGTH_ZI);
+1002401e:	480c      	ldr	r0, [pc, #48]	; (10024050 <patch_entry+0x34>)
+10024020:	4a0c      	ldr	r2, [pc, #48]	; (10024054 <patch_entry+0x38>)
+10024022:	1a12      	subs	r2, r2, r0
+10024024:	2100      	movs	r1, #0
+10024026:	f000 f9b1 	bl	1002438c <memset>
+    memcpy(SECTION_BASE_RW_DESTINATION, SECTION_BASE_RW_SOURCE, SECTION_LENGTH_RW);
+1002402a:	480b      	ldr	r0, [pc, #44]	; (10024058 <patch_entry+0x3c>)
+1002402c:	4a0b      	ldr	r2, [pc, #44]	; (1002405c <patch_entry+0x40>)
+1002402e:	1a12      	subs	r2, r2, r0
+10024030:	490b      	ldr	r1, [pc, #44]	; (10024060 <patch_entry+0x44>)
+10024032:	f000 f969 	bl	10024308 <memcpy>
+    // Initialize ram execution section
+    memcpy(SECTION_BASE_RAM_EXEC_DESTINATION, SECTION_BASE_RAM_EXEC_SOURCE, SECTION_LENGTH_RAM_EXEC);
+10024036:	480b      	ldr	r0, [pc, #44]	; (10024064 <patch_entry+0x48>)
+10024038:	4a0b      	ldr	r2, [pc, #44]	; (10024068 <patch_entry+0x4c>)
+1002403a:	1a12      	subs	r2, r2, r0
+1002403c:	490b      	ldr	r1, [pc, #44]	; (1002406c <patch_entry+0x50>)
+1002403e:	f000 f963 	bl	10024308 <memcpy>
+/* lint requires us to have both a declaration and a definition ... we
+ * could probably bail out through some local lint, but her we simply
+ * play to the rules.
+ */
+HAL_INLINE void HAL_SET32(volatile uint32_t* addr, uint32_t val) {
+    *addr = val;
+10024042:	4a0b      	ldr	r2, [pc, #44]	; (10024070 <patch_entry+0x54>)
+10024044:	4b0b      	ldr	r3, [pc, #44]	; (10024074 <patch_entry+0x58>)
+10024046:	601a      	str	r2, [r3, #0]
+
+
+    SCU_SPARE_FF__SET(0x5971BBBBUL);  // write the patch id to SCU spare for simple test that patch loaded
+    user_drv_init();
+10024048:	f000 f942 	bl	100242d0 <user_drv_init>
+}
+1002404c:	bd10      	pop	{r4, pc}
+1002404e:	46c0      	nop			; (mov r8, r8)
+10024050:	20063800 	.word	0x20063800
+10024054:	200638a8 	.word	0x200638a8
+10024058:	20063800 	.word	0x20063800
+1002405c:	20063800 	.word	0x20063800
+10024060:	10024420 	.word	0x10024420
+10024064:	200638a8 	.word	0x200638a8
+10024068:	200638a8 	.word	0x200638a8
+1002406c:	10024420 	.word	0x10024420
+10024070:	5971bbbb 	.word	0x5971bbbb
+10024074:	40000020 	.word	0x40000020
+
+10024078 <add_on_features_init>:
+#include "pmbus_mfr_autogen.h"
+#include "regulation_state_machine_callbacks.h"
+
+void add_on_features_init (void)
+{
+	user_data.deadtime_flag = 0;	// set flag
+10024078:	2100      	movs	r1, #0
+1002407a:	2375      	movs	r3, #117	; 0x75
+1002407c:	4a01      	ldr	r2, [pc, #4]	; (10024084 <add_on_features_init+0xc>)
+1002407e:	54d1      	strb	r1, [r2, r3]
+}
+10024080:	4770      	bx	lr
+10024082:	46c0      	nop			; (mov r8, r8)
+10024084:	20063830 	.word	0x20063830
+
+10024088 <Set_StartUp_Deadtime>:
+/**
+ * Function to set the startup deadtime of PWM2 DR and PWM6 DR
+ * @param loop regulation loop to operate on.
+ */
+void Set_StartUp_Deadtime(PMBUS_PAGE_t loop)
+{
+10024088:	b530      	push	{r4, r5, lr}
+	if(user_data.deadtime_flag == 0)
+1002408a:	2375      	movs	r3, #117	; 0x75
+1002408c:	4a10      	ldr	r2, [pc, #64]	; (100240d0 <Set_StartUp_Deadtime+0x48>)
+1002408e:	5cd3      	ldrb	r3, [r2, r3]
+10024090:	2b00      	cmp	r3, #0
+10024092:	d11c      	bne.n	100240ce <Set_StartUp_Deadtime+0x46>
+	{
+		user_data.deadtime_flag = 1;
+10024094:	0013      	movs	r3, r2
+10024096:	2101      	movs	r1, #1
+10024098:	2275      	movs	r2, #117	; 0x75
+1002409a:	5499      	strb	r1, [r3, r2]
+ * HW 'behind' this address, changing the address' content.
+ */
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr);
+
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr) {
+    return *addr;
+1002409c:	480d      	ldr	r0, [pc, #52]	; (100240d4 <Set_StartUp_Deadtime+0x4c>)
+1002409e:	6801      	ldr	r1, [r0, #0]
+ * @param bf_value new value for PWM2_DEADTIME.PWM2_DR
+ */
+__PWM_INLINE void PWM_PWM2_DEADTIME__PWM2_DR__SET(uint32_t bf_value)
+{
+    uint32_t reg = PWM_PWM2_DEADTIME__GET();
+    reg = (reg & ~PWM_PWM2_DEADTIME__PWM2_DR__Msk);
+100240a0:	25ff      	movs	r5, #255	; 0xff
+100240a2:	43a9      	bics	r1, r5
+		// Set both PWM2 DR and PWM6 DR with startup PWM2 DR and PWM6 DR
+		PWM_PWM2_DEADTIME__PWM2_DR__SET(user_data.Startup_PWM2_PWM6_dr);
+100240a4:	2472      	movs	r4, #114	; 0x72
+100240a6:	5d1a      	ldrb	r2, [r3, r4]
+    reg = (reg | (PWM_PWM2_DEADTIME__PWM2_DR__Shift((uint32_t)bf_value)));
+100240a8:	430a      	orrs	r2, r1
+    *addr = val;
+100240aa:	6002      	str	r2, [r0, #0]
+    return *addr;
+100240ac:	480a      	ldr	r0, [pc, #40]	; (100240d8 <Set_StartUp_Deadtime+0x50>)
+100240ae:	6801      	ldr	r1, [r0, #0]
+ * @param bf_value new value for PWM6_DEADTIME.PWM6_DR
+ */
+__PWM_INLINE void PWM_PWM6_DEADTIME__PWM6_DR__SET(uint32_t bf_value)
+{
+    uint32_t reg = PWM_PWM6_DEADTIME__GET();
+    reg = (reg & ~PWM_PWM6_DEADTIME__PWM6_DR__Msk);
+100240b0:	43a9      	bics	r1, r5
+		PWM_PWM6_DEADTIME__PWM6_DR__SET(user_data.Startup_PWM2_PWM6_dr);
+100240b2:	5d1a      	ldrb	r2, [r3, r4]
+    reg = (reg | (PWM_PWM6_DEADTIME__PWM6_DR__Shift((uint32_t)bf_value)));
+100240b4:	430a      	orrs	r2, r1
+    *addr = val;
+100240b6:	6002      	str	r2, [r0, #0]
+ * @return Returns the pointer to the uint8_t data array.
+ */
+__DRIVER_COMMON_INLINE uint8_t * PMBUS_GET_DATA_ARRAY_POINTER(PMBUS_PAGE_t loop, uint8_t cmd)  // worth 5k code size to inline
+{
+	if (loop==PMBUS_PAGE_0)
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA0;
+100240b8:	22cf      	movs	r2, #207	; 0xcf
+100240ba:	0092      	lsls	r2, r2, #2
+100240bc:	4907      	ldr	r1, [pc, #28]	; (100240dc <Set_StartUp_Deadtime+0x54>)
+100240be:	588a      	ldr	r2, [r1, r2]
+100240c0:	6892      	ldr	r2, [r2, #8]
+		// to add below PWM12 line for deadtime change to be effective.
+		uint8_t *data = PMBUS_GET_DATA_ARRAY_POINTER(0, PMBUS_CMDCODE_PWM_DEADTIME);
+
+		user_data.SteadyState_PWM2_dr = data[1*2 + 1];	// PWM2 dr
+100240c2:	78d0      	ldrb	r0, [r2, #3]
+100240c4:	2173      	movs	r1, #115	; 0x73
+100240c6:	5458      	strb	r0, [r3, r1]
+		user_data.SteadyState_PWM6_dr = data[5*2 + 1];	// PWM6 dr
+100240c8:	7ad1      	ldrb	r1, [r2, #11]
+100240ca:	2274      	movs	r2, #116	; 0x74
+100240cc:	5499      	strb	r1, [r3, r2]
+	}
+}
+100240ce:	bd30      	pop	{r4, r5, pc}
+100240d0:	20063830 	.word	0x20063830
+100240d4:	70002c58 	.word	0x70002c58
+100240d8:	70002c68 	.word	0x70002c68
+100240dc:	2005d534 	.word	0x2005d534
+
+100240e0 <Set_SteadyState_Deadtime>:
+/**
+ * Function to set the steady state deadtime of PWM2 DR and PWM6 DR
+ * @param loop regulation loop to operate on.
+ */
+void Set_SteadyState_Deadtime(PMBUS_PAGE_t loop)
+{
+100240e0:	b570      	push	{r4, r5, r6, lr}
+	user_data.deadtime_flag = 0;
+100240e2:	4b0d      	ldr	r3, [pc, #52]	; (10024118 <Set_SteadyState_Deadtime+0x38>)
+100240e4:	2100      	movs	r1, #0
+100240e6:	2275      	movs	r2, #117	; 0x75
+100240e8:	5499      	strb	r1, [r3, r2]
+    return *addr;
+100240ea:	4d0c      	ldr	r5, [pc, #48]	; (1002411c <Set_SteadyState_Deadtime+0x3c>)
+100240ec:	6829      	ldr	r1, [r5, #0]
+    reg = (reg & ~PWM_PWM2_DEADTIME__PWM2_DR__Msk);
+100240ee:	26ff      	movs	r6, #255	; 0xff
+100240f0:	43b1      	bics	r1, r6
+	// Set both PWM2 DR and PWM6 DR with the steadystate values
+	PWM_PWM2_DEADTIME__PWM2_DR__SET(user_data.SteadyState_PWM2_dr);
+100240f2:	2473      	movs	r4, #115	; 0x73
+100240f4:	5d1a      	ldrb	r2, [r3, r4]
+    reg = (reg | (PWM_PWM2_DEADTIME__PWM2_DR__Shift((uint32_t)bf_value)));
+100240f6:	430a      	orrs	r2, r1
+    *addr = val;
+100240f8:	602a      	str	r2, [r5, #0]
+    return *addr;
+100240fa:	4d09      	ldr	r5, [pc, #36]	; (10024120 <Set_SteadyState_Deadtime+0x40>)
+100240fc:	6829      	ldr	r1, [r5, #0]
+    reg = (reg & ~PWM_PWM6_DEADTIME__PWM6_DR__Msk);
+100240fe:	43b1      	bics	r1, r6
+	PWM_PWM6_DEADTIME__PWM6_DR__SET(user_data.SteadyState_PWM6_dr);
+10024100:	2274      	movs	r2, #116	; 0x74
+10024102:	5c9a      	ldrb	r2, [r3, r2]
+    reg = (reg | (PWM_PWM6_DEADTIME__PWM6_DR__Shift((uint32_t)bf_value)));
+10024104:	430a      	orrs	r2, r1
+    *addr = val;
+10024106:	602a      	str	r2, [r5, #0]
+    return *addr;
+10024108:	4a06      	ldr	r2, [pc, #24]	; (10024124 <Set_SteadyState_Deadtime+0x44>)
+1002410a:	6811      	ldr	r1, [r2, #0]
+    *addr = val;
+1002410c:	6011      	str	r1, [r2, #0]
+	// to add below PWM12 line for deadtime change to be effective.
+	PWM_PWM12_DEADTIME__SET(PWM_PWM12_DEADTIME__GET());
+
+	// DEBUG - show PWM2 DR startup
+	PMBUS_Set_Command_Byte(loop, PMBUS_CMDCODE_MFR_DBG_DEADTIME, user_data.SteadyState_PWM2_dr);
+1002410e:	5d1a      	ldrb	r2, [r3, r4]
+10024110:	21b3      	movs	r1, #179	; 0xb3
+10024112:	f7dd fb91 	bl	10001838 <PMBUS_Log_Error+0x73>
+}
+10024116:	bd70      	pop	{r4, r5, r6, pc}
+10024118:	20063830 	.word	0x20063830
+1002411c:	70002c58 	.word	0x70002c58
+10024120:	70002c68 	.word	0x70002c68
+10024124:	70002c80 	.word	0x70002c80
+
+10024128 <PMBUS_HANDLE_MFR_DEADTIME>:
+ * Function read the previous DeadTime of pwm2 dr and pwm6 dr and store new MFR DeadTime
+ * @param page Selects the PMBus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void PMBUS_HANDLE_MFR_DEADTIME (PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+10024128:	b570      	push	{r4, r5, r6, lr}
+1002412a:	0004      	movs	r4, r0
+#ifdef deadtime
+
+	if ((direction == PMBUS_WRITE)||(direction == OTP_RESTORE))
+1002412c:	2304      	movs	r3, #4
+1002412e:	4399      	bics	r1, r3
+10024130:	d000      	beq.n	10024134 <PMBUS_HANDLE_MFR_DEADTIME+0xc>
+
+		// DEBUG - to delete later - show PWM2 DR startup
+		PMBUS_Set_Command_Byte(page, PMBUS_CMDCODE_MFR_DBG_DEADTIME, user_data.Startup_PWM2_PWM6_dr);
+	}
+#endif
+}
+10024132:	bd70      	pop	{r4, r5, r6, pc}
+		user_data.Startup_PWM2_PWM6_dr = PMBUS_Get_Command_Byte(page, PMBUS_CMDCODE_MFR_DEADTIME);
+10024134:	31b2      	adds	r1, #178	; 0xb2
+10024136:	f7dd fa53 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+1002413a:	0005      	movs	r5, r0
+1002413c:	2372      	movs	r3, #114	; 0x72
+1002413e:	4a11      	ldr	r2, [pc, #68]	; (10024184 <PMBUS_HANDLE_MFR_DEADTIME+0x5c>)
+10024140:	54d0      	strb	r0, [r2, r3]
+	if (loop==PMBUS_PAGE_0)
+10024142:	2c00      	cmp	r4, #0
+10024144:	d118      	bne.n	10024178 <PMBUS_HANDLE_MFR_DEADTIME+0x50>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA0;
+10024146:	23cf      	movs	r3, #207	; 0xcf
+10024148:	009b      	lsls	r3, r3, #2
+1002414a:	4a0f      	ldr	r2, [pc, #60]	; (10024188 <PMBUS_HANDLE_MFR_DEADTIME+0x60>)
+1002414c:	58d3      	ldr	r3, [r2, r3]
+1002414e:	689a      	ldr	r2, [r3, #8]
+		user_data.SteadyState_PWM2_dr = data[1*2 + 1];	// PWM2 dr
+10024150:	78d1      	ldrb	r1, [r2, #3]
+10024152:	4b0c      	ldr	r3, [pc, #48]	; (10024184 <PMBUS_HANDLE_MFR_DEADTIME+0x5c>)
+10024154:	2073      	movs	r0, #115	; 0x73
+10024156:	5419      	strb	r1, [r3, r0]
+		user_data.SteadyState_PWM6_dr = data[5*2 + 1];	// PWM6 dr
+10024158:	7ad0      	ldrb	r0, [r2, #11]
+1002415a:	2274      	movs	r2, #116	; 0x74
+1002415c:	5498      	strb	r0, [r3, r2]
+		if(user_data.Startup_PWM2_PWM6_dr == 0)
+1002415e:	2d00      	cmp	r5, #0
+10024160:	d102      	bne.n	10024168 <PMBUS_HANDLE_MFR_DEADTIME+0x40>
+			user_data.Startup_PWM2_PWM6_dr = user_data.SteadyState_PWM2_dr;
+10024162:	2372      	movs	r3, #114	; 0x72
+10024164:	4a07      	ldr	r2, [pc, #28]	; (10024184 <PMBUS_HANDLE_MFR_DEADTIME+0x5c>)
+10024166:	54d1      	strb	r1, [r2, r3]
+		PMBUS_Set_Command_Byte(page, PMBUS_CMDCODE_MFR_DBG_DEADTIME, user_data.Startup_PWM2_PWM6_dr);
+10024168:	2372      	movs	r3, #114	; 0x72
+1002416a:	4a06      	ldr	r2, [pc, #24]	; (10024184 <PMBUS_HANDLE_MFR_DEADTIME+0x5c>)
+1002416c:	5cd2      	ldrb	r2, [r2, r3]
+1002416e:	21b3      	movs	r1, #179	; 0xb3
+10024170:	0020      	movs	r0, r4
+10024172:	f7dd fb61 	bl	10001838 <PMBUS_Log_Error+0x73>
+}
+10024176:	e7dc      	b.n	10024132 <PMBUS_HANDLE_MFR_DEADTIME+0xa>
+	else //if (loop==PMBUS_PAGE_1)
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA1;
+10024178:	23cf      	movs	r3, #207	; 0xcf
+1002417a:	009b      	lsls	r3, r3, #2
+1002417c:	4a02      	ldr	r2, [pc, #8]	; (10024188 <PMBUS_HANDLE_MFR_DEADTIME+0x60>)
+1002417e:	58d3      	ldr	r3, [r2, r3]
+10024180:	68da      	ldr	r2, [r3, #12]
+10024182:	e7e5      	b.n	10024150 <PMBUS_HANDLE_MFR_DEADTIME+0x28>
+10024184:	20063830 	.word	0x20063830
+10024188:	2005d534 	.word	0x2005d534
+
+1002418c <PMBUS_HANDLE_MFR_DBG_DEADTIME>:
+ * Function read the previous DeadTime of pwm2 dr and pwm6 dr and store new MFR dbg DeadTime
+ * @param page Selects the PMBus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void PMBUS_HANDLE_MFR_DBG_DEADTIME (PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+1002418c:	b510      	push	{r4, lr}
+#ifdef deadtime
+	if (direction == PMBUS_READ)
+1002418e:	2901      	cmp	r1, #1
+10024190:	d000      	beq.n	10024194 <PMBUS_HANDLE_MFR_DBG_DEADTIME+0x8>
+//		PMBUS_Set_Command_Byte(page, PMBUS_CMDCODE_MFR_DBG_DEADTIME, user_data.Startup_PWM2_PWM6_dr);
+
+		PMBUS_Set_Command_Byte(page, PMBUS_CMDCODE_MFR_DBG_DEADTIME, (uint8_t)PWM_PWM2_DEADTIME__PWM2_DR__GET());
+	}
+#endif
+}
+10024192:	bd10      	pop	{r4, pc}
+    return *addr;
+10024194:	4b03      	ldr	r3, [pc, #12]	; (100241a4 <PMBUS_HANDLE_MFR_DBG_DEADTIME+0x18>)
+10024196:	681a      	ldr	r2, [r3, #0]
+		PMBUS_Set_Command_Byte(page, PMBUS_CMDCODE_MFR_DBG_DEADTIME, (uint8_t)PWM_PWM2_DEADTIME__PWM2_DR__GET());
+10024198:	b2d2      	uxtb	r2, r2
+1002419a:	31b2      	adds	r1, #178	; 0xb2
+1002419c:	f7dd fb4c 	bl	10001838 <PMBUS_Log_Error+0x73>
+}
+100241a0:	e7f7      	b.n	10024192 <PMBUS_HANDLE_MFR_DBG_DEADTIME+0x6>
+100241a2:	46c0      	nop			; (mov r8, r8)
+100241a4:	70002c58 	.word	0x70002c58
+
+100241a8 <pmbus_mfr_autogen_init>:
+/*
+ * Initializes all of our pmbus structs that were generated by the script
+ * Function gets called to setup command support array, initialize pointers to command data, and describe commands 
+ */
+void pmbus_mfr_autogen_init(void)
+{
+100241a8:	b510      	push	{r4, lr}
+
+
+	/* initialize command structure for MFR_DEADTIME. */
+	// MFR_DEADTIME COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_DEADTIME] = PMBUS_HANDLE_MFR_DEADTIME;
+100241aa:	4c10      	ldr	r4, [pc, #64]	; (100241ec <pmbus_mfr_autogen_init+0x44>)
+100241ac:	22b2      	movs	r2, #178	; 0xb2
+100241ae:	0092      	lsls	r2, r2, #2
+100241b0:	4b0f      	ldr	r3, [pc, #60]	; (100241f0 <pmbus_mfr_autogen_init+0x48>)
+100241b2:	50a3      	str	r3, [r4, r2]
+	//PMBUS_CMD_MFR_DEADTIME.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_DEADTIME.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_DEADTIME.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_DEADTIME.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_DEADTIME.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_DEADTIME.CMD_CONFIG = 0xc18123b2;
+100241b4:	4b0f      	ldr	r3, [pc, #60]	; (100241f4 <pmbus_mfr_autogen_init+0x4c>)
+100241b6:	4910      	ldr	r1, [pc, #64]	; (100241f8 <pmbus_mfr_autogen_init+0x50>)
+100241b8:	6019      	str	r1, [r3, #0]
+	PMBUS_CMD_MFR_DEADTIME.DATA0 = &PMBUS_CMD_MFR_DEADTIME_DATA_LOOP0[0];  // set the pointer to the data array
+100241ba:	4910      	ldr	r1, [pc, #64]	; (100241fc <pmbus_mfr_autogen_init+0x54>)
+100241bc:	6099      	str	r1, [r3, #8]
+	PMBUS_CMD_MFR_DEADTIME.DATA1 = &PMBUS_CMD_MFR_DEADTIME_DATA_LOOP1[0];  // set the pointer to the data array
+100241be:	4910      	ldr	r1, [pc, #64]	; (10024200 <pmbus_mfr_autogen_init+0x58>)
+100241c0:	60d9      	str	r1, [r3, #12]
+	// RANGE SUPPORT for MFR_DEADTIME COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_DEADTIME] = &PMBUS_CMD_MFR_DEADTIME;
+100241c2:	4810      	ldr	r0, [pc, #64]	; (10024204 <pmbus_mfr_autogen_init+0x5c>)
+100241c4:	5083      	str	r3, [r0, r2]
+	//PMBUS_CMD_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_DEADTIME] = &PMBUS_CMD_MFR_DEADTIME;
+	//lint -e{778} suppress "Constant expression evaluates to 0 in operation '&'" 
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_DEADTIME/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_DEADTIME&31u));
+100241c6:	4a10      	ldr	r2, [pc, #64]	; (10024208 <pmbus_mfr_autogen_init+0x60>)
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_DEADTIME/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_DEADTIME&31u));
+
+	/* initialize command structure for MFR_DBG_DEADTIME. */
+	// MFR_DBG_DEADTIME COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_DBG_DEADTIME] = PMBUS_HANDLE_MFR_DBG_DEADTIME;
+100241c8:	21b3      	movs	r1, #179	; 0xb3
+100241ca:	0089      	lsls	r1, r1, #2
+100241cc:	4b0f      	ldr	r3, [pc, #60]	; (1002420c <pmbus_mfr_autogen_init+0x64>)
+100241ce:	5063      	str	r3, [r4, r1]
+	//PMBUS_CMD_MFR_DBG_DEADTIME.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_DBG_DEADTIME.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_DBG_DEADTIME.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_DBG_DEADTIME.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_DBG_DEADTIME.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_DBG_DEADTIME.CMD_CONFIG = 0xc18123b3;
+100241d0:	4b0f      	ldr	r3, [pc, #60]	; (10024210 <pmbus_mfr_autogen_init+0x68>)
+100241d2:	4c10      	ldr	r4, [pc, #64]	; (10024214 <pmbus_mfr_autogen_init+0x6c>)
+100241d4:	601c      	str	r4, [r3, #0]
+	PMBUS_CMD_MFR_DBG_DEADTIME.DATA0 = &PMBUS_CMD_MFR_DBG_DEADTIME_DATA_LOOP0[0];  // set the pointer to the data array
+100241d6:	4c10      	ldr	r4, [pc, #64]	; (10024218 <pmbus_mfr_autogen_init+0x70>)
+100241d8:	609c      	str	r4, [r3, #8]
+	PMBUS_CMD_MFR_DBG_DEADTIME.DATA1 = &PMBUS_CMD_MFR_DBG_DEADTIME_DATA_LOOP1[0];  // set the pointer to the data array
+100241da:	4c10      	ldr	r4, [pc, #64]	; (1002421c <pmbus_mfr_autogen_init+0x74>)
+100241dc:	60dc      	str	r4, [r3, #12]
+	// RANGE SUPPORT for MFR_DBG_DEADTIME COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_DBG_DEADTIME] = &PMBUS_CMD_MFR_DBG_DEADTIME;
+100241de:	5043      	str	r3, [r0, r1]
+	//PMBUS_CMD_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_DBG_DEADTIME] = &PMBUS_CMD_MFR_DBG_DEADTIME;
+	//lint -e{778} suppress "Constant expression evaluates to 0 in operation '&'" 
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_DBG_DEADTIME/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_DBG_DEADTIME&31u));
+100241e0:	23c0      	movs	r3, #192	; 0xc0
+100241e2:	031b      	lsls	r3, r3, #12
+100241e4:	6951      	ldr	r1, [r2, #20]
+100241e6:	430b      	orrs	r3, r1
+100241e8:	6153      	str	r3, [r2, #20]
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_DBG_DEADTIME/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_DBG_DEADTIME&31u));
+
+}
+100241ea:	bd10      	pop	{r4, pc}
+100241ec:	2005d954 	.word	0x2005d954
+100241f0:	10024129 	.word	0x10024129
+100241f4:	20063808 	.word	0x20063808
+100241f8:	c18123b2 	.word	0xc18123b2
+100241fc:	20063800 	.word	0x20063800
+10024200:	20063828 	.word	0x20063828
+10024204:	2005d534 	.word	0x2005d534
+10024208:	2005d934 	.word	0x2005d934
+1002420c:	1002418d 	.word	0x1002418d
+10024210:	20063818 	.word	0x20063818
+10024214:	c18123b3 	.word	0xc18123b3
+10024218:	2006382c 	.word	0x2006382c
+1002421c:	20063804 	.word	0x20063804
+
+10024220 <TON_DELAY_ENABLE>:
+
+	Regulation_set_regulation_event_cb(REGULATION_STATE_TON_RISE, REGULATION_CONTROLS_VID_REACHED, TON_RISE_VID_REACHED);
+
+}
+
+void TON_DELAY_ENABLE(PMBUS_PAGE_t loop){
+10024220:	b510      	push	{r4, lr}
+
+#ifdef deadtime
+	Set_StartUp_Deadtime(loop);
+10024222:	f7ff ff31 	bl	10024088 <Set_StartUp_Deadtime>
+#endif
+
+}
+10024226:	bd10      	pop	{r4, pc}
+
+10024228 <AT_SHUTDOWN>:
+{
+
+}
+
+void AT_SHUTDOWN(PMBUS_PAGE_t loop)
+{
+10024228:	b510      	push	{r4, lr}
+1002422a:	0004      	movs	r4, r0
+#ifdef deadtime
+	Set_StartUp_Deadtime(loop);
+1002422c:	f7ff ff2c 	bl	10024088 <Set_StartUp_Deadtime>
+ * @param idp index of peripheral
+ * @return base address of peripheral's instance
+ */
+__VCONTROL_INLINE uint32_t* __VCONTROL_BASE_PTR(vcontrol_idx_t idp)
+{
+    return (uint32_t*)(VCONTROL_BASE + (uint32_t)((uint32_t)idp * VCONTROL_STRIDE));
+10024230:	4b04      	ldr	r3, [pc, #16]	; (10024244 <AT_SHUTDOWN+0x1c>)
+10024232:	469c      	mov	ip, r3
+10024234:	4464      	add	r4, ip
+10024236:	02a4      	lsls	r4, r4, #10
+10024238:	6963      	ldr	r3, [r4, #20]
+ * @param bf_value new value for VC_VRAMP3.VC_VCONTROL_DELTA
+ */
+__VCONTROL_INLINE void VCONTROL_VC_VRAMP3__VC_VCONTROL_DELTA__SET(vcontrol_idx_t idp, uint32_t bf_value)
+{
+    uint32_t reg = VCONTROL_VC_VRAMP3__GET(idp);
+    reg = (reg & ~VCONTROL_VC_VRAMP3__VC_VCONTROL_DELTA__Msk);
+1002423a:	0b5b      	lsrs	r3, r3, #13
+1002423c:	035b      	lsls	r3, r3, #13
+    *addr = val;
+1002423e:	6163      	str	r3, [r4, #20]
+#endif
+	VCONTROL_VC_VRAMP3__VC_VCONTROL_DELTA__SET((vcontrol_idx_t) loop, 0);
+}
+10024240:	bd10      	pop	{r4, pc}
+10024242:	46c0      	nop			; (mov r8, r8)
+10024244:	001c0005 	.word	0x001c0005
+
+10024248 <TON_RISE_VID_REACHED>:
+{
+10024248:	b510      	push	{r4, lr}
+	Set_SteadyState_Deadtime(loop);
+1002424a:	f7ff ff49 	bl	100240e0 <Set_SteadyState_Deadtime>
+}
+1002424e:	bd10      	pop	{r4, pc}
+
+10024250 <regulation_sm_callbacks_init>:
+{
+10024250:	b510      	push	{r4, lr}
+	Regulation_set_regulation_event_cb(REGULATION_STATE_TON_DELAY, REGULATION_CONTROLS_TON_TOFF_DELAY_TIMER, TON_DELAY_ENABLE);
+10024252:	4a1a      	ldr	r2, [pc, #104]	; (100242bc <regulation_sm_callbacks_init+0x6c>)
+10024254:	2106      	movs	r1, #6
+10024256:	2001      	movs	r0, #1
+10024258:	f7e3 fc82 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_OFF, REGULATION_CONTROLS_SHUTDOWN, AT_SHUTDOWN);
+1002425c:	4c18      	ldr	r4, [pc, #96]	; (100242c0 <regulation_sm_callbacks_init+0x70>)
+1002425e:	0022      	movs	r2, r4
+10024260:	2102      	movs	r1, #2
+10024262:	2000      	movs	r0, #0
+10024264:	f7e3 fc7c 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_OFF, REGULATION_CONTROLS_SHUTDOWN_IMMEDIATE, AT_SHUTDOWN);
+10024268:	0022      	movs	r2, r4
+1002426a:	2101      	movs	r1, #1
+1002426c:	2000      	movs	r0, #0
+1002426e:	f7e3 fc77 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_AT_TARGET_VID, REGULATION_CONTROLS_SHUTDOWN, AT_SHUTDOWN);
+10024272:	0022      	movs	r2, r4
+10024274:	2102      	movs	r1, #2
+10024276:	2003      	movs	r0, #3
+10024278:	f7e3 fc72 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_AT_TARGET_VID, REGULATION_CONTROLS_SHUTDOWN_IMMEDIATE, AT_SHUTDOWN);
+1002427c:	0022      	movs	r2, r4
+1002427e:	2101      	movs	r1, #1
+10024280:	2003      	movs	r0, #3
+10024282:	f7e3 fc6d 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_TOFF_FALL, REGULATION_CONTROLS_SHUTDOWN, AT_SHUTDOWN);
+10024286:	0022      	movs	r2, r4
+10024288:	2102      	movs	r1, #2
+1002428a:	2005      	movs	r0, #5
+1002428c:	f7e3 fc68 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_TOFF_FALL, REGULATION_CONTROLS_SHUTDOWN_IMMEDIATE, AT_SHUTDOWN);
+10024290:	0022      	movs	r2, r4
+10024292:	2101      	movs	r1, #1
+10024294:	2005      	movs	r0, #5
+10024296:	f7e3 fc63 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_FAULT, REGULATION_CONTROLS_SHUTDOWN, AT_SHUTDOWN);
+1002429a:	0022      	movs	r2, r4
+1002429c:	2102      	movs	r1, #2
+1002429e:	2006      	movs	r0, #6
+100242a0:	f7e3 fc5e 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_FAULT, REGULATION_CONTROLS_SHUTDOWN_IMMEDIATE, AT_SHUTDOWN);
+100242a4:	0022      	movs	r2, r4
+100242a6:	2101      	movs	r1, #1
+100242a8:	2006      	movs	r0, #6
+100242aa:	f7e3 fc59 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_TON_RISE, REGULATION_CONTROLS_VID_REACHED, TON_RISE_VID_REACHED);
+100242ae:	4a05      	ldr	r2, [pc, #20]	; (100242c4 <regulation_sm_callbacks_init+0x74>)
+100242b0:	210b      	movs	r1, #11
+100242b2:	2002      	movs	r0, #2
+100242b4:	f7e3 fc54 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+}
+100242b8:	bd10      	pop	{r4, pc}
+100242ba:	46c0      	nop			; (mov r8, r8)
+100242bc:	10024221 	.word	0x10024221
+100242c0:	10024229 	.word	0x10024229
+100242c4:	10024249 	.word	0x10024249
+
+100242c8 <patch_pmbus_mfr_autogen_init>:
+
+void patch_pmbus_mfr_autogen_init(void);
+
+
+void patch_pmbus_mfr_autogen_init(void)
+{
+100242c8:	b510      	push	{r4, lr}
+	pmbus_mfr_autogen_init();
+100242ca:	f7ff ff6d 	bl	100241a8 <pmbus_mfr_autogen_init>
+}
+100242ce:	bd10      	pop	{r4, pc}
+
+100242d0 <user_drv_init>:
+ * Main entry point of the user application.  Good place to set breakpoint when debugging a patch.
+ * This will only get executed a single time prior to configuration loading and before RTOS starts
+ */
+
+void user_drv_init(void)
+{
+100242d0:	b510      	push	{r4, lr}
+	memset(&user_data, 0, sizeof(USER_DATA_t));  // ZI the user data
+100242d2:	2278      	movs	r2, #120	; 0x78
+100242d4:	2100      	movs	r1, #0
+100242d6:	4808      	ldr	r0, [pc, #32]	; (100242f8 <user_drv_init+0x28>)
+100242d8:	f000 f858 	bl	1002438c <memset>
+
+	// this is the initialization of user pmbus commands autogenerated from pmbus spreadsheet
+	ptr_mfr_specific_init = (mfr_specific_init_ptr) patch_pmbus_mfr_autogen_init;
+100242dc:	4a07      	ldr	r2, [pc, #28]	; (100242fc <user_drv_init+0x2c>)
+100242de:	4b08      	ldr	r3, [pc, #32]	; (10024300 <user_drv_init+0x30>)
+100242e0:	601a      	str	r2, [r3, #0]
+
+	// set the pointer funtion in init of regulation state machine to user callback setup for each state
+	set_module_init_cb(MODULE_REGULATION, regulation_sm_callbacks_init);
+100242e2:	4908      	ldr	r1, [pc, #32]	; (10024304 <user_drv_init+0x34>)
+100242e4:	2002      	movs	r0, #2
+100242e6:	f7e0 fb01 	bl	100048ec <scratchpad_semaphore_release+0x33>
+
+	add_on_features_init();
+100242ea:	f7ff fec5 	bl	10024078 <add_on_features_init>
+	regulation_sm_callbacks_init();
+100242ee:	f7ff ffaf 	bl	10024250 <regulation_sm_callbacks_init>
+	pmbus_mfr_autogen_init();
+100242f2:	f7ff ff59 	bl	100241a8 <pmbus_mfr_autogen_init>
+	patch_pmbus_mfr_autogen_init();
+
+}
+100242f6:	bd10      	pop	{r4, pc}
+100242f8:	20063830 	.word	0x20063830
+100242fc:	100242c9 	.word	0x100242c9
+10024300:	2005d468 	.word	0x2005d468
+10024304:	10024251 	.word	0x10024251
+
+10024308 <memcpy>:
+10024308:	b5f0      	push	{r4, r5, r6, r7, lr}
+1002430a:	0005      	movs	r5, r0
+1002430c:	2a0f      	cmp	r2, #15
+1002430e:	d92f      	bls.n	10024370 <memcpy+0x68>
+10024310:	000b      	movs	r3, r1
+10024312:	4303      	orrs	r3, r0
+10024314:	079b      	lsls	r3, r3, #30
+10024316:	d134      	bne.n	10024382 <memcpy+0x7a>
+10024318:	0016      	movs	r6, r2
+1002431a:	000c      	movs	r4, r1
+1002431c:	0003      	movs	r3, r0
+1002431e:	3e10      	subs	r6, #16
+10024320:	0935      	lsrs	r5, r6, #4
+10024322:	3501      	adds	r5, #1
+10024324:	012d      	lsls	r5, r5, #4
+10024326:	1945      	adds	r5, r0, r5
+10024328:	6827      	ldr	r7, [r4, #0]
+1002432a:	601f      	str	r7, [r3, #0]
+1002432c:	6867      	ldr	r7, [r4, #4]
+1002432e:	605f      	str	r7, [r3, #4]
+10024330:	68a7      	ldr	r7, [r4, #8]
+10024332:	609f      	str	r7, [r3, #8]
+10024334:	68e7      	ldr	r7, [r4, #12]
+10024336:	3410      	adds	r4, #16
+10024338:	60df      	str	r7, [r3, #12]
+1002433a:	3310      	adds	r3, #16
+1002433c:	429d      	cmp	r5, r3
+1002433e:	d1f3      	bne.n	10024328 <memcpy+0x20>
+10024340:	230f      	movs	r3, #15
+10024342:	439e      	bics	r6, r3
+10024344:	3610      	adds	r6, #16
+10024346:	1985      	adds	r5, r0, r6
+10024348:	1989      	adds	r1, r1, r6
+1002434a:	4013      	ands	r3, r2
+1002434c:	2b03      	cmp	r3, #3
+1002434e:	d91a      	bls.n	10024386 <memcpy+0x7e>
+10024350:	1f1e      	subs	r6, r3, #4
+10024352:	2300      	movs	r3, #0
+10024354:	08b4      	lsrs	r4, r6, #2
+10024356:	3401      	adds	r4, #1
+10024358:	00a4      	lsls	r4, r4, #2
+1002435a:	58cf      	ldr	r7, [r1, r3]
+1002435c:	50ef      	str	r7, [r5, r3]
+1002435e:	3304      	adds	r3, #4
+10024360:	42a3      	cmp	r3, r4
+10024362:	d1fa      	bne.n	1002435a <memcpy+0x52>
+10024364:	2403      	movs	r4, #3
+10024366:	43a6      	bics	r6, r4
+10024368:	1d33      	adds	r3, r6, #4
+1002436a:	4022      	ands	r2, r4
+1002436c:	18c9      	adds	r1, r1, r3
+1002436e:	18ed      	adds	r5, r5, r3
+10024370:	2a00      	cmp	r2, #0
+10024372:	d005      	beq.n	10024380 <memcpy+0x78>
+10024374:	2300      	movs	r3, #0
+10024376:	5ccc      	ldrb	r4, [r1, r3]
+10024378:	54ec      	strb	r4, [r5, r3]
+1002437a:	3301      	adds	r3, #1
+1002437c:	4293      	cmp	r3, r2
+1002437e:	d1fa      	bne.n	10024376 <memcpy+0x6e>
+10024380:	bdf0      	pop	{r4, r5, r6, r7, pc}
+10024382:	0005      	movs	r5, r0
+10024384:	e7f6      	b.n	10024374 <memcpy+0x6c>
+10024386:	001a      	movs	r2, r3
+10024388:	e7f2      	b.n	10024370 <memcpy+0x68>
+1002438a:	46c0      	nop			; (mov r8, r8)
+
+1002438c <memset>:
+1002438c:	b5f0      	push	{r4, r5, r6, r7, lr}
+1002438e:	0783      	lsls	r3, r0, #30
+10024390:	d043      	beq.n	1002441a <memset+0x8e>
+10024392:	1e54      	subs	r4, r2, #1
+10024394:	2a00      	cmp	r2, #0
+10024396:	d03f      	beq.n	10024418 <memset+0x8c>
+10024398:	b2ce      	uxtb	r6, r1
+1002439a:	0002      	movs	r2, r0
+1002439c:	2503      	movs	r5, #3
+1002439e:	e002      	b.n	100243a6 <memset+0x1a>
+100243a0:	001a      	movs	r2, r3
+100243a2:	3c01      	subs	r4, #1
+100243a4:	d338      	bcc.n	10024418 <memset+0x8c>
+100243a6:	1c53      	adds	r3, r2, #1
+100243a8:	7016      	strb	r6, [r2, #0]
+100243aa:	422b      	tst	r3, r5
+100243ac:	d1f8      	bne.n	100243a0 <memset+0x14>
+100243ae:	2c03      	cmp	r4, #3
+100243b0:	d92a      	bls.n	10024408 <memset+0x7c>
+100243b2:	22ff      	movs	r2, #255	; 0xff
+100243b4:	400a      	ands	r2, r1
+100243b6:	0215      	lsls	r5, r2, #8
+100243b8:	4315      	orrs	r5, r2
+100243ba:	042a      	lsls	r2, r5, #16
+100243bc:	4315      	orrs	r5, r2
+100243be:	2c0f      	cmp	r4, #15
+100243c0:	d914      	bls.n	100243ec <memset+0x60>
+100243c2:	0027      	movs	r7, r4
+100243c4:	001a      	movs	r2, r3
+100243c6:	3f10      	subs	r7, #16
+100243c8:	093e      	lsrs	r6, r7, #4
+100243ca:	3601      	adds	r6, #1
+100243cc:	0136      	lsls	r6, r6, #4
+100243ce:	199e      	adds	r6, r3, r6
+100243d0:	6015      	str	r5, [r2, #0]
+100243d2:	6055      	str	r5, [r2, #4]
+100243d4:	6095      	str	r5, [r2, #8]
+100243d6:	60d5      	str	r5, [r2, #12]
+100243d8:	3210      	adds	r2, #16
+100243da:	4296      	cmp	r6, r2
+100243dc:	d1f8      	bne.n	100243d0 <memset+0x44>
+100243de:	220f      	movs	r2, #15
+100243e0:	4397      	bics	r7, r2
+100243e2:	3710      	adds	r7, #16
+100243e4:	19db      	adds	r3, r3, r7
+100243e6:	4014      	ands	r4, r2
+100243e8:	2c03      	cmp	r4, #3
+100243ea:	d90d      	bls.n	10024408 <memset+0x7c>
+100243ec:	001a      	movs	r2, r3
+100243ee:	1f27      	subs	r7, r4, #4
+100243f0:	08be      	lsrs	r6, r7, #2
+100243f2:	3601      	adds	r6, #1
+100243f4:	00b6      	lsls	r6, r6, #2
+100243f6:	199e      	adds	r6, r3, r6
+100243f8:	c220      	stmia	r2!, {r5}
+100243fa:	42b2      	cmp	r2, r6
+100243fc:	d1fc      	bne.n	100243f8 <memset+0x6c>
+100243fe:	2203      	movs	r2, #3
+10024400:	4397      	bics	r7, r2
+10024402:	3704      	adds	r7, #4
+10024404:	19db      	adds	r3, r3, r7
+10024406:	4014      	ands	r4, r2
+10024408:	2c00      	cmp	r4, #0
+1002440a:	d005      	beq.n	10024418 <memset+0x8c>
+1002440c:	b2c9      	uxtb	r1, r1
+1002440e:	191c      	adds	r4, r3, r4
+10024410:	7019      	strb	r1, [r3, #0]
+10024412:	3301      	adds	r3, #1
+10024414:	429c      	cmp	r4, r3
+10024416:	d1fb      	bne.n	10024410 <memset+0x84>
+10024418:	bdf0      	pop	{r4, r5, r6, r7, pc}
+1002441a:	0014      	movs	r4, r2
+1002441c:	0003      	movs	r3, r0
+1002441e:	e7c6      	b.n	100243ae <memset+0x22>

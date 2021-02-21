@@ -1,0 +1,2437 @@
+
+.\build\patch/patch.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .bss          00000074  20063800  20063800  00023800  2**2
+                  ALLOC
+  1 .otp_data     00004000  10020000  10020000  00010000  2**0
+                  ALLOC
+  2 .otp_header   0000001c  10024000  10024000  00010000  2**0
+                  ALLOC
+  3 .txt          00000e44  1002401c  1002401c  0001401c  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  4 .otp_patch2   00004000  10024e60  10024e60  00014e60  2**0
+                  ALLOC
+  5 .otp_patch3   00004000  10028e60  10028e60  00014e60  2**0
+                  ALLOC
+  6 .debug_info   00022711  00000000  00000000  00014e60  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 000013a0  00000000  00000000  00037571  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_loc    00002637  00000000  00000000  00038911  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_aranges 00000160  00000000  00000000  0003af48  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000418  00000000  00000000  0003b0a8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_macro  0000abb2  00000000  00000000  0003b4c0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_line   00004323  00000000  00000000  00046072  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_str    00065b4c  00000000  00000000  0004a395  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 14 .comment      0000007f  00000000  00000000  000afee1  2**0
+                  CONTENTS, READONLY
+ 15 .ARM.attributes 00000031  00000000  00000000  000aff60  2**0
+                  CONTENTS, READONLY
+ 16 .debug_frame  00000318  00000000  00000000  000aff94  2**2
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .txt:
+
+1002401c <patch_entry>:
+/**
+ * This is the patch entry point, which is called after the patch got
+ * successfully loaded into RAM.
+ */
+void patch_entry(void)
+{
+1002401c:	b510      	push	{r4, lr}
+    // Initialize the .bss and .data section
+    memset(SECTION_BASE_ZI, 0, SECTION_LENGTH_ZI);
+1002401e:	480c      	ldr	r0, [pc, #48]	; (10024050 <patch_entry+0x34>)
+10024020:	4a0c      	ldr	r2, [pc, #48]	; (10024054 <patch_entry+0x38>)
+10024022:	1a12      	subs	r2, r2, r0
+10024024:	2100      	movs	r1, #0
+10024026:	f000 fec5 	bl	10024db4 <memset>
+    memcpy(SECTION_BASE_RW_DESTINATION, SECTION_BASE_RW_SOURCE, SECTION_LENGTH_RW);
+1002402a:	480b      	ldr	r0, [pc, #44]	; (10024058 <patch_entry+0x3c>)
+1002402c:	4a0b      	ldr	r2, [pc, #44]	; (1002405c <patch_entry+0x40>)
+1002402e:	1a12      	subs	r2, r2, r0
+10024030:	490b      	ldr	r1, [pc, #44]	; (10024060 <patch_entry+0x44>)
+10024032:	f000 fe7d 	bl	10024d30 <memcpy>
+    // Initialize ram execution section
+    memcpy(SECTION_BASE_RAM_EXEC_DESTINATION, SECTION_BASE_RAM_EXEC_SOURCE, SECTION_LENGTH_RAM_EXEC);
+10024036:	480b      	ldr	r0, [pc, #44]	; (10024064 <patch_entry+0x48>)
+10024038:	4a0b      	ldr	r2, [pc, #44]	; (10024068 <patch_entry+0x4c>)
+1002403a:	1a12      	subs	r2, r2, r0
+1002403c:	490b      	ldr	r1, [pc, #44]	; (1002406c <patch_entry+0x50>)
+1002403e:	f000 fe77 	bl	10024d30 <memcpy>
+/* lint requires us to have both a declaration and a definition ... we
+ * could probably bail out through some local lint, but her we simply
+ * play to the rules.
+ */
+HAL_INLINE void HAL_SET32(volatile uint32_t* addr, uint32_t val) {
+    *addr = val;
+10024042:	4a0b      	ldr	r2, [pc, #44]	; (10024070 <patch_entry+0x54>)
+10024044:	4b0b      	ldr	r3, [pc, #44]	; (10024074 <patch_entry+0x58>)
+10024046:	601a      	str	r2, [r3, #0]
+
+
+    SCU_SPARE_FF__SET(0x5971BBBBUL);  // write the patch id to SCU spare for simple test that patch loaded
+    user_drv_init();
+10024048:	f000 fe4e 	bl	10024ce8 <user_drv_init>
+}
+1002404c:	bd10      	pop	{r4, pc}
+1002404e:	46c0      	nop			; (mov r8, r8)
+10024050:	20063800 	.word	0x20063800
+10024054:	20063874 	.word	0x20063874
+10024058:	20063800 	.word	0x20063800
+1002405c:	20063800 	.word	0x20063800
+10024060:	10024e60 	.word	0x10024e60
+10024064:	20063874 	.word	0x20063874
+10024068:	20063874 	.word	0x20063874
+1002406c:	10024e60 	.word	0x10024e60
+10024070:	5971bbbb 	.word	0x5971bbbb
+10024074:	40000020 	.word	0x40000020
+
+10024078 <add_on_features_init>:
+#include "pmbus_mfr_autogen.h"
+
+void add_on_features_init (void)
+{
+	uint8_t test1 = 0;
+}
+10024078:	4770      	bx	lr
+	...
+
+1002407c <patch_PMBUS_HANDLE_IOUT_CAL_OFFSET>:
+ * Callback or Handle function called by pmbus thread after a read or write of given command
+ * @param page Selects the pmbus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void patch_PMBUS_HANDLE_IOUT_CAL_OFFSET(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+1002407c:	b570      	push	{r4, r5, r6, lr}
+1002407e:	0004      	movs	r4, r0
+	// if write:
+	if ((direction == PMBUS_WRITE)||(direction == OTP_RESTORE))
+10024080:	2304      	movs	r3, #4
+10024082:	4399      	bics	r1, r3
+10024084:	d000      	beq.n	10024088 <patch_PMBUS_HANDLE_IOUT_CAL_OFFSET+0xc>
+		/* iout scale Example Modification End */
+		value = SHIFT_EXPONENT(value, (exponent-IOUT_CAL_OFFSET_EXPONENT));
+		if (value > 0xff) value = 0xff;
+		ISEN_ISP_APC__ISP_IOFFSET__SET((isen_idx_t)page, (uint32_t)value);
+	}
+}
+10024086:	bd70      	pop	{r4, r5, r6, pc}
+		int32_t value = LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_IOUT_CAL_OFFSET));
+10024088:	3139      	adds	r1, #57	; 0x39
+1002408a:	f7dd fae5 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+1002408e:	0543      	lsls	r3, r0, #21
+10024090:	0d5b      	lsrs	r3, r3, #21
+ * Takes a linear11 format (16bit, 5bit exponent 11bit mantissa) number
+ * and extracts the mantissa
+ */
+__DRIVER_INLINE int32_t LINEAR11_TO_MANTISSA(uint16_t packed_linear_format_number)
+{
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+10024092:	001d      	movs	r5, r3
+	int32_t mant_signbit=mant_bits & 0x0400;
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024094:	0542      	lsls	r2, r0, #21
+10024096:	d501      	bpl.n	1002409c <patch_PMBUS_HANDLE_IOUT_CAL_OFFSET+0x20>
+10024098:	4d14      	ldr	r5, [pc, #80]	; (100240ec <patch_PMBUS_HANDLE_IOUT_CAL_OFFSET+0x70>)
+1002409a:	431d      	orrs	r5, r3
+		exponent = LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_IOUT_CAL_OFFSET)) - 1;
+1002409c:	2139      	movs	r1, #57	; 0x39
+1002409e:	0020      	movs	r0, r4
+100240a0:	f7dd fada 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+ * Takes a linear11 format (16bit, 5bit exponent 11bit mantissa) number
+ * and extracts the exponent
+ */
+__DRIVER_INLINE int32_t LINEAR11_TO_EXPONENT(uint16_t packed_linear_format_number)
+{
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+100240a4:	0ac0      	lsrs	r0, r0, #11
+100240a6:	b280      	uxth	r0, r0
+	int32_t exp_signbit=exp_bits & 0x0010;
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+100240a8:	06c3      	lsls	r3, r0, #27
+100240aa:	d502      	bpl.n	100240b2 <patch_PMBUS_HANDLE_IOUT_CAL_OFFSET+0x36>
+100240ac:	2320      	movs	r3, #32
+100240ae:	425b      	negs	r3, r3
+100240b0:	4318      	orrs	r0, r3
+		value = SHIFT_EXPONENT(value, (exponent-IOUT_CAL_OFFSET_EXPONENT));
+100240b2:	1c82      	adds	r2, r0, #2
+		exponent = -exponent;
+		value = value >> (exponent);
+	}
+	else
+	{
+		value = value << (exponent);
+100240b4:	002b      	movs	r3, r5
+100240b6:	4093      	lsls	r3, r2
+	if ( exponent <= 0)
+100240b8:	2a00      	cmp	r2, #0
+100240ba:	dd10      	ble.n	100240de <patch_PMBUS_HANDLE_IOUT_CAL_OFFSET+0x62>
+ * @param idp index of peripheral
+ * @return base address of peripheral's instance
+ */
+__ISEN_INLINE uint32_t* __ISEN_BASE_PTR(isen_idx_t idp)
+{
+    return (uint32_t*)(ISEN_BASE + (uint32_t)((uint32_t)idp * ISEN_STRIDE));
+100240bc:	4a0c      	ldr	r2, [pc, #48]	; (100240f0 <patch_PMBUS_HANDLE_IOUT_CAL_OFFSET+0x74>)
+100240be:	4694      	mov	ip, r2
+100240c0:	4464      	add	r4, ip
+100240c2:	02a4      	lsls	r4, r4, #10
+ * HW 'behind' this address, changing the address' content.
+ */
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr);
+
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr) {
+    return *addr;
+100240c4:	69a2      	ldr	r2, [r4, #24]
+ * @param bf_value new value for ISP_APC.ISP_IOFFSET
+ */
+__ISEN_INLINE void ISEN_ISP_APC__ISP_IOFFSET__SET(isen_idx_t idp, uint32_t bf_value)
+{
+    uint32_t reg = ISEN_ISP_APC__GET(idp);
+    reg = (reg & ~ISEN_ISP_APC__ISP_IOFFSET__Msk);
+100240c6:	490b      	ldr	r1, [pc, #44]	; (100240f4 <patch_PMBUS_HANDLE_IOUT_CAL_OFFSET+0x78>)
+100240c8:	400a      	ands	r2, r1
+		ISEN_ISP_APC__ISP_IOFFSET__SET((isen_idx_t)page, (uint32_t)value);
+100240ca:	2bff      	cmp	r3, #255	; 0xff
+100240cc:	dd00      	ble.n	100240d0 <patch_PMBUS_HANDLE_IOUT_CAL_OFFSET+0x54>
+100240ce:	23ff      	movs	r3, #255	; 0xff
+    reg = (reg | (ISEN_ISP_APC__ISP_IOFFSET__Shift((uint32_t)bf_value)));
+100240d0:	02db      	lsls	r3, r3, #11
+100240d2:	21ff      	movs	r1, #255	; 0xff
+100240d4:	02c9      	lsls	r1, r1, #11
+100240d6:	400b      	ands	r3, r1
+100240d8:	4313      	orrs	r3, r2
+    *addr = val;
+100240da:	61a3      	str	r3, [r4, #24]
+}
+100240dc:	e7d3      	b.n	10024086 <patch_PMBUS_HANDLE_IOUT_CAL_OFFSET+0xa>
+		exponent = -exponent;
+100240de:	2302      	movs	r3, #2
+100240e0:	425b      	negs	r3, r3
+100240e2:	1a18      	subs	r0, r3, r0
+		value = value >> (exponent);
+100240e4:	002b      	movs	r3, r5
+100240e6:	4103      	asrs	r3, r0
+100240e8:	e7e8      	b.n	100240bc <patch_PMBUS_HANDLE_IOUT_CAL_OFFSET+0x40>
+100240ea:	46c0      	nop			; (mov r8, r8)
+100240ec:	fffff800 	.word	0xfffff800
+100240f0:	001c0009 	.word	0x001c0009
+100240f4:	fff807ff 	.word	0xfff807ff
+
+100240f8 <patch_PMBUS_HANDLE_IOUT_OC_FAULT_LIMIT>:
+ * Callback or Handle function called by pmbus thread after a read or write of given command
+ * @param page Selects the pmbus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void patch_PMBUS_HANDLE_IOUT_OC_FAULT_LIMIT(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+100240f8:	b570      	push	{r4, r5, r6, lr}
+100240fa:	b084      	sub	sp, #16
+100240fc:	0004      	movs	r4, r0
+	// if write:
+	if (direction == PMBUS_WRITE)
+100240fe:	2900      	cmp	r1, #0
+10024100:	d001      	beq.n	10024106 <patch_PMBUS_HANDLE_IOUT_OC_FAULT_LIMIT+0xe>
+		FAULTS_SETUP_FAULT(page, FAULT_TYPE_IOUT_OC_FAULT, fault_response_cmd_byte,
+								FAULTS_CONFIG_IOUT_DELAY_UNIT, CURRENT_RESPONSE_TYPE,
+								(uint8_t)PMBUS_CMDCODE_STATUS_IOUT, (uint8_t)PMBUS_STATUS_IOUT_OC_FAULT, FAULT_TYPE_IOUT_OC_WARN);
+		Fault_Threshold_Set(page, FAULT_TYPE_IOUT_OC_FAULT, (int32_t)mantissa, (int32_t)exponent);
+	}
+}
+10024102:	b004      	add	sp, #16
+10024104:	bd70      	pop	{r4, r5, r6, pc}
+		int32_t exponent = LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_IOUT_OC_FAULT_LIMIT)) - 1;
+10024106:	3146      	adds	r1, #70	; 0x46
+10024108:	f7dd faa6 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+1002410c:	0ac0      	lsrs	r0, r0, #11
+1002410e:	b280      	uxth	r0, r0
+10024110:	0006      	movs	r6, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10024112:	06c3      	lsls	r3, r0, #27
+10024114:	d502      	bpl.n	1002411c <patch_PMBUS_HANDLE_IOUT_OC_FAULT_LIMIT+0x24>
+10024116:	2620      	movs	r6, #32
+10024118:	4276      	negs	r6, r6
+1002411a:	4306      	orrs	r6, r0
+1002411c:	3e01      	subs	r6, #1
+		uint16_t mantissa = (uint16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_IOUT_OC_FAULT_LIMIT));
+1002411e:	2146      	movs	r1, #70	; 0x46
+10024120:	0020      	movs	r0, r4
+10024122:	f7dd fa99 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024126:	0545      	lsls	r5, r0, #21
+10024128:	0d6d      	lsrs	r5, r5, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+1002412a:	0543      	lsls	r3, r0, #21
+1002412c:	d501      	bpl.n	10024132 <patch_PMBUS_HANDLE_IOUT_OC_FAULT_LIMIT+0x3a>
+1002412e:	4a0e      	ldr	r2, [pc, #56]	; (10024168 <patch_PMBUS_HANDLE_IOUT_OC_FAULT_LIMIT+0x70>)
+10024130:	4315      	orrs	r5, r2
+		uint8_t fault_response_cmd_byte = PMBUS_Get_Command_Byte(page, PMBUS_CMDCODE_IOUT_OC_FAULT_RESPONSE);
+10024132:	2147      	movs	r1, #71	; 0x47
+10024134:	0020      	movs	r0, r4
+10024136:	f7dd fa53 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+1002413a:	0002      	movs	r2, r0
+		FAULTS_SETUP_FAULT(page, FAULT_TYPE_IOUT_OC_FAULT, fault_response_cmd_byte,
+1002413c:	230b      	movs	r3, #11
+1002413e:	9303      	str	r3, [sp, #12]
+10024140:	3b04      	subs	r3, #4
+10024142:	9302      	str	r3, [sp, #8]
+10024144:	3374      	adds	r3, #116	; 0x74
+10024146:	9301      	str	r3, [sp, #4]
+10024148:	3b7a      	subs	r3, #122	; 0x7a
+1002414a:	9300      	str	r3, [sp, #0]
+1002414c:	3301      	adds	r3, #1
+1002414e:	2109      	movs	r1, #9
+10024150:	0020      	movs	r0, r4
+10024152:	f7e4 f89f 	bl	10008294 <FAULTS_Resolve_Shutdown_Priority+0xa7>
+		Fault_Threshold_Set(page, FAULT_TYPE_IOUT_OC_FAULT, (int32_t)mantissa, (int32_t)exponent);
+10024156:	042a      	lsls	r2, r5, #16
+10024158:	0c12      	lsrs	r2, r2, #16
+1002415a:	0033      	movs	r3, r6
+1002415c:	2109      	movs	r1, #9
+1002415e:	0020      	movs	r0, r4
+10024160:	f7e4 f9a6 	bl	100084b0 <FAULTS_Uninitialize+0x63>
+}
+10024164:	e7cd      	b.n	10024102 <patch_PMBUS_HANDLE_IOUT_OC_FAULT_LIMIT+0xa>
+10024166:	46c0      	nop			; (mov r8, r8)
+10024168:	fffff800 	.word	0xfffff800
+
+1002416c <patch_PMBUS_HANDLE_IOUT_UC_FAULT_LIMIT>:
+ * Callback or Handle function called by pmbus thread after a read or write of given command
+ * @param page Selects the pmbus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void patch_PMBUS_HANDLE_IOUT_UC_FAULT_LIMIT(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+1002416c:	b570      	push	{r4, r5, r6, lr}
+1002416e:	b084      	sub	sp, #16
+10024170:	0004      	movs	r4, r0
+	// if write:
+	if (direction == PMBUS_WRITE)
+10024172:	2900      	cmp	r1, #0
+10024174:	d001      	beq.n	1002417a <patch_PMBUS_HANDLE_IOUT_UC_FAULT_LIMIT+0xe>
+		FAULTS_SETUP_FAULT(page, FAULT_TYPE_IOUT_UC_FAULT,fault_response_cmd_byte,
+								FAULTS_CONFIG_IOUT_DELAY_UNIT, VOLTAGE_RESPONSE_TYPE,
+								(uint8_t)PMBUS_CMDCODE_STATUS_IOUT, (uint8_t)PMBUS_STATUS_IOUT_UC_FAULT, (FAULT_TYPE_t) FAULT_TYPE_IOUT_UC_FAULT);
+		Fault_Threshold_Set(page, FAULT_TYPE_IOUT_UC_FAULT, (int32_t)mantissa, (int32_t)exponent);
+	}
+}
+10024176:	b004      	add	sp, #16
+10024178:	bd70      	pop	{r4, r5, r6, pc}
+		int32_t exponent = LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_IOUT_UC_FAULT_LIMIT)) - 1;
+1002417a:	314b      	adds	r1, #75	; 0x4b
+1002417c:	f7dd fa6c 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10024180:	0ac0      	lsrs	r0, r0, #11
+10024182:	b280      	uxth	r0, r0
+10024184:	0005      	movs	r5, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10024186:	06c3      	lsls	r3, r0, #27
+10024188:	d502      	bpl.n	10024190 <patch_PMBUS_HANDLE_IOUT_UC_FAULT_LIMIT+0x24>
+1002418a:	2520      	movs	r5, #32
+1002418c:	426d      	negs	r5, r5
+1002418e:	4305      	orrs	r5, r0
+10024190:	3d01      	subs	r5, #1
+		int16_t mantissa = (int16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_IOUT_UC_FAULT_LIMIT));
+10024192:	214b      	movs	r1, #75	; 0x4b
+10024194:	0020      	movs	r0, r4
+10024196:	f7dd fa5f 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+1002419a:	0542      	lsls	r2, r0, #21
+1002419c:	0d52      	lsrs	r2, r2, #21
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+1002419e:	0016      	movs	r6, r2
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100241a0:	0543      	lsls	r3, r0, #21
+100241a2:	d501      	bpl.n	100241a8 <patch_PMBUS_HANDLE_IOUT_UC_FAULT_LIMIT+0x3c>
+100241a4:	4e0d      	ldr	r6, [pc, #52]	; (100241dc <patch_PMBUS_HANDLE_IOUT_UC_FAULT_LIMIT+0x70>)
+100241a6:	4316      	orrs	r6, r2
+		uint8_t fault_response_cmd_byte = PMBUS_Get_Command_Byte(page, PMBUS_CMDCODE_IOUT_UC_FAULT_RESPONSE);
+100241a8:	214c      	movs	r1, #76	; 0x4c
+100241aa:	0020      	movs	r0, r4
+100241ac:	f7dd fa18 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+100241b0:	0002      	movs	r2, r0
+		FAULTS_SETUP_FAULT(page, FAULT_TYPE_IOUT_UC_FAULT,fault_response_cmd_byte,
+100241b2:	230c      	movs	r3, #12
+100241b4:	9303      	str	r3, [sp, #12]
+100241b6:	3b08      	subs	r3, #8
+100241b8:	9302      	str	r3, [sp, #8]
+100241ba:	3377      	adds	r3, #119	; 0x77
+100241bc:	9301      	str	r3, [sp, #4]
+100241be:	2300      	movs	r3, #0
+100241c0:	9300      	str	r3, [sp, #0]
+100241c2:	3302      	adds	r3, #2
+100241c4:	210c      	movs	r1, #12
+100241c6:	0020      	movs	r0, r4
+100241c8:	f7e4 f864 	bl	10008294 <FAULTS_Resolve_Shutdown_Priority+0xa7>
+		Fault_Threshold_Set(page, FAULT_TYPE_IOUT_UC_FAULT, (int32_t)mantissa, (int32_t)exponent);
+100241cc:	b232      	sxth	r2, r6
+100241ce:	002b      	movs	r3, r5
+100241d0:	210c      	movs	r1, #12
+100241d2:	0020      	movs	r0, r4
+100241d4:	f7e4 f96c 	bl	100084b0 <FAULTS_Uninitialize+0x63>
+}
+100241d8:	e7cd      	b.n	10024176 <patch_PMBUS_HANDLE_IOUT_UC_FAULT_LIMIT+0xa>
+100241da:	46c0      	nop			; (mov r8, r8)
+100241dc:	fffff800 	.word	0xfffff800
+
+100241e0 <patch_PMBUS_HANDLE_IOUT_OC_WARN_LIMIT>:
+ * Callback or Handle function called by pmbus thread after a read or write of given command
+ * @param page Selects the pmbus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void patch_PMBUS_HANDLE_IOUT_OC_WARN_LIMIT(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+100241e0:	b570      	push	{r4, r5, r6, lr}
+100241e2:	b084      	sub	sp, #16
+100241e4:	0005      	movs	r5, r0
+	// if write:
+	if ((direction == PMBUS_WRITE)||(direction == OTP_RESTORE))
+100241e6:	2304      	movs	r3, #4
+100241e8:	4399      	bics	r1, r3
+100241ea:	d001      	beq.n	100241f0 <patch_PMBUS_HANDLE_IOUT_OC_WARN_LIMIT+0x10>
+		FAULTS_SETUP_FAULT(page, FAULT_TYPE_IOUT_OC_WARN, fault_response_cmd_byte,
+								FAULTS_CONFIG_IOUT_DELAY_UNIT, VOLTAGE_RESPONSE_TYPE,
+								(uint8_t)PMBUS_CMDCODE_STATUS_IOUT, (uint8_t)PMBUS_STATUS_IOUT_OC_WARNING, FAULT_TYPE_IOUT_OC_FAULT);
+		Fault_Threshold_Set(page, FAULT_TYPE_IOUT_OC_WARN, (int32_t)mantissa, (int32_t)exponent);
+	}
+}
+100241ec:	b004      	add	sp, #16
+100241ee:	bd70      	pop	{r4, r5, r6, pc}
+		int32_t exponent = LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_IOUT_OC_WARN_LIMIT)) - 1;
+100241f0:	314a      	adds	r1, #74	; 0x4a
+100241f2:	f7dd fa31 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+100241f6:	0ac0      	lsrs	r0, r0, #11
+100241f8:	b280      	uxth	r0, r0
+100241fa:	0006      	movs	r6, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+100241fc:	06c3      	lsls	r3, r0, #27
+100241fe:	d502      	bpl.n	10024206 <patch_PMBUS_HANDLE_IOUT_OC_WARN_LIMIT+0x26>
+10024200:	2620      	movs	r6, #32
+10024202:	4276      	negs	r6, r6
+10024204:	4306      	orrs	r6, r0
+10024206:	3e01      	subs	r6, #1
+		uint16_t mantissa = (uint16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_IOUT_OC_WARN_LIMIT));
+10024208:	214a      	movs	r1, #74	; 0x4a
+1002420a:	0028      	movs	r0, r5
+1002420c:	f7dd fa24 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024210:	0542      	lsls	r2, r0, #21
+10024212:	0d52      	lsrs	r2, r2, #21
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+10024214:	0014      	movs	r4, r2
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024216:	0543      	lsls	r3, r0, #21
+10024218:	d501      	bpl.n	1002421e <patch_PMBUS_HANDLE_IOUT_OC_WARN_LIMIT+0x3e>
+1002421a:	4c0c      	ldr	r4, [pc, #48]	; (1002424c <patch_PMBUS_HANDLE_IOUT_OC_WARN_LIMIT+0x6c>)
+1002421c:	4314      	orrs	r4, r2
+		FAULTS_SETUP_FAULT(page, FAULT_TYPE_IOUT_OC_WARN, fault_response_cmd_byte,
+1002421e:	2309      	movs	r3, #9
+10024220:	9303      	str	r3, [sp, #12]
+10024222:	3b04      	subs	r3, #4
+10024224:	9302      	str	r3, [sp, #8]
+10024226:	3376      	adds	r3, #118	; 0x76
+10024228:	9301      	str	r3, [sp, #4]
+1002422a:	2300      	movs	r3, #0
+1002422c:	9300      	str	r3, [sp, #0]
+1002422e:	3302      	adds	r3, #2
+10024230:	2200      	movs	r2, #0
+10024232:	210b      	movs	r1, #11
+10024234:	0028      	movs	r0, r5
+10024236:	f7e4 f82d 	bl	10008294 <FAULTS_Resolve_Shutdown_Priority+0xa7>
+		Fault_Threshold_Set(page, FAULT_TYPE_IOUT_OC_WARN, (int32_t)mantissa, (int32_t)exponent);
+1002423a:	0422      	lsls	r2, r4, #16
+1002423c:	0c12      	lsrs	r2, r2, #16
+1002423e:	0033      	movs	r3, r6
+10024240:	210b      	movs	r1, #11
+10024242:	0028      	movs	r0, r5
+10024244:	f7e4 f934 	bl	100084b0 <FAULTS_Uninitialize+0x63>
+}
+10024248:	e7d0      	b.n	100241ec <patch_PMBUS_HANDLE_IOUT_OC_WARN_LIMIT+0xc>
+1002424a:	46c0      	nop			; (mov r8, r8)
+1002424c:	fffff800 	.word	0xfffff800
+
+10024250 <patch_PMBUS_HANDLE_IIN_OC_FAULT_LIMIT>:
+ * Callback or Handle function called by pmbus thread after a read or write of given command
+ * @param page Selects the pmbus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void patch_PMBUS_HANDLE_IIN_OC_FAULT_LIMIT(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+10024250:	b570      	push	{r4, r5, r6, lr}
+10024252:	b084      	sub	sp, #16
+10024254:	0004      	movs	r4, r0
+	// if write:
+	if (direction == PMBUS_WRITE)
+10024256:	2900      	cmp	r1, #0
+10024258:	d001      	beq.n	1002425e <patch_PMBUS_HANDLE_IIN_OC_FAULT_LIMIT+0xe>
+								FAULTS_CONFIG_VIN_DELAY_UNIT, VOLTAGE_RESPONSE_TYPE,
+								(uint8_t)PMBUS_CMDCODE_STATUS_INPUT, (uint8_t)PMBUS_STATUS_INPUT_IIN_OC_FAULT, FAULT_TYPE_IIN_OC_WARN);
+		Fault_Threshold_Set(page, FAULT_TYPE_IIN_OC_FAULT, (int32_t)mantissa, (int32_t)exponent);
+
+	}
+}
+1002425a:	b004      	add	sp, #16
+1002425c:	bd70      	pop	{r4, r5, r6, pc}
+		int32_t exponent = LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_IIN_OC_FAULT_LIMIT)) - 1;
+1002425e:	315b      	adds	r1, #91	; 0x5b
+10024260:	f7dd f9fa 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10024264:	0ac0      	lsrs	r0, r0, #11
+10024266:	b280      	uxth	r0, r0
+10024268:	0006      	movs	r6, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+1002426a:	06c3      	lsls	r3, r0, #27
+1002426c:	d502      	bpl.n	10024274 <patch_PMBUS_HANDLE_IIN_OC_FAULT_LIMIT+0x24>
+1002426e:	2620      	movs	r6, #32
+10024270:	4276      	negs	r6, r6
+10024272:	4306      	orrs	r6, r0
+10024274:	3e01      	subs	r6, #1
+		uint16_t mantissa = (uint16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_IIN_OC_FAULT_LIMIT));
+10024276:	215b      	movs	r1, #91	; 0x5b
+10024278:	0020      	movs	r0, r4
+1002427a:	f7dd f9ed 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+1002427e:	0545      	lsls	r5, r0, #21
+10024280:	0d6d      	lsrs	r5, r5, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024282:	0543      	lsls	r3, r0, #21
+10024284:	d501      	bpl.n	1002428a <patch_PMBUS_HANDLE_IIN_OC_FAULT_LIMIT+0x3a>
+10024286:	4a0e      	ldr	r2, [pc, #56]	; (100242c0 <patch_PMBUS_HANDLE_IIN_OC_FAULT_LIMIT+0x70>)
+10024288:	4315      	orrs	r5, r2
+		uint8_t fault_response_cmd_byte = PMBUS_Get_Command_Byte(page, PMBUS_CMDCODE_IIN_OC_FAULT_RESPONSE);
+1002428a:	215c      	movs	r1, #92	; 0x5c
+1002428c:	0020      	movs	r0, r4
+1002428e:	f7dd f9a7 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+10024292:	0002      	movs	r2, r0
+		FAULTS_SETUP_FAULT(page, FAULT_TYPE_IIN_OC_FAULT, fault_response_cmd_byte,
+10024294:	230f      	movs	r3, #15
+10024296:	9303      	str	r3, [sp, #12]
+10024298:	3b0d      	subs	r3, #13
+1002429a:	9302      	str	r3, [sp, #8]
+1002429c:	337a      	adds	r3, #122	; 0x7a
+1002429e:	9301      	str	r3, [sp, #4]
+100242a0:	2300      	movs	r3, #0
+100242a2:	9300      	str	r3, [sp, #0]
+100242a4:	3304      	adds	r3, #4
+100242a6:	210e      	movs	r1, #14
+100242a8:	0020      	movs	r0, r4
+100242aa:	f7e3 fff3 	bl	10008294 <FAULTS_Resolve_Shutdown_Priority+0xa7>
+		Fault_Threshold_Set(page, FAULT_TYPE_IIN_OC_FAULT, (int32_t)mantissa, (int32_t)exponent);
+100242ae:	042a      	lsls	r2, r5, #16
+100242b0:	0c12      	lsrs	r2, r2, #16
+100242b2:	0033      	movs	r3, r6
+100242b4:	210e      	movs	r1, #14
+100242b6:	0020      	movs	r0, r4
+100242b8:	f7e4 f8fa 	bl	100084b0 <FAULTS_Uninitialize+0x63>
+}
+100242bc:	e7cd      	b.n	1002425a <patch_PMBUS_HANDLE_IIN_OC_FAULT_LIMIT+0xa>
+100242be:	46c0      	nop			; (mov r8, r8)
+100242c0:	fffff800 	.word	0xfffff800
+
+100242c4 <patch_PMBUS_HANDLE_IIN_OC_WARN_LIMIT>:
+ * Callback or Handle function called by pmbus thread after a read or write of given command
+ * @param page Selects the pmbus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void patch_PMBUS_HANDLE_IIN_OC_WARN_LIMIT(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+100242c4:	b570      	push	{r4, r5, r6, lr}
+100242c6:	b084      	sub	sp, #16
+100242c8:	0005      	movs	r5, r0
+	// if write:
+	if ((direction == PMBUS_WRITE)||(direction == OTP_RESTORE))
+100242ca:	2304      	movs	r3, #4
+100242cc:	4399      	bics	r1, r3
+100242ce:	d001      	beq.n	100242d4 <patch_PMBUS_HANDLE_IIN_OC_WARN_LIMIT+0x10>
+		FAULTS_SETUP_FAULT(page, FAULT_TYPE_IIN_OC_WARN, fault_response_cmd_byte,
+								FAULTS_CONFIG_VIN_DELAY_UNIT, VOLTAGE_RESPONSE_TYPE,
+								(uint8_t)PMBUS_CMDCODE_STATUS_INPUT, (uint8_t)PMBUS_STATUS_INPUT_IIN_OC_WARNING, FAULT_TYPE_IIN_OC_FAULT);
+		Fault_Threshold_Set(page, FAULT_TYPE_IIN_OC_WARN, (int32_t)mantissa, (int32_t)exponent);
+	}
+}
+100242d0:	b004      	add	sp, #16
+100242d2:	bd70      	pop	{r4, r5, r6, pc}
+		int32_t exponent = LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_IIN_OC_WARN_LIMIT)) - 1;
+100242d4:	315d      	adds	r1, #93	; 0x5d
+100242d6:	f7dd f9bf 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+100242da:	0ac0      	lsrs	r0, r0, #11
+100242dc:	b280      	uxth	r0, r0
+100242de:	0006      	movs	r6, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+100242e0:	06c3      	lsls	r3, r0, #27
+100242e2:	d502      	bpl.n	100242ea <patch_PMBUS_HANDLE_IIN_OC_WARN_LIMIT+0x26>
+100242e4:	2620      	movs	r6, #32
+100242e6:	4276      	negs	r6, r6
+100242e8:	4306      	orrs	r6, r0
+100242ea:	3e01      	subs	r6, #1
+		uint16_t mantissa = (uint16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_IIN_OC_WARN_LIMIT));
+100242ec:	215d      	movs	r1, #93	; 0x5d
+100242ee:	0028      	movs	r0, r5
+100242f0:	f7dd f9b2 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+100242f4:	0542      	lsls	r2, r0, #21
+100242f6:	0d52      	lsrs	r2, r2, #21
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+100242f8:	0014      	movs	r4, r2
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100242fa:	0543      	lsls	r3, r0, #21
+100242fc:	d501      	bpl.n	10024302 <patch_PMBUS_HANDLE_IIN_OC_WARN_LIMIT+0x3e>
+100242fe:	4c0c      	ldr	r4, [pc, #48]	; (10024330 <patch_PMBUS_HANDLE_IIN_OC_WARN_LIMIT+0x6c>)
+10024300:	4314      	orrs	r4, r2
+		FAULTS_SETUP_FAULT(page, FAULT_TYPE_IIN_OC_WARN, fault_response_cmd_byte,
+10024302:	230e      	movs	r3, #14
+10024304:	9303      	str	r3, [sp, #12]
+10024306:	3b0d      	subs	r3, #13
+10024308:	9302      	str	r3, [sp, #8]
+1002430a:	337b      	adds	r3, #123	; 0x7b
+1002430c:	9301      	str	r3, [sp, #4]
+1002430e:	2300      	movs	r3, #0
+10024310:	9300      	str	r3, [sp, #0]
+10024312:	3304      	adds	r3, #4
+10024314:	2200      	movs	r2, #0
+10024316:	210f      	movs	r1, #15
+10024318:	0028      	movs	r0, r5
+1002431a:	f7e3 ffbb 	bl	10008294 <FAULTS_Resolve_Shutdown_Priority+0xa7>
+		Fault_Threshold_Set(page, FAULT_TYPE_IIN_OC_WARN, (int32_t)mantissa, (int32_t)exponent);
+1002431e:	0422      	lsls	r2, r4, #16
+10024320:	0c12      	lsrs	r2, r2, #16
+10024322:	0033      	movs	r3, r6
+10024324:	210f      	movs	r1, #15
+10024326:	0028      	movs	r0, r5
+10024328:	f7e4 f8c2 	bl	100084b0 <FAULTS_Uninitialize+0x63>
+}
+1002432c:	e7d0      	b.n	100242d0 <patch_PMBUS_HANDLE_IIN_OC_WARN_LIMIT+0xc>
+1002432e:	46c0      	nop			; (mov r8, r8)
+10024330:	fffff800 	.word	0xfffff800
+
+10024334 <patch_PMBUS_HANDLE_VOUT_DROOP>:
+ * Callback or Handle function called by pmbus thread after a read or write of given command
+ * @param page Selects the pmbus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void patch_PMBUS_HANDLE_VOUT_DROOP(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+10024334:	b570      	push	{r4, r5, r6, lr}
+10024336:	0004      	movs	r4, r0
+	// if write:
+	if ((direction == PMBUS_WRITE))
+10024338:	2900      	cmp	r1, #0
+1002433a:	d000      	beq.n	1002433e <patch_PMBUS_HANDLE_VOUT_DROOP+0xa>
+		// multiply droop by vout scale and shift to LOADLINE_EXP
+		uint32_t mohms = (uint32_t)SHIFT_EXPONENT((int32_t)(vout_droop * vout_scale) , (-LOADLINE_EXP+vout_droop_exp+PMBUS_Q_EXP));
+		if (mohms > 0x7ff) mohms = 0x7ff;  // cap at max
+		VCONTROL_VC_VAVP3__VC_VAVP_RLL__SET((vcontrol_idx_t) page, mohms);
+	}
+}
+1002433c:	bd70      	pop	{r4, r5, r6, pc}
+		uint32_t vout_scale = PMBUS_Get_Vout_Scale(page, PMBUS_Q_EXP);
+1002433e:	3910      	subs	r1, #16
+10024340:	f7dd f9f5 	bl	1000172e <PMBUS_Get_Vout_Mode_Exponent+0x1d>
+10024344:	0005      	movs	r5, r0
+		uint32_t vout_droop = PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_VOUT_DROOP);
+10024346:	2128      	movs	r1, #40	; 0x28
+10024348:	0020      	movs	r0, r4
+1002434a:	f7dd f985 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+1002434e:	0ac3      	lsrs	r3, r0, #11
+10024350:	b29b      	uxth	r3, r3
+10024352:	0019      	movs	r1, r3
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10024354:	06da      	lsls	r2, r3, #27
+10024356:	d502      	bpl.n	1002435e <patch_PMBUS_HANDLE_VOUT_DROOP+0x2a>
+10024358:	2120      	movs	r1, #32
+1002435a:	4249      	negs	r1, r1
+1002435c:	4319      	orrs	r1, r3
+1002435e:	0542      	lsls	r2, r0, #21
+10024360:	0d52      	lsrs	r2, r2, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024362:	0543      	lsls	r3, r0, #21
+10024364:	d501      	bpl.n	1002436a <patch_PMBUS_HANDLE_VOUT_DROOP+0x36>
+10024366:	480f      	ldr	r0, [pc, #60]	; (100243a4 <patch_PMBUS_HANDLE_VOUT_DROOP+0x70>)
+10024368:	4302      	orrs	r2, r0
+		uint32_t mohms = (uint32_t)SHIFT_EXPONENT((int32_t)(vout_droop * vout_scale) , (-LOADLINE_EXP+vout_droop_exp+PMBUS_Q_EXP));
+1002436a:	4355      	muls	r5, r2
+1002436c:	000a      	movs	r2, r1
+1002436e:	3a08      	subs	r2, #8
+		value = value << (exponent);
+10024370:	002b      	movs	r3, r5
+10024372:	4093      	lsls	r3, r2
+	if ( exponent <= 0)
+10024374:	2a00      	cmp	r2, #0
+10024376:	dd0f      	ble.n	10024398 <patch_PMBUS_HANDLE_VOUT_DROOP+0x64>
+ * @param idp index of peripheral
+ * @return base address of peripheral's instance
+ */
+__VCONTROL_INLINE uint32_t* __VCONTROL_BASE_PTR(vcontrol_idx_t idp)
+{
+    return (uint32_t*)(VCONTROL_BASE + (uint32_t)((uint32_t)idp * VCONTROL_STRIDE));
+10024378:	4a0b      	ldr	r2, [pc, #44]	; (100243a8 <patch_PMBUS_HANDLE_VOUT_DROOP+0x74>)
+1002437a:	4694      	mov	ip, r2
+1002437c:	4464      	add	r4, ip
+1002437e:	02a4      	lsls	r4, r4, #10
+    return *addr;
+10024380:	6922      	ldr	r2, [r4, #16]
+ * @param bf_value new value for VC_VAVP3.VC_VAVP_RLL
+ */
+__VCONTROL_INLINE void VCONTROL_VC_VAVP3__VC_VAVP_RLL__SET(vcontrol_idx_t idp, uint32_t bf_value)
+{
+    uint32_t reg = VCONTROL_VC_VAVP3__GET(idp);
+    reg = (reg & ~VCONTROL_VC_VAVP3__VC_VAVP_RLL__Msk);
+10024382:	0ad2      	lsrs	r2, r2, #11
+10024384:	02d2      	lsls	r2, r2, #11
+    reg = (reg | (VCONTROL_VC_VAVP3__VC_VAVP_RLL__Shift((uint32_t)bf_value)));
+10024386:	4909      	ldr	r1, [pc, #36]	; (100243ac <patch_PMBUS_HANDLE_VOUT_DROOP+0x78>)
+10024388:	428b      	cmp	r3, r1
+1002438a:	d900      	bls.n	1002438e <patch_PMBUS_HANDLE_VOUT_DROOP+0x5a>
+1002438c:	000b      	movs	r3, r1
+1002438e:	055b      	lsls	r3, r3, #21
+10024390:	0d5b      	lsrs	r3, r3, #21
+10024392:	4313      	orrs	r3, r2
+    *addr = val;
+10024394:	6123      	str	r3, [r4, #16]
+}
+10024396:	e7d1      	b.n	1002433c <patch_PMBUS_HANDLE_VOUT_DROOP+0x8>
+		exponent = -exponent;
+10024398:	2308      	movs	r3, #8
+1002439a:	1a5b      	subs	r3, r3, r1
+		value = value >> (exponent);
+1002439c:	411d      	asrs	r5, r3
+1002439e:	002b      	movs	r3, r5
+100243a0:	e7ea      	b.n	10024378 <patch_PMBUS_HANDLE_VOUT_DROOP+0x44>
+100243a2:	46c0      	nop			; (mov r8, r8)
+100243a4:	fffff800 	.word	0xfffff800
+100243a8:	001c0005 	.word	0x001c0005
+100243ac:	000007ff 	.word	0x000007ff
+
+100243b0 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION>:
+ * Callback or Handle function called by pmbus thread after a read or write of given command
+ * @param page Selects the pmbus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void patch_PMBUS_HANDLE_FW_CONFIG_REGULATION(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+100243b0:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+100243b2:	0005      	movs	r5, r0
+	uint32_t vout_scale;
+	uint32_t vout_droop;
+	int32_t vout_droop_exp;
+
+	// if write:
+	if(direction == PMBUS_WRITE)
+100243b4:	2900      	cmp	r1, #0
+100243b6:	d000      	beq.n	100243ba <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0xa>
+		// Write threshold register for seg3
+		mohms = (uint32_t)SHIFT_EXPONENT(LINEAR11_TO_MANTISSA((uint16_t)vout_droop), (1 + LINEAR11_TO_EXPONENT((uint16_t)vout_droop) - 1));
+		/* iout scale Example Modification End */
+		VCONTROL_VC_VAVP8__VC_VAVP_ITHR_SEG3__SET((vcontrol_idx_t) page, mohms);
+	}
+}
+100243b8:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
+		vout_scale = PMBUS_Get_Vout_Scale(page, PMBUS_Q_EXP);
+100243ba:	3910      	subs	r1, #16
+100243bc:	f7dd f9b7 	bl	1000172e <PMBUS_Get_Vout_Mode_Exponent+0x1d>
+100243c0:	0006      	movs	r6, r0
+		vout_droop = Regulation_Get_PMBUS_Configuration(page, REGULATION_CONFIG_MFR_RDROOP_RLL_SEG2);
+100243c2:	2120      	movs	r1, #32
+100243c4:	0028      	movs	r0, r5
+100243c6:	f7e1 fc73 	bl	10005cb0 <Regulation_Get_All_Q_Messages_By_Priority+0x147>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+100243ca:	0ac3      	lsrs	r3, r0, #11
+100243cc:	b29b      	uxth	r3, r3
+100243ce:	001c      	movs	r4, r3
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+100243d0:	06da      	lsls	r2, r3, #27
+100243d2:	d502      	bpl.n	100243da <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x2a>
+100243d4:	2420      	movs	r4, #32
+100243d6:	4264      	negs	r4, r4
+100243d8:	431c      	orrs	r4, r3
+100243da:	0541      	lsls	r1, r0, #21
+100243dc:	0d49      	lsrs	r1, r1, #21
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+100243de:	000a      	movs	r2, r1
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100243e0:	0543      	lsls	r3, r0, #21
+100243e2:	d501      	bpl.n	100243e8 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x38>
+100243e4:	4a5a      	ldr	r2, [pc, #360]	; (10024550 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x1a0>)
+100243e6:	430a      	orrs	r2, r1
+		uint32_t mohms = (uint32_t)SHIFT_EXPONENT((int32_t)(vout_droop * vout_scale) , (1+vout_droop_exp+PMBUS_Q_EXP + 1));
+100243e8:	4372      	muls	r2, r6
+100243ea:	0021      	movs	r1, r4
+100243ec:	390e      	subs	r1, #14
+		value = value << (exponent);
+100243ee:	0013      	movs	r3, r2
+100243f0:	408b      	lsls	r3, r1
+	if ( exponent <= 0)
+100243f2:	2900      	cmp	r1, #0
+100243f4:	dc00      	bgt.n	100243f8 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x48>
+100243f6:	e08d      	b.n	10024514 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x164>
+    return (uint32_t*)(VCONTROL_BASE + (uint32_t)((uint32_t)idp * VCONTROL_STRIDE));
+100243f8:	4a56      	ldr	r2, [pc, #344]	; (10024554 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x1a4>)
+100243fa:	18ac      	adds	r4, r5, r2
+100243fc:	02a4      	lsls	r4, r4, #10
+    return *addr;
+100243fe:	6ae2      	ldr	r2, [r4, #44]	; 0x2c
+ * @param bf_value new value for VC_VAVP5.VC_VAVP_RLL_SEG2
+ */
+__VCONTROL_INLINE void VCONTROL_VC_VAVP5__VC_VAVP_RLL_SEG2__SET(vcontrol_idx_t idp, uint32_t bf_value)
+{
+    uint32_t reg = VCONTROL_VC_VAVP5__GET(idp);
+    reg = (reg & ~VCONTROL_VC_VAVP5__VC_VAVP_RLL_SEG2__Msk);
+10024400:	0a92      	lsrs	r2, r2, #10
+10024402:	0292      	lsls	r2, r2, #10
+    reg = (reg | (VCONTROL_VC_VAVP5__VC_VAVP_RLL_SEG2__Shift((uint32_t)bf_value)));
+10024404:	4954      	ldr	r1, [pc, #336]	; (10024558 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x1a8>)
+10024406:	428b      	cmp	r3, r1
+10024408:	d900      	bls.n	1002440c <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x5c>
+1002440a:	000b      	movs	r3, r1
+1002440c:	059b      	lsls	r3, r3, #22
+1002440e:	0d9b      	lsrs	r3, r3, #22
+10024410:	4313      	orrs	r3, r2
+    *addr = val;
+10024412:	62e3      	str	r3, [r4, #44]	; 0x2c
+		vout_droop = Regulation_Get_PMBUS_Configuration(page, REGULATION_CONFIG_MFR_RDROOP_RLL_SEG3);
+10024414:	2130      	movs	r1, #48	; 0x30
+10024416:	0028      	movs	r0, r5
+10024418:	f7e1 fc4a 	bl	10005cb0 <Regulation_Get_All_Q_Messages_By_Priority+0x147>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+1002441c:	0ac3      	lsrs	r3, r0, #11
+1002441e:	b29b      	uxth	r3, r3
+10024420:	001f      	movs	r7, r3
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10024422:	06da      	lsls	r2, r3, #27
+10024424:	d502      	bpl.n	1002442c <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x7c>
+10024426:	2720      	movs	r7, #32
+10024428:	427f      	negs	r7, r7
+1002442a:	431f      	orrs	r7, r3
+1002442c:	0541      	lsls	r1, r0, #21
+1002442e:	0d49      	lsrs	r1, r1, #21
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+10024430:	000a      	movs	r2, r1
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024432:	0543      	lsls	r3, r0, #21
+10024434:	d501      	bpl.n	1002443a <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x8a>
+10024436:	4a46      	ldr	r2, [pc, #280]	; (10024550 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x1a0>)
+10024438:	430a      	orrs	r2, r1
+		mohms = (uint32_t)SHIFT_EXPONENT((int32_t)(vout_droop * vout_scale) , (1+vout_droop_exp+PMBUS_Q_EXP + 1));
+1002443a:	4372      	muls	r2, r6
+1002443c:	0039      	movs	r1, r7
+1002443e:	390e      	subs	r1, #14
+		value = value << (exponent);
+10024440:	0013      	movs	r3, r2
+10024442:	408b      	lsls	r3, r1
+	if ( exponent <= 0)
+10024444:	2900      	cmp	r1, #0
+10024446:	dd6a      	ble.n	1002451e <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x16e>
+    return *addr;
+10024448:	6b22      	ldr	r2, [r4, #48]	; 0x30
+ * @param bf_value new value for VC_VAVP6.VC_VAVP_RLL_SEG3
+ */
+__VCONTROL_INLINE void VCONTROL_VC_VAVP6__VC_VAVP_RLL_SEG3__SET(vcontrol_idx_t idp, uint32_t bf_value)
+{
+    uint32_t reg = VCONTROL_VC_VAVP6__GET(idp);
+    reg = (reg & ~VCONTROL_VC_VAVP6__VC_VAVP_RLL_SEG3__Msk);
+1002444a:	0a92      	lsrs	r2, r2, #10
+1002444c:	0292      	lsls	r2, r2, #10
+    reg = (reg | (VCONTROL_VC_VAVP6__VC_VAVP_RLL_SEG3__Shift((uint32_t)bf_value)));
+1002444e:	4942      	ldr	r1, [pc, #264]	; (10024558 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x1a8>)
+10024450:	428b      	cmp	r3, r1
+10024452:	d900      	bls.n	10024456 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0xa6>
+10024454:	000b      	movs	r3, r1
+10024456:	059b      	lsls	r3, r3, #22
+10024458:	0d9b      	lsrs	r3, r3, #22
+1002445a:	4313      	orrs	r3, r2
+    *addr = val;
+1002445c:	6323      	str	r3, [r4, #48]	; 0x30
+		vout_droop = Regulation_Get_PMBUS_Configuration(page, REGULATION_CONFIG_MFR_RDROOP_RLL_NEG);
+1002445e:	2140      	movs	r1, #64	; 0x40
+10024460:	0028      	movs	r0, r5
+10024462:	f7e1 fc25 	bl	10005cb0 <Regulation_Get_All_Q_Messages_By_Priority+0x147>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10024466:	0ac3      	lsrs	r3, r0, #11
+10024468:	b29b      	uxth	r3, r3
+1002446a:	0019      	movs	r1, r3
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+1002446c:	06da      	lsls	r2, r3, #27
+1002446e:	d502      	bpl.n	10024476 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0xc6>
+10024470:	2120      	movs	r1, #32
+10024472:	4249      	negs	r1, r1
+10024474:	4319      	orrs	r1, r3
+10024476:	0542      	lsls	r2, r0, #21
+10024478:	0d52      	lsrs	r2, r2, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+1002447a:	0543      	lsls	r3, r0, #21
+1002447c:	d501      	bpl.n	10024482 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0xd2>
+1002447e:	4b34      	ldr	r3, [pc, #208]	; (10024550 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x1a0>)
+10024480:	431a      	orrs	r2, r3
+		mohms = (uint32_t)SHIFT_EXPONENT((int32_t)(vout_droop * vout_scale) , (7+vout_droop_exp+PMBUS_Q_EXP) + 1);
+10024482:	4356      	muls	r6, r2
+10024484:	000a      	movs	r2, r1
+10024486:	3a08      	subs	r2, #8
+		value = value << (exponent);
+10024488:	0033      	movs	r3, r6
+1002448a:	4093      	lsls	r3, r2
+	if ( exponent <= 0)
+1002448c:	2a00      	cmp	r2, #0
+1002448e:	dd4b      	ble.n	10024528 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x178>
+    return *addr;
+10024490:	69e2      	ldr	r2, [r4, #28]
+    reg = (reg & ~VCONTROL_VC_VAVP4__VC_VAVP_RLL_NEG__Msk);
+10024492:	0ad2      	lsrs	r2, r2, #11
+10024494:	02d2      	lsls	r2, r2, #11
+    reg = (reg | (VCONTROL_VC_VAVP4__VC_VAVP_RLL_NEG__Shift((uint32_t)bf_value)));
+10024496:	4931      	ldr	r1, [pc, #196]	; (1002455c <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x1ac>)
+10024498:	428b      	cmp	r3, r1
+1002449a:	d900      	bls.n	1002449e <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0xee>
+1002449c:	000b      	movs	r3, r1
+1002449e:	055b      	lsls	r3, r3, #21
+100244a0:	0d5b      	lsrs	r3, r3, #21
+100244a2:	4313      	orrs	r3, r2
+    *addr = val;
+100244a4:	61e3      	str	r3, [r4, #28]
+		vout_droop = Regulation_Get_PMBUS_Configuration(page, REGULATION_CONFIG_MFR_RDROOP_ITHR_SEG2);
+100244a6:	2150      	movs	r1, #80	; 0x50
+100244a8:	0028      	movs	r0, r5
+100244aa:	f7e1 fc01 	bl	10005cb0 <Regulation_Get_All_Q_Messages_By_Priority+0x147>
+100244ae:	0543      	lsls	r3, r0, #21
+100244b0:	0d5b      	lsrs	r3, r3, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100244b2:	0542      	lsls	r2, r0, #21
+100244b4:	d43d      	bmi.n	10024532 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x182>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+100244b6:	001a      	movs	r2, r3
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+100244b8:	0ac0      	lsrs	r0, r0, #11
+100244ba:	b280      	uxth	r0, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+100244bc:	06c3      	lsls	r3, r0, #27
+100244be:	d502      	bpl.n	100244c6 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x116>
+100244c0:	2320      	movs	r3, #32
+100244c2:	425b      	negs	r3, r3
+100244c4:	4318      	orrs	r0, r3
+		value = value << (exponent);
+100244c6:	0013      	movs	r3, r2
+100244c8:	4083      	lsls	r3, r0
+	if ( exponent <= 0)
+100244ca:	2800      	cmp	r0, #0
+100244cc:	dd34      	ble.n	10024538 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x188>
+    return *addr;
+100244ce:	6b62      	ldr	r2, [r4, #52]	; 0x34
+ * @param bf_value new value for VC_VAVP7.VC_VAVP_ITHR_SEG2
+ */
+__VCONTROL_INLINE void VCONTROL_VC_VAVP7__VC_VAVP_ITHR_SEG2__SET(vcontrol_idx_t idp, uint32_t bf_value)
+{
+    uint32_t reg = VCONTROL_VC_VAVP7__GET(idp);
+    reg = (reg & ~VCONTROL_VC_VAVP7__VC_VAVP_ITHR_SEG2__Msk);
+100244d0:	0a52      	lsrs	r2, r2, #9
+100244d2:	0252      	lsls	r2, r2, #9
+    reg = (reg | (VCONTROL_VC_VAVP7__VC_VAVP_ITHR_SEG2__Shift((uint32_t)bf_value)));
+100244d4:	05db      	lsls	r3, r3, #23
+100244d6:	0ddb      	lsrs	r3, r3, #23
+100244d8:	4313      	orrs	r3, r2
+    *addr = val;
+100244da:	6363      	str	r3, [r4, #52]	; 0x34
+		vout_droop = Regulation_Get_PMBUS_Configuration(page, REGULATION_CONFIG_MFR_RDROOP_ITHR_SEG3);
+100244dc:	2160      	movs	r1, #96	; 0x60
+100244de:	0028      	movs	r0, r5
+100244e0:	f7e1 fbe6 	bl	10005cb0 <Regulation_Get_All_Q_Messages_By_Priority+0x147>
+100244e4:	0543      	lsls	r3, r0, #21
+100244e6:	0d5b      	lsrs	r3, r3, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100244e8:	0542      	lsls	r2, r0, #21
+100244ea:	d429      	bmi.n	10024540 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x190>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+100244ec:	001a      	movs	r2, r3
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+100244ee:	0ac0      	lsrs	r0, r0, #11
+100244f0:	b280      	uxth	r0, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+100244f2:	06c3      	lsls	r3, r0, #27
+100244f4:	d502      	bpl.n	100244fc <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x14c>
+100244f6:	2320      	movs	r3, #32
+100244f8:	425b      	negs	r3, r3
+100244fa:	4318      	orrs	r0, r3
+		value = value << (exponent);
+100244fc:	0013      	movs	r3, r2
+100244fe:	4083      	lsls	r3, r0
+	if ( exponent <= 0)
+10024500:	2800      	cmp	r0, #0
+10024502:	dd20      	ble.n	10024546 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x196>
+    return *addr;
+10024504:	6ba2      	ldr	r2, [r4, #56]	; 0x38
+ * @param bf_value new value for VC_VAVP8.VC_VAVP_ITHR_SEG3
+ */
+__VCONTROL_INLINE void VCONTROL_VC_VAVP8__VC_VAVP_ITHR_SEG3__SET(vcontrol_idx_t idp, uint32_t bf_value)
+{
+    uint32_t reg = VCONTROL_VC_VAVP8__GET(idp);
+    reg = (reg & ~VCONTROL_VC_VAVP8__VC_VAVP_ITHR_SEG3__Msk);
+10024506:	0a52      	lsrs	r2, r2, #9
+10024508:	0252      	lsls	r2, r2, #9
+    reg = (reg | (VCONTROL_VC_VAVP8__VC_VAVP_ITHR_SEG3__Shift((uint32_t)bf_value)));
+1002450a:	05db      	lsls	r3, r3, #23
+1002450c:	0ddb      	lsrs	r3, r3, #23
+1002450e:	4313      	orrs	r3, r2
+    *addr = val;
+10024510:	63a3      	str	r3, [r4, #56]	; 0x38
+}
+10024512:	e751      	b.n	100243b8 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x8>
+		exponent = -exponent;
+10024514:	230e      	movs	r3, #14
+10024516:	1b1b      	subs	r3, r3, r4
+		value = value >> (exponent);
+10024518:	411a      	asrs	r2, r3
+1002451a:	0013      	movs	r3, r2
+1002451c:	e76c      	b.n	100243f8 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x48>
+		exponent = -exponent;
+1002451e:	230e      	movs	r3, #14
+10024520:	1bdb      	subs	r3, r3, r7
+		value = value >> (exponent);
+10024522:	411a      	asrs	r2, r3
+10024524:	0013      	movs	r3, r2
+10024526:	e78f      	b.n	10024448 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x98>
+		exponent = -exponent;
+10024528:	2308      	movs	r3, #8
+1002452a:	1a5b      	subs	r3, r3, r1
+		value = value >> (exponent);
+1002452c:	411e      	asrs	r6, r3
+1002452e:	0033      	movs	r3, r6
+10024530:	e7ae      	b.n	10024490 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0xe0>
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024532:	4a07      	ldr	r2, [pc, #28]	; (10024550 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x1a0>)
+10024534:	431a      	orrs	r2, r3
+10024536:	e7bf      	b.n	100244b8 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x108>
+		exponent = -exponent;
+10024538:	4240      	negs	r0, r0
+		value = value >> (exponent);
+1002453a:	0013      	movs	r3, r2
+1002453c:	4103      	asrs	r3, r0
+1002453e:	e7c6      	b.n	100244ce <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x11e>
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024540:	4a03      	ldr	r2, [pc, #12]	; (10024550 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x1a0>)
+10024542:	431a      	orrs	r2, r3
+10024544:	e7d3      	b.n	100244ee <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x13e>
+		exponent = -exponent;
+10024546:	4240      	negs	r0, r0
+		value = value >> (exponent);
+10024548:	0013      	movs	r3, r2
+1002454a:	4103      	asrs	r3, r0
+1002454c:	e7da      	b.n	10024504 <patch_PMBUS_HANDLE_FW_CONFIG_REGULATION+0x154>
+1002454e:	46c0      	nop			; (mov r8, r8)
+10024550:	fffff800 	.word	0xfffff800
+10024554:	001c0005 	.word	0x001c0005
+10024558:	000003ff 	.word	0x000003ff
+1002455c:	000007ff 	.word	0x000007ff
+
+10024560 <patch_PMBUS_HANDLE_MFR_IOUT_OC_FAST_FAULT_LIMIT>:
+ * Callback or Handle function called by pmbus thread after a read or write of given command
+ * @param page Selects the pmbus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void patch_PMBUS_HANDLE_MFR_IOUT_OC_FAST_FAULT_LIMIT(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+10024560:	b570      	push	{r4, r5, r6, lr}
+10024562:	b084      	sub	sp, #16
+10024564:	0004      	movs	r4, r0
+	// if write:
+	if (direction == PMBUS_WRITE)
+10024566:	2900      	cmp	r1, #0
+10024568:	d001      	beq.n	1002456e <patch_PMBUS_HANDLE_MFR_IOUT_OC_FAST_FAULT_LIMIT+0xe>
+								FAULTS_CONFIG_IOUT_DELAY_UNIT, CURRENT_RESPONSE_TYPE,
+								(uint8_t)PMBUS_CMDCODE_STATUS_MFR_SPECIFIC, (uint8_t)PMBUS_STATUS_MFR_SPECIFIC_5, (FAULT_TYPE_t) FAULT_TYPE_MFR_IOUT_OC_FAST);
+
+		Fault_Threshold_Set(page, FAULT_TYPE_MFR_IOUT_OC_FAST, (int32_t)mantissa, (int32_t)exponent);
+	}
+}
+1002456a:	b004      	add	sp, #16
+1002456c:	bd70      	pop	{r4, r5, r6, pc}
+		int32_t exponent = LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_MFR_IOUT_OC_FAST_FAULT_LIMIT)) - 1;
+1002456e:	31d1      	adds	r1, #209	; 0xd1
+10024570:	f7dd f872 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10024574:	0ac0      	lsrs	r0, r0, #11
+10024576:	b280      	uxth	r0, r0
+10024578:	0005      	movs	r5, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+1002457a:	06c3      	lsls	r3, r0, #27
+1002457c:	d502      	bpl.n	10024584 <patch_PMBUS_HANDLE_MFR_IOUT_OC_FAST_FAULT_LIMIT+0x24>
+1002457e:	2520      	movs	r5, #32
+10024580:	426d      	negs	r5, r5
+10024582:	4305      	orrs	r5, r0
+10024584:	3d01      	subs	r5, #1
+		int16_t mantissa = (int16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_MFR_IOUT_OC_FAST_FAULT_LIMIT));
+10024586:	21d1      	movs	r1, #209	; 0xd1
+10024588:	0020      	movs	r0, r4
+1002458a:	f7dd f865 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+1002458e:	0542      	lsls	r2, r0, #21
+10024590:	0d52      	lsrs	r2, r2, #21
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+10024592:	0016      	movs	r6, r2
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024594:	0543      	lsls	r3, r0, #21
+10024596:	d501      	bpl.n	1002459c <patch_PMBUS_HANDLE_MFR_IOUT_OC_FAST_FAULT_LIMIT+0x3c>
+10024598:	4e0d      	ldr	r6, [pc, #52]	; (100245d0 <patch_PMBUS_HANDLE_MFR_IOUT_OC_FAST_FAULT_LIMIT+0x70>)
+1002459a:	4316      	orrs	r6, r2
+		uint8_t fault_response_cmd_byte = PMBUS_Get_Command_Byte(page, PMBUS_CMDCODE_MFR_IOUT_OC_FAST_FAULT_RESPONSE);
+1002459c:	21ca      	movs	r1, #202	; 0xca
+1002459e:	0020      	movs	r0, r4
+100245a0:	f7dd f81e 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+100245a4:	0002      	movs	r2, r0
+		FAULTS_SETUP_FAULT(page, FAULT_TYPE_MFR_IOUT_OC_FAST, fault_response_cmd_byte,
+100245a6:	230d      	movs	r3, #13
+100245a8:	9303      	str	r3, [sp, #12]
+100245aa:	3b08      	subs	r3, #8
+100245ac:	9302      	str	r3, [sp, #8]
+100245ae:	337b      	adds	r3, #123	; 0x7b
+100245b0:	9301      	str	r3, [sp, #4]
+100245b2:	3b7f      	subs	r3, #127	; 0x7f
+100245b4:	9300      	str	r3, [sp, #0]
+100245b6:	3301      	adds	r3, #1
+100245b8:	210d      	movs	r1, #13
+100245ba:	0020      	movs	r0, r4
+100245bc:	f7e3 fe6a 	bl	10008294 <FAULTS_Resolve_Shutdown_Priority+0xa7>
+		Fault_Threshold_Set(page, FAULT_TYPE_MFR_IOUT_OC_FAST, (int32_t)mantissa, (int32_t)exponent);
+100245c0:	b232      	sxth	r2, r6
+100245c2:	002b      	movs	r3, r5
+100245c4:	210d      	movs	r1, #13
+100245c6:	0020      	movs	r0, r4
+100245c8:	f7e3 ff72 	bl	100084b0 <FAULTS_Uninitialize+0x63>
+}
+100245cc:	e7cd      	b.n	1002456a <patch_PMBUS_HANDLE_MFR_IOUT_OC_FAST_FAULT_LIMIT+0xa>
+100245ce:	46c0      	nop			; (mov r8, r8)
+100245d0:	fffff800 	.word	0xfffff800
+
+100245d4 <patch_PMBUS_HANDLE_MFR_IOUT_APC>:
+ * Callback or Handle function called by pmbus thread after a read or write of given command
+ * @param page Selects the pmbus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void patch_PMBUS_HANDLE_MFR_IOUT_APC(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+100245d4:	b570      	push	{r4, r5, r6, lr}
+100245d6:	0004      	movs	r4, r0
+	// if write:
+	if ((direction == PMBUS_WRITE)||(direction == OTP_RESTORE))
+100245d8:	2304      	movs	r3, #4
+100245da:	4399      	bics	r1, r3
+100245dc:	d000      	beq.n	100245e0 <patch_PMBUS_HANDLE_MFR_IOUT_APC+0xc>
+		/* iout scale Example Modification End */
+		value = (uint32_t)SHIFT_EXPONENT((int32_t)value, (exponent-ISEN_APC_EXPONENT));
+		if (value > 0x7ff) value = 0x7ff;  // cap at field max
+		ISEN_ISP_APC__ISP_APC__SET((isen_idx_t)page, value);
+	}
+}
+100245de:	bd70      	pop	{r4, r5, r6, pc}
+		uint32_t value = (uint32_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_MFR_IOUT_APC));
+100245e0:	31ea      	adds	r1, #234	; 0xea
+100245e2:	f7dd f839 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+100245e6:	0543      	lsls	r3, r0, #21
+100245e8:	0d5b      	lsrs	r3, r3, #21
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+100245ea:	001d      	movs	r5, r3
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100245ec:	0542      	lsls	r2, r0, #21
+100245ee:	d501      	bpl.n	100245f4 <patch_PMBUS_HANDLE_MFR_IOUT_APC+0x20>
+100245f0:	4d14      	ldr	r5, [pc, #80]	; (10024644 <patch_PMBUS_HANDLE_MFR_IOUT_APC+0x70>)
+100245f2:	431d      	orrs	r5, r3
+		exponent = LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_MFR_IOUT_APC)) - 1;
+100245f4:	21ea      	movs	r1, #234	; 0xea
+100245f6:	0020      	movs	r0, r4
+100245f8:	f7dd f82e 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+100245fc:	0ac0      	lsrs	r0, r0, #11
+100245fe:	b280      	uxth	r0, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10024600:	06c3      	lsls	r3, r0, #27
+10024602:	d502      	bpl.n	1002460a <patch_PMBUS_HANDLE_MFR_IOUT_APC+0x36>
+10024604:	2320      	movs	r3, #32
+10024606:	425b      	negs	r3, r3
+10024608:	4318      	orrs	r0, r3
+		value = (uint32_t)SHIFT_EXPONENT((int32_t)value, (exponent-ISEN_APC_EXPONENT));
+1002460a:	0002      	movs	r2, r0
+1002460c:	3208      	adds	r2, #8
+		value = value << (exponent);
+1002460e:	002b      	movs	r3, r5
+10024610:	4093      	lsls	r3, r2
+	if ( exponent <= 0)
+10024612:	2a00      	cmp	r2, #0
+10024614:	dd0f      	ble.n	10024636 <patch_PMBUS_HANDLE_MFR_IOUT_APC+0x62>
+    return (uint32_t*)(ISEN_BASE + (uint32_t)((uint32_t)idp * ISEN_STRIDE));
+10024616:	4a0c      	ldr	r2, [pc, #48]	; (10024648 <patch_PMBUS_HANDLE_MFR_IOUT_APC+0x74>)
+10024618:	4694      	mov	ip, r2
+1002461a:	4464      	add	r4, ip
+1002461c:	02a4      	lsls	r4, r4, #10
+    return *addr;
+1002461e:	69a2      	ldr	r2, [r4, #24]
+ * @param bf_value new value for ISP_APC.ISP_APC
+ */
+__ISEN_INLINE void ISEN_ISP_APC__ISP_APC__SET(isen_idx_t idp, uint32_t bf_value)
+{
+    uint32_t reg = ISEN_ISP_APC__GET(idp);
+    reg = (reg & ~ISEN_ISP_APC__ISP_APC__Msk);
+10024620:	0ad2      	lsrs	r2, r2, #11
+10024622:	02d2      	lsls	r2, r2, #11
+    reg = (reg | (ISEN_ISP_APC__ISP_APC__Shift((uint32_t)bf_value)));
+10024624:	4909      	ldr	r1, [pc, #36]	; (1002464c <patch_PMBUS_HANDLE_MFR_IOUT_APC+0x78>)
+10024626:	428b      	cmp	r3, r1
+10024628:	d900      	bls.n	1002462c <patch_PMBUS_HANDLE_MFR_IOUT_APC+0x58>
+1002462a:	000b      	movs	r3, r1
+1002462c:	055b      	lsls	r3, r3, #21
+1002462e:	0d5b      	lsrs	r3, r3, #21
+10024630:	4313      	orrs	r3, r2
+    *addr = val;
+10024632:	61a3      	str	r3, [r4, #24]
+}
+10024634:	e7d3      	b.n	100245de <patch_PMBUS_HANDLE_MFR_IOUT_APC+0xa>
+		exponent = -exponent;
+10024636:	2308      	movs	r3, #8
+10024638:	425b      	negs	r3, r3
+1002463a:	1a18      	subs	r0, r3, r0
+		value = value >> (exponent);
+1002463c:	002b      	movs	r3, r5
+1002463e:	4103      	asrs	r3, r0
+10024640:	e7e9      	b.n	10024616 <patch_PMBUS_HANDLE_MFR_IOUT_APC+0x42>
+10024642:	46c0      	nop			; (mov r8, r8)
+10024644:	fffff800 	.word	0xfffff800
+10024648:	001c0009 	.word	0x001c0009
+1002464c:	000007ff 	.word	0x000007ff
+
+10024650 <patch_Telemetry_Sample>:
+/**
+ * Telemetry sample routine called to update all telemetry replace ROM function.
+ * Reference from Telemetry_Sample() with modification for iout_scale example
+ */
+void patch_Telemetry_Sample(void)
+{
+10024650:	b5f0      	push	{r4, r5, r6, r7, lr}
+10024652:	46de      	mov	lr, fp
+10024654:	4657      	mov	r7, sl
+10024656:	464e      	mov	r6, r9
+10024658:	4645      	mov	r5, r8
+1002465a:	b5e0      	push	{r5, r6, r7, lr}
+1002465c:	b093      	sub	sp, #76	; 0x4c
+1002465e:	4b4e      	ldr	r3, [pc, #312]	; (10024798 <patch_Telemetry_Sample+0x148>)
+10024660:	930a      	str	r3, [sp, #40]	; 0x28
+10024662:	4b4e      	ldr	r3, [pc, #312]	; (1002479c <patch_Telemetry_Sample+0x14c>)
+10024664:	469a      	mov	sl, r3
+10024666:	2300      	movs	r3, #0
+10024668:	4698      	mov	r8, r3
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+1002466a:	330f      	adds	r3, #15
+1002466c:	469b      	mov	fp, r3
+1002466e:	4c4c      	ldr	r4, [pc, #304]	; (100247a0 <patch_Telemetry_Sample+0x150>)
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024670:	4645      	mov	r5, r8
+10024672:	e0a7      	b.n	100247c4 <patch_Telemetry_Sample+0x174>
+		return ((int32_t) (exp & ((1 << (numbits-1)) - 1)));
+10024674:	2307      	movs	r3, #7
+10024676:	4018      	ands	r0, r3
+10024678:	e0c6      	b.n	10024808 <patch_Telemetry_Sample+0x1b8>
+1002467a:	2307      	movs	r3, #7
+1002467c:	4018      	ands	r0, r3
+1002467e:	e0d1      	b.n	10024824 <patch_Telemetry_Sample+0x1d4>
+10024680:	2307      	movs	r3, #7
+10024682:	4018      	ands	r0, r3
+10024684:	e0dd      	b.n	10024842 <patch_Telemetry_Sample+0x1f2>
+10024686:	2307      	movs	r3, #7
+10024688:	4018      	ands	r0, r3
+1002468a:	e0e9      	b.n	10024860 <patch_Telemetry_Sample+0x210>
+1002468c:	2303      	movs	r3, #3
+1002468e:	4018      	ands	r0, r3
+10024690:	e0f4      	b.n	1002487c <patch_Telemetry_Sample+0x22c>
+10024692:	2307      	movs	r3, #7
+10024694:	4018      	ands	r0, r3
+10024696:	e0ff      	b.n	10024898 <patch_Telemetry_Sample+0x248>
+		exponent = -exponent;
+10024698:	425b      	negs	r3, r3
+		value = value >> (exponent);
+1002469a:	0002      	movs	r2, r0
+1002469c:	411a      	asrs	r2, r3
+1002469e:	e10a      	b.n	100248b6 <patch_Telemetry_Sample+0x266>
+		pin = (uint32_t)Telemetry_get_power(vin, vin_read_exp[loop], (int32_t)iin, iin_read_exp[loop], power_read_exp[loop]);
+		if (pin > 0x3ff) pin = 0x3ff;  // cap value
+		TELEM_DATA.pin[loop] = pin;
+
+		if (Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_FW_FILTER_EN) == 1) {
+			vout = (vout + (uint32_t)(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_VOUT)))>>1;
+100246a0:	218b      	movs	r1, #139	; 0x8b
+100246a2:	9f03      	ldr	r7, [sp, #12]
+100246a4:	0038      	movs	r0, r7
+100246a6:	f7dc ffd7 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+100246aa:	9b05      	ldr	r3, [sp, #20]
+100246ac:	469c      	mov	ip, r3
+100246ae:	4460      	add	r0, ip
+100246b0:	0843      	lsrs	r3, r0, #1
+100246b2:	9305      	str	r3, [sp, #20]
+			/*lint -e702 */
+			iout = (iout + (LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_IOUT))))>>1u;
+100246b4:	218c      	movs	r1, #140	; 0x8c
+100246b6:	0038      	movs	r0, r7
+100246b8:	f7dc ffce 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+100246bc:	0543      	lsls	r3, r0, #21
+100246be:	0d5b      	lsrs	r3, r3, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100246c0:	2280      	movs	r2, #128	; 0x80
+100246c2:	00d2      	lsls	r2, r2, #3
+100246c4:	4210      	tst	r0, r2
+100246c6:	d001      	beq.n	100246cc <patch_Telemetry_Sample+0x7c>
+100246c8:	4836      	ldr	r0, [pc, #216]	; (100247a4 <patch_Telemetry_Sample+0x154>)
+100246ca:	4303      	orrs	r3, r0
+100246cc:	199e      	adds	r6, r3, r6
+100246ce:	1076      	asrs	r6, r6, #1
+			vin  = (vin  + (uint32_t)(LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_VIN))))>>1u;
+100246d0:	2188      	movs	r1, #136	; 0x88
+100246d2:	9803      	ldr	r0, [sp, #12]
+100246d4:	f7dc ffc0 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+100246d8:	0543      	lsls	r3, r0, #21
+100246da:	0d5b      	lsrs	r3, r3, #21
+100246dc:	2280      	movs	r2, #128	; 0x80
+100246de:	00d2      	lsls	r2, r2, #3
+100246e0:	4210      	tst	r0, r2
+100246e2:	d134      	bne.n	1002474e <patch_Telemetry_Sample+0xfe>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+100246e4:	0018      	movs	r0, r3
+100246e6:	4440      	add	r0, r8
+100246e8:	0843      	lsrs	r3, r0, #1
+100246ea:	4698      	mov	r8, r3
+			iin  = (iin  + (uint32_t)(LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_IIN))))>>1u;
+100246ec:	2189      	movs	r1, #137	; 0x89
+100246ee:	9803      	ldr	r0, [sp, #12]
+100246f0:	f7dc ffb2 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+100246f4:	0543      	lsls	r3, r0, #21
+100246f6:	0d5b      	lsrs	r3, r3, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100246f8:	2280      	movs	r2, #128	; 0x80
+100246fa:	00d2      	lsls	r2, r2, #3
+100246fc:	4210      	tst	r0, r2
+100246fe:	d001      	beq.n	10024704 <patch_Telemetry_Sample+0xb4>
+10024700:	4828      	ldr	r0, [pc, #160]	; (100247a4 <patch_Telemetry_Sample+0x154>)
+10024702:	4303      	orrs	r3, r0
+10024704:	9a06      	ldr	r2, [sp, #24]
+10024706:	189f      	adds	r7, r3, r2
+10024708:	087b      	lsrs	r3, r7, #1
+1002470a:	9306      	str	r3, [sp, #24]
+			duty = (duty + (uint32_t)(LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_DUTY_CYCLE))))>>1u;
+1002470c:	2194      	movs	r1, #148	; 0x94
+1002470e:	9803      	ldr	r0, [sp, #12]
+10024710:	f7dc ffa2 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024714:	0543      	lsls	r3, r0, #21
+10024716:	0d5b      	lsrs	r3, r3, #21
+10024718:	2280      	movs	r2, #128	; 0x80
+1002471a:	00d2      	lsls	r2, r2, #3
+1002471c:	4210      	tst	r0, r2
+1002471e:	d119      	bne.n	10024754 <patch_Telemetry_Sample+0x104>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+10024720:	0018      	movs	r0, r3
+10024722:	9b08      	ldr	r3, [sp, #32]
+10024724:	469c      	mov	ip, r3
+10024726:	4460      	add	r0, ip
+10024728:	0843      	lsrs	r3, r0, #1
+1002472a:	9308      	str	r3, [sp, #32]
+			fsw  = (fsw +  (uint32_t)(LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_FREQUENCY))))>>1u;
+1002472c:	2195      	movs	r1, #149	; 0x95
+1002472e:	9803      	ldr	r0, [sp, #12]
+10024730:	f7dc ff92 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024734:	0543      	lsls	r3, r0, #21
+10024736:	0d5b      	lsrs	r3, r3, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024738:	2280      	movs	r2, #128	; 0x80
+1002473a:	00d2      	lsls	r2, r2, #3
+1002473c:	4210      	tst	r0, r2
+1002473e:	d10c      	bne.n	1002475a <patch_Telemetry_Sample+0x10a>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+10024740:	0018      	movs	r0, r3
+10024742:	9b09      	ldr	r3, [sp, #36]	; 0x24
+10024744:	469c      	mov	ip, r3
+10024746:	4460      	add	r0, ip
+10024748:	0843      	lsrs	r3, r0, #1
+1002474a:	9309      	str	r3, [sp, #36]	; 0x24
+1002474c:	e113      	b.n	10024976 <patch_Telemetry_Sample+0x326>
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+1002474e:	4815      	ldr	r0, [pc, #84]	; (100247a4 <patch_Telemetry_Sample+0x154>)
+10024750:	4318      	orrs	r0, r3
+10024752:	e7c8      	b.n	100246e6 <patch_Telemetry_Sample+0x96>
+10024754:	4813      	ldr	r0, [pc, #76]	; (100247a4 <patch_Telemetry_Sample+0x154>)
+10024756:	4318      	orrs	r0, r3
+10024758:	e7e3      	b.n	10024722 <patch_Telemetry_Sample+0xd2>
+1002475a:	4812      	ldr	r0, [pc, #72]	; (100247a4 <patch_Telemetry_Sample+0x154>)
+1002475c:	4318      	orrs	r0, r3
+1002475e:	e7f0      	b.n	10024742 <patch_Telemetry_Sample+0xf2>
+		TELEMETRY_VIN_SOURCE source = Telemetry_get_vin_source((PMBUS_PAGE_t)loop);
+		if ((ON_OFF_STATE.On_Off_State[loop]==0)&&
+				((source == (TELEMETRY_VIN_SOURCE)TELEMETRY_VIN_SOURCE_VRECT1) || (source == (TELEMETRY_VIN_SOURCE)TELEMETRY_VIN_SOURCE_VRECT2)))
+		{
+			// if we have vrect sensing and not actively switching we need to set read_vin to 0v
+			PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_VIN, (uint16_t)(((TWOS_COMPLEMENT (5, vin_read_exp[loop]))<<11)));
+10024760:	221f      	movs	r2, #31
+10024762:	9b0b      	ldr	r3, [sp, #44]	; 0x2c
+10024764:	401a      	ands	r2, r3
+10024766:	02d2      	lsls	r2, r2, #11
+10024768:	2188      	movs	r1, #136	; 0x88
+1002476a:	9803      	ldr	r0, [sp, #12]
+1002476c:	f7dd f8aa 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+10024770:	e117      	b.n	100249a2 <patch_Telemetry_Sample+0x352>
+10024772:	4b0c      	ldr	r3, [pc, #48]	; (100247a4 <patch_Telemetry_Sample+0x154>)
+10024774:	4313      	orrs	r3, r2
+10024776:	e179      	b.n	10024a6c <patch_Telemetry_Sample+0x41c>
+		exponent = -exponent;
+10024778:	4276      	negs	r6, r6
+		value = value >> (exponent);
+1002477a:	4133      	asrs	r3, r6
+1002477c:	001a      	movs	r2, r3
+1002477e:	e17d      	b.n	10024a7c <patch_Telemetry_Sample+0x42c>
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024780:	4b08      	ldr	r3, [pc, #32]	; (100247a4 <patch_Telemetry_Sample+0x154>)
+10024782:	4313      	orrs	r3, r2
+10024784:	e195      	b.n	10024ab2 <patch_Telemetry_Sample+0x462>
+		exponent = -exponent;
+10024786:	4276      	negs	r6, r6
+		value = value >> (exponent);
+10024788:	4133      	asrs	r3, r6
+1002478a:	001a      	movs	r2, r3
+1002478c:	e199      	b.n	10024ac2 <patch_Telemetry_Sample+0x472>
+		{
+			Set_Firmware_Fault((PMBUS_PAGE_t)loop, FAULT_TYPE_POUT_OP_WARN);
+		}
+		else
+		{
+			Clear_Firmware_Fault((PMBUS_PAGE_t)loop, FAULT_TYPE_POUT_OP_WARN);
+1002478e:	2125      	movs	r1, #37	; 0x25
+10024790:	9803      	ldr	r0, [sp, #12]
+10024792:	f7e3 fbcb 	bl	10007f2c <COMMON_FAULT_HANDLE+0x187>
+10024796:	e19e      	b.n	10024ad6 <patch_Telemetry_Sample+0x486>
+10024798:	2005cfa4 	.word	0x2005cfa4
+1002479c:	200614d0 	.word	0x200614d0
+100247a0:	000003ff 	.word	0x000003ff
+100247a4:	fffff800 	.word	0xfffff800
+		{
+			Set_Firmware_Fault((PMBUS_PAGE_t)loop, FAULT_TYPE_PIN_OP_WARN);
+		}
+		else
+		{
+			Clear_Firmware_Fault((PMBUS_PAGE_t)loop, FAULT_TYPE_PIN_OP_WARN);
+100247a8:	2124      	movs	r1, #36	; 0x24
+100247aa:	9803      	ldr	r0, [sp, #12]
+100247ac:	f7e3 fbbe 	bl	10007f2c <COMMON_FAULT_HANDLE+0x187>
+100247b0:	3501      	adds	r5, #1
+100247b2:	9b0a      	ldr	r3, [sp, #40]	; 0x28
+100247b4:	3304      	adds	r3, #4
+100247b6:	930a      	str	r3, [sp, #40]	; 0x28
+100247b8:	2304      	movs	r3, #4
+100247ba:	469c      	mov	ip, r3
+100247bc:	44e2      	add	sl, ip
+	for(loop=0; loop<(uint8_t)NUM_LOOPS; loop++)  // update for the number of loops in the system
+100247be:	2d02      	cmp	r5, #2
+100247c0:	d100      	bne.n	100247c4 <patch_Telemetry_Sample+0x174>
+100247c2:	e191      	b.n	10024ae8 <patch_Telemetry_Sample+0x498>
+100247c4:	b2eb      	uxtb	r3, r5
+100247c6:	001e      	movs	r6, r3
+100247c8:	9303      	str	r3, [sp, #12]
+		vout_read_exp[loop] = (int8_t)PMBUS_Get_Vout_Mode_Exponent((PMBUS_PAGE_t)loop);
+100247ca:	0018      	movs	r0, r3
+100247cc:	f7dc ffa0 	bl	10001710 <PMBUS_Get_On_Off_State+0x7b>
+100247d0:	b243      	sxtb	r3, r0
+100247d2:	4699      	mov	r9, r3
+		fsw_read_exp[loop]  = (int8_t)LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_FREQUENCY_SWITCH));
+100247d4:	2133      	movs	r1, #51	; 0x33
+100247d6:	0030      	movs	r0, r6
+100247d8:	f7dc ff3e 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+100247dc:	0ac0      	lsrs	r0, r0, #11
+100247de:	b280      	uxth	r0, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+100247e0:	2310      	movs	r3, #16
+100247e2:	4203      	tst	r3, r0
+100247e4:	d002      	beq.n	100247ec <patch_Telemetry_Sample+0x19c>
+100247e6:	2220      	movs	r2, #32
+100247e8:	4252      	negs	r2, r2
+100247ea:	4310      	orrs	r0, r2
+100247ec:	b243      	sxtb	r3, r0
+100247ee:	930e      	str	r3, [sp, #56]	; 0x38
+		vin_read_exp[loop]  = (int8_t)TWOS_UNCOMPLEMENT(4, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_READ_VIN_EXP));
+100247f0:	2158      	movs	r1, #88	; 0x58
+100247f2:	9803      	ldr	r0, [sp, #12]
+100247f4:	f7e4 fc9a 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+100247f8:	465b      	mov	r3, fp
+100247fa:	4003      	ands	r3, r0
+100247fc:	08db      	lsrs	r3, r3, #3
+100247fe:	d100      	bne.n	10024802 <patch_Telemetry_Sample+0x1b2>
+10024800:	e738      	b.n	10024674 <patch_Telemetry_Sample+0x24>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+10024802:	465b      	mov	r3, fp
+10024804:	4383      	bics	r3, r0
+10024806:	43d8      	mvns	r0, r3
+10024808:	b243      	sxtb	r3, r0
+1002480a:	930b      	str	r3, [sp, #44]	; 0x2c
+		iout_read_exp[loop] = (int8_t)TWOS_UNCOMPLEMENT(4, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_READ_IOUT_EXP)) + 1;
+1002480c:	215c      	movs	r1, #92	; 0x5c
+1002480e:	9803      	ldr	r0, [sp, #12]
+10024810:	f7e4 fc8c 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+10024814:	465b      	mov	r3, fp
+10024816:	4003      	ands	r3, r0
+10024818:	08db      	lsrs	r3, r3, #3
+1002481a:	d100      	bne.n	1002481e <patch_Telemetry_Sample+0x1ce>
+1002481c:	e72d      	b.n	1002467a <patch_Telemetry_Sample+0x2a>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+1002481e:	465b      	mov	r3, fp
+10024820:	4383      	bics	r3, r0
+10024822:	43d8      	mvns	r0, r3
+10024824:	3001      	adds	r0, #1
+10024826:	b243      	sxtb	r3, r0
+10024828:	930c      	str	r3, [sp, #48]	; 0x30
+		iin_read_exp[loop]  = (int8_t)TWOS_UNCOMPLEMENT(4, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_READ_IIN_EXP)) + 1;
+1002482a:	2160      	movs	r1, #96	; 0x60
+1002482c:	9803      	ldr	r0, [sp, #12]
+1002482e:	f7e4 fc7d 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+10024832:	465b      	mov	r3, fp
+10024834:	4003      	ands	r3, r0
+10024836:	08db      	lsrs	r3, r3, #3
+10024838:	d100      	bne.n	1002483c <patch_Telemetry_Sample+0x1ec>
+1002483a:	e721      	b.n	10024680 <patch_Telemetry_Sample+0x30>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+1002483c:	465b      	mov	r3, fp
+1002483e:	4383      	bics	r3, r0
+10024840:	43d8      	mvns	r0, r3
+10024842:	3001      	adds	r0, #1
+10024844:	b243      	sxtb	r3, r0
+10024846:	930d      	str	r3, [sp, #52]	; 0x34
+		duty_read_exp[loop] = (int8_t)TWOS_UNCOMPLEMENT(4, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_READ_DUTY_EXP));
+10024848:	2164      	movs	r1, #100	; 0x64
+1002484a:	9803      	ldr	r0, [sp, #12]
+1002484c:	f7e4 fc6e 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+10024850:	465b      	mov	r3, fp
+10024852:	4003      	ands	r3, r0
+10024854:	08db      	lsrs	r3, r3, #3
+10024856:	d100      	bne.n	1002485a <patch_Telemetry_Sample+0x20a>
+10024858:	e715      	b.n	10024686 <patch_Telemetry_Sample+0x36>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+1002485a:	465b      	mov	r3, fp
+1002485c:	4383      	bics	r3, r0
+1002485e:	43d8      	mvns	r0, r3
+10024860:	b243      	sxtb	r3, r0
+10024862:	930f      	str	r3, [sp, #60]	; 0x3c
+		power_read_exp[loop]= (int8_t)TWOS_UNCOMPLEMENT(3, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_READ_POWER_EXP));
+10024864:	2100      	movs	r1, #0
+10024866:	9803      	ldr	r0, [sp, #12]
+10024868:	f7e4 fc60 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+1002486c:	2307      	movs	r3, #7
+1002486e:	4003      	ands	r3, r0
+10024870:	089b      	lsrs	r3, r3, #2
+10024872:	d100      	bne.n	10024876 <patch_Telemetry_Sample+0x226>
+10024874:	e70a      	b.n	1002468c <patch_Telemetry_Sample+0x3c>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+10024876:	2307      	movs	r3, #7
+10024878:	4383      	bics	r3, r0
+1002487a:	43d8      	mvns	r0, r3
+1002487c:	b243      	sxtb	r3, r0
+1002487e:	9304      	str	r3, [sp, #16]
+		fan_read_exp[loop]  = (int8_t)TWOS_UNCOMPLEMENT(4, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)PMBUS_PAGE_0, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_READ_FAN_EXP));
+10024880:	2168      	movs	r1, #104	; 0x68
+10024882:	2000      	movs	r0, #0
+10024884:	f7e4 fc52 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+10024888:	465b      	mov	r3, fp
+1002488a:	4003      	ands	r3, r0
+1002488c:	08db      	lsrs	r3, r3, #3
+1002488e:	d100      	bne.n	10024892 <patch_Telemetry_Sample+0x242>
+10024890:	e6ff      	b.n	10024692 <patch_Telemetry_Sample+0x42>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+10024892:	465b      	mov	r3, fp
+10024894:	4383      	bics	r3, r0
+10024896:	43d8      	mvns	r0, r3
+10024898:	ab11      	add	r3, sp, #68	; 0x44
+1002489a:	54e8      	strb	r0, [r5, r3]
+		vout = (uint32_t)Telemetry_get((PMBUS_PAGE_t)loop, VOUT_TELEM);
+1002489c:	2100      	movs	r1, #0
+1002489e:	9803      	ldr	r0, [sp, #12]
+100248a0:	f7e5 fb4a 	bl	10009f38 <Telemetry_drv_init+0x47>
+		vout = (uint32_t)SHIFT_EXPONENT((int32_t)vout,  PMBUS_Q_EXP - vout_read_exp[loop]);  // convert to vout_mode format
+100248a4:	2310      	movs	r3, #16
+100248a6:	425b      	negs	r3, r3
+100248a8:	464a      	mov	r2, r9
+100248aa:	1a9b      	subs	r3, r3, r2
+		value = value << (exponent);
+100248ac:	0002      	movs	r2, r0
+100248ae:	409a      	lsls	r2, r3
+	if ( exponent <= 0)
+100248b0:	2b00      	cmp	r3, #0
+100248b2:	dc00      	bgt.n	100248b6 <patch_Telemetry_Sample+0x266>
+100248b4:	e6f0      	b.n	10024698 <patch_Telemetry_Sample+0x48>
+100248b6:	9205      	str	r2, [sp, #20]
+100248b8:	4bd6      	ldr	r3, [pc, #856]	; (10024c14 <patch_Telemetry_Sample+0x5c4>)
+100248ba:	429a      	cmp	r2, r3
+100248bc:	d900      	bls.n	100248c0 <patch_Telemetry_Sample+0x270>
+100248be:	9305      	str	r3, [sp, #20]
+100248c0:	4657      	mov	r7, sl
+		TELEM_DATA.vout[loop] = vout;
+100248c2:	9a05      	ldr	r2, [sp, #20]
+100248c4:	603a      	str	r2, [r7, #0]
+		iout = Telemetry_get((PMBUS_PAGE_t)loop, IOUT_TELEM);
+100248c6:	2101      	movs	r1, #1
+100248c8:	9803      	ldr	r0, [sp, #12]
+100248ca:	f7e5 fb35 	bl	10009f38 <Telemetry_drv_init+0x47>
+100248ce:	42a0      	cmp	r0, r4
+100248d0:	dd00      	ble.n	100248d4 <patch_Telemetry_Sample+0x284>
+100248d2:	0020      	movs	r0, r4
+100248d4:	0006      	movs	r6, r0
+100248d6:	4bd0      	ldr	r3, [pc, #832]	; (10024c18 <patch_Telemetry_Sample+0x5c8>)
+100248d8:	4298      	cmp	r0, r3
+100248da:	da00      	bge.n	100248de <patch_Telemetry_Sample+0x28e>
+100248dc:	001e      	movs	r6, r3
+		TELEM_DATA.iout[loop] = iout;
+100248de:	60be      	str	r6, [r7, #8]
+		vin = (uint32_t)Telemetry_get((PMBUS_PAGE_t)loop, VIN_TELEM);
+100248e0:	2102      	movs	r1, #2
+100248e2:	9803      	ldr	r0, [sp, #12]
+100248e4:	f7e5 fb28 	bl	10009f38 <Telemetry_drv_init+0x47>
+100248e8:	4680      	mov	r8, r0
+100248ea:	42a0      	cmp	r0, r4
+100248ec:	d900      	bls.n	100248f0 <patch_Telemetry_Sample+0x2a0>
+100248ee:	46a0      	mov	r8, r4
+		TELEM_DATA.vin[loop] = vin;
+100248f0:	4643      	mov	r3, r8
+100248f2:	61bb      	str	r3, [r7, #24]
+		iin = (uint32_t)Telemetry_get((PMBUS_PAGE_t)loop, IIN_TELEM);
+100248f4:	2103      	movs	r1, #3
+100248f6:	9803      	ldr	r0, [sp, #12]
+100248f8:	f7e5 fb1e 	bl	10009f38 <Telemetry_drv_init+0x47>
+100248fc:	9006      	str	r0, [sp, #24]
+100248fe:	42a0      	cmp	r0, r4
+10024900:	d900      	bls.n	10024904 <patch_Telemetry_Sample+0x2b4>
+10024902:	9406      	str	r4, [sp, #24]
+		TELEM_DATA.iin[loop] = iin;
+10024904:	9b06      	ldr	r3, [sp, #24]
+10024906:	613b      	str	r3, [r7, #16]
+		duty = (uint32_t)Telemetry_get((PMBUS_PAGE_t)loop, DUTY_TELEM);
+10024908:	2107      	movs	r1, #7
+1002490a:	9803      	ldr	r0, [sp, #12]
+1002490c:	f7e5 fb14 	bl	10009f38 <Telemetry_drv_init+0x47>
+10024910:	9008      	str	r0, [sp, #32]
+10024912:	42a0      	cmp	r0, r4
+10024914:	d900      	bls.n	10024918 <patch_Telemetry_Sample+0x2c8>
+10024916:	9408      	str	r4, [sp, #32]
+		TELEM_DATA.duty[loop] = duty;
+10024918:	9b08      	ldr	r3, [sp, #32]
+1002491a:	63bb      	str	r3, [r7, #56]	; 0x38
+		fsw = (uint32_t)Telemetry_get((PMBUS_PAGE_t)loop, FSW_TELEM);
+1002491c:	2108      	movs	r1, #8
+1002491e:	9803      	ldr	r0, [sp, #12]
+10024920:	f7e5 fb0a 	bl	10009f38 <Telemetry_drv_init+0x47>
+10024924:	9009      	str	r0, [sp, #36]	; 0x24
+10024926:	42a0      	cmp	r0, r4
+10024928:	d900      	bls.n	1002492c <patch_Telemetry_Sample+0x2dc>
+1002492a:	9409      	str	r4, [sp, #36]	; 0x24
+		TELEM_DATA.fsw[loop] = fsw;
+1002492c:	9b09      	ldr	r3, [sp, #36]	; 0x24
+1002492e:	633b      	str	r3, [r7, #48]	; 0x30
+		pout = (uint32_t)Telemetry_get_power(vout, vout_read_exp[loop], iout, iout_read_exp[loop], power_read_exp[loop]); //in read_power_exp
+10024930:	9b04      	ldr	r3, [sp, #16]
+10024932:	9300      	str	r3, [sp, #0]
+10024934:	9b0c      	ldr	r3, [sp, #48]	; 0x30
+10024936:	0032      	movs	r2, r6
+10024938:	4649      	mov	r1, r9
+1002493a:	9805      	ldr	r0, [sp, #20]
+1002493c:	f7e5 fc54 	bl	1000a1e8 <Telemetry_get_fan_speed+0x1f>
+10024940:	9007      	str	r0, [sp, #28]
+10024942:	42a0      	cmp	r0, r4
+10024944:	d900      	bls.n	10024948 <patch_Telemetry_Sample+0x2f8>
+10024946:	9407      	str	r4, [sp, #28]
+		TELEM_DATA.pout[loop] = pout;
+10024948:	9b07      	ldr	r3, [sp, #28]
+1002494a:	623b      	str	r3, [r7, #32]
+		pin = (uint32_t)Telemetry_get_power(vin, vin_read_exp[loop], (int32_t)iin, iin_read_exp[loop], power_read_exp[loop]);
+1002494c:	9b04      	ldr	r3, [sp, #16]
+1002494e:	9300      	str	r3, [sp, #0]
+10024950:	9b0d      	ldr	r3, [sp, #52]	; 0x34
+10024952:	9a06      	ldr	r2, [sp, #24]
+10024954:	990b      	ldr	r1, [sp, #44]	; 0x2c
+10024956:	4640      	mov	r0, r8
+10024958:	f7e5 fc46 	bl	1000a1e8 <Telemetry_get_fan_speed+0x1f>
+1002495c:	4681      	mov	r9, r0
+1002495e:	42a0      	cmp	r0, r4
+10024960:	d900      	bls.n	10024964 <patch_Telemetry_Sample+0x314>
+10024962:	46a1      	mov	r9, r4
+		TELEM_DATA.pin[loop] = pin;
+10024964:	464b      	mov	r3, r9
+10024966:	62bb      	str	r3, [r7, #40]	; 0x28
+		if (Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_FW_FILTER_EN) == 1) {
+10024968:	2103      	movs	r1, #3
+1002496a:	9803      	ldr	r0, [sp, #12]
+1002496c:	f7e4 fbde 	bl	1000912c <Telemetry_GetVersion+0x17>
+10024970:	2801      	cmp	r0, #1
+10024972:	d100      	bne.n	10024976 <patch_Telemetry_Sample+0x326>
+10024974:	e694      	b.n	100246a0 <patch_Telemetry_Sample+0x50>
+		TELEMETRY_VIN_SOURCE source = Telemetry_get_vin_source((PMBUS_PAGE_t)loop);
+10024976:	9803      	ldr	r0, [sp, #12]
+10024978:	f7e5 fc7c 	bl	1000a274 <Telemetry_get_tempi+0x5b>
+		if ((ON_OFF_STATE.On_Off_State[loop]==0)&&
+1002497c:	4ba7      	ldr	r3, [pc, #668]	; (10024c1c <patch_Telemetry_Sample+0x5cc>)
+1002497e:	5d5b      	ldrb	r3, [r3, r5]
+10024980:	2b00      	cmp	r3, #0
+10024982:	d102      	bne.n	1002498a <patch_Telemetry_Sample+0x33a>
+10024984:	2801      	cmp	r0, #1
+10024986:	d800      	bhi.n	1002498a <patch_Telemetry_Sample+0x33a>
+10024988:	e6ea      	b.n	10024760 <patch_Telemetry_Sample+0x110>
+			PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_VIN, (uint16_t)(((TWOS_COMPLEMENT (5, vin_read_exp[loop]))<<11) | (vin & 0x7ff))); // read_vin is u7.2
+1002498a:	221f      	movs	r2, #31
+1002498c:	9b0b      	ldr	r3, [sp, #44]	; 0x2c
+1002498e:	401a      	ands	r2, r3
+10024990:	02d0      	lsls	r0, r2, #11
+10024992:	4643      	mov	r3, r8
+10024994:	055a      	lsls	r2, r3, #21
+10024996:	0d52      	lsrs	r2, r2, #21
+10024998:	4302      	orrs	r2, r0
+1002499a:	2188      	movs	r1, #136	; 0x88
+1002499c:	9803      	ldr	r0, [sp, #12]
+1002499e:	f7dc ff91 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_VOUT,      (uint16_t)vout);
+100249a2:	466b      	mov	r3, sp
+100249a4:	8a9a      	ldrh	r2, [r3, #20]
+100249a6:	218b      	movs	r1, #139	; 0x8b
+100249a8:	9f03      	ldr	r7, [sp, #12]
+100249aa:	0038      	movs	r0, r7
+100249ac:	f7dc ff8a 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+	return ((uint8_t)exp & ((1 << numbits)-1));
+100249b0:	231f      	movs	r3, #31
+100249b2:	4698      	mov	r8, r3
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_IOUT,      (uint16_t)( (TWOS_COMPLEMENT (5, iout_read_exp[loop] )<<11) | ((uint16_t)iout & 0x7ff))); // read_iout is s7.2
+100249b4:	9a0c      	ldr	r2, [sp, #48]	; 0x30
+100249b6:	401a      	ands	r2, r3
+100249b8:	02d2      	lsls	r2, r2, #11
+100249ba:	0576      	lsls	r6, r6, #21
+100249bc:	0d76      	lsrs	r6, r6, #21
+100249be:	4332      	orrs	r2, r6
+100249c0:	218c      	movs	r1, #140	; 0x8c
+100249c2:	003e      	movs	r6, r7
+100249c4:	0038      	movs	r0, r7
+100249c6:	f7dc ff7d 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_IIN,       (uint16_t)( (TWOS_COMPLEMENT (5, iin_read_exp[loop]  )<<11) | (iin  & 0x7ff))); // read_iin is u6.4
+100249ca:	9a0d      	ldr	r2, [sp, #52]	; 0x34
+100249cc:	4643      	mov	r3, r8
+100249ce:	401a      	ands	r2, r3
+100249d0:	02d2      	lsls	r2, r2, #11
+100249d2:	9b06      	ldr	r3, [sp, #24]
+100249d4:	055f      	lsls	r7, r3, #21
+100249d6:	0d7f      	lsrs	r7, r7, #21
+100249d8:	433a      	orrs	r2, r7
+100249da:	2189      	movs	r1, #137	; 0x89
+100249dc:	0037      	movs	r7, r6
+100249de:	0030      	movs	r0, r6
+100249e0:	f7dc ff70 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_POUT,      (uint16_t)( (TWOS_COMPLEMENT (5, power_read_exp[loop])<<11) | (pout & 0x7ff))); // fixed at u10.0 format
+100249e4:	9e04      	ldr	r6, [sp, #16]
+100249e6:	4643      	mov	r3, r8
+100249e8:	401e      	ands	r6, r3
+100249ea:	02f6      	lsls	r6, r6, #11
+100249ec:	9b07      	ldr	r3, [sp, #28]
+100249ee:	055a      	lsls	r2, r3, #21
+100249f0:	0d52      	lsrs	r2, r2, #21
+100249f2:	4332      	orrs	r2, r6
+100249f4:	2196      	movs	r1, #150	; 0x96
+100249f6:	0038      	movs	r0, r7
+100249f8:	f7dc ff64 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_PIN,       (uint16_t)( (TWOS_COMPLEMENT (5, power_read_exp[loop])<<11) | (pin  & 0x7ff)));
+100249fc:	464b      	mov	r3, r9
+100249fe:	055a      	lsls	r2, r3, #21
+10024a00:	0d52      	lsrs	r2, r2, #21
+10024a02:	4332      	orrs	r2, r6
+10024a04:	2197      	movs	r1, #151	; 0x97
+10024a06:	0038      	movs	r0, r7
+10024a08:	f7dc ff5c 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_DUTY_CYCLE,(uint16_t)( (TWOS_COMPLEMENT (5, duty_read_exp[loop] )<<11) | (duty & 0x7ff)));  // u7.3 %
+10024a0c:	980f      	ldr	r0, [sp, #60]	; 0x3c
+10024a0e:	4643      	mov	r3, r8
+10024a10:	4018      	ands	r0, r3
+10024a12:	02c0      	lsls	r0, r0, #11
+10024a14:	9b08      	ldr	r3, [sp, #32]
+10024a16:	055a      	lsls	r2, r3, #21
+10024a18:	0d52      	lsrs	r2, r2, #21
+10024a1a:	4302      	orrs	r2, r0
+10024a1c:	2194      	movs	r1, #148	; 0x94
+10024a1e:	0038      	movs	r0, r7
+10024a20:	f7dc ff50 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, (uint8_t)PMBUS_CMDCODE_READ_FREQUENCY, (uint16_t)( (TWOS_COMPLEMENT (5, fsw_read_exp[loop]  )<<11) | (fsw  & 0x7ff)));  // Return READ_FREQUENCY in FREQUENCY_SWITCH format
+10024a24:	9a0e      	ldr	r2, [sp, #56]	; 0x38
+10024a26:	4643      	mov	r3, r8
+10024a28:	401a      	ands	r2, r3
+10024a2a:	02d2      	lsls	r2, r2, #11
+10024a2c:	9b09      	ldr	r3, [sp, #36]	; 0x24
+10024a2e:	0558      	lsls	r0, r3, #21
+10024a30:	0d40      	lsrs	r0, r0, #21
+10024a32:	4302      	orrs	r2, r0
+10024a34:	2195      	movs	r1, #149	; 0x95
+10024a36:	0038      	movs	r0, r7
+10024a38:	f7dc ff44 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+			int32_t exponent = LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_POUT_OP_WARN_LIMIT));
+10024a3c:	216a      	movs	r1, #106	; 0x6a
+10024a3e:	0038      	movs	r0, r7
+10024a40:	f7dc fe0a 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10024a44:	0ac0      	lsrs	r0, r0, #11
+10024a46:	b286      	uxth	r6, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10024a48:	2310      	movs	r3, #16
+10024a4a:	4233      	tst	r3, r6
+10024a4c:	d002      	beq.n	10024a54 <patch_Telemetry_Sample+0x404>
+10024a4e:	2020      	movs	r0, #32
+10024a50:	4240      	negs	r0, r0
+10024a52:	4306      	orrs	r6, r0
+			int16_t mantissa = (int16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_POUT_OP_WARN_LIMIT));
+10024a54:	216a      	movs	r1, #106	; 0x6a
+10024a56:	9803      	ldr	r0, [sp, #12]
+10024a58:	f7dc fdfe 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024a5c:	0542      	lsls	r2, r0, #21
+10024a5e:	0d52      	lsrs	r2, r2, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024a60:	2380      	movs	r3, #128	; 0x80
+10024a62:	00db      	lsls	r3, r3, #3
+10024a64:	4218      	tst	r0, r3
+10024a66:	d000      	beq.n	10024a6a <patch_Telemetry_Sample+0x41a>
+10024a68:	e683      	b.n	10024772 <patch_Telemetry_Sample+0x122>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+10024a6a:	0013      	movs	r3, r2
+			POWER_WARN_THRESH[loop].pout_op_warn_thresh = (uint16_t) SHIFT_EXPONENT(mantissa, (- power_read_exp[loop] + exponent));
+10024a6c:	b21b      	sxth	r3, r3
+10024a6e:	9a04      	ldr	r2, [sp, #16]
+10024a70:	1ab6      	subs	r6, r6, r2
+		value = value << (exponent);
+10024a72:	001a      	movs	r2, r3
+10024a74:	40b2      	lsls	r2, r6
+	if ( exponent <= 0)
+10024a76:	2e00      	cmp	r6, #0
+10024a78:	dc00      	bgt.n	10024a7c <patch_Telemetry_Sample+0x42c>
+10024a7a:	e67d      	b.n	10024778 <patch_Telemetry_Sample+0x128>
+10024a7c:	9b0a      	ldr	r3, [sp, #40]	; 0x28
+10024a7e:	001f      	movs	r7, r3
+10024a80:	801a      	strh	r2, [r3, #0]
+			exponent = LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_PIN_OP_WARN_LIMIT));
+10024a82:	216b      	movs	r1, #107	; 0x6b
+10024a84:	9803      	ldr	r0, [sp, #12]
+10024a86:	f7dc fde7 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10024a8a:	0ac0      	lsrs	r0, r0, #11
+10024a8c:	b286      	uxth	r6, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10024a8e:	2310      	movs	r3, #16
+10024a90:	4233      	tst	r3, r6
+10024a92:	d002      	beq.n	10024a9a <patch_Telemetry_Sample+0x44a>
+10024a94:	2020      	movs	r0, #32
+10024a96:	4240      	negs	r0, r0
+10024a98:	4306      	orrs	r6, r0
+			mantissa = (int16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_PIN_OP_WARN_LIMIT));
+10024a9a:	216b      	movs	r1, #107	; 0x6b
+10024a9c:	9803      	ldr	r0, [sp, #12]
+10024a9e:	f7dc fddb 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024aa2:	0542      	lsls	r2, r0, #21
+10024aa4:	0d52      	lsrs	r2, r2, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024aa6:	2380      	movs	r3, #128	; 0x80
+10024aa8:	00db      	lsls	r3, r3, #3
+10024aaa:	4218      	tst	r0, r3
+10024aac:	d000      	beq.n	10024ab0 <patch_Telemetry_Sample+0x460>
+10024aae:	e667      	b.n	10024780 <patch_Telemetry_Sample+0x130>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+10024ab0:	0013      	movs	r3, r2
+			POWER_WARN_THRESH[loop].pin_op_warn_thresh = (uint16_t) SHIFT_EXPONENT(mantissa, (- power_read_exp[loop] + exponent));
+10024ab2:	b21b      	sxth	r3, r3
+10024ab4:	9a04      	ldr	r2, [sp, #16]
+10024ab6:	1ab6      	subs	r6, r6, r2
+		value = value << (exponent);
+10024ab8:	001a      	movs	r2, r3
+10024aba:	40b2      	lsls	r2, r6
+	if ( exponent <= 0)
+10024abc:	2e00      	cmp	r6, #0
+10024abe:	dc00      	bgt.n	10024ac2 <patch_Telemetry_Sample+0x472>
+10024ac0:	e661      	b.n	10024786 <patch_Telemetry_Sample+0x136>
+10024ac2:	807a      	strh	r2, [r7, #2]
+		if (pout>POWER_WARN_THRESH[loop].pout_op_warn_thresh)
+10024ac4:	883b      	ldrh	r3, [r7, #0]
+10024ac6:	9a07      	ldr	r2, [sp, #28]
+10024ac8:	4293      	cmp	r3, r2
+10024aca:	d300      	bcc.n	10024ace <patch_Telemetry_Sample+0x47e>
+10024acc:	e65f      	b.n	1002478e <patch_Telemetry_Sample+0x13e>
+			Set_Firmware_Fault((PMBUS_PAGE_t)loop, FAULT_TYPE_POUT_OP_WARN);
+10024ace:	2125      	movs	r1, #37	; 0x25
+10024ad0:	9803      	ldr	r0, [sp, #12]
+10024ad2:	f7e4 f9c7 	bl	10008e64 <LOOP_FAULT_HANDLE+0x3db>
+		if (pin>POWER_WARN_THRESH[loop].pin_op_warn_thresh)
+10024ad6:	887b      	ldrh	r3, [r7, #2]
+10024ad8:	454b      	cmp	r3, r9
+10024ada:	d300      	bcc.n	10024ade <patch_Telemetry_Sample+0x48e>
+10024adc:	e664      	b.n	100247a8 <patch_Telemetry_Sample+0x158>
+			Set_Firmware_Fault((PMBUS_PAGE_t)loop, FAULT_TYPE_PIN_OP_WARN);
+10024ade:	2124      	movs	r1, #36	; 0x24
+10024ae0:	9803      	ldr	r0, [sp, #12]
+10024ae2:	f7e4 f9bf 	bl	10008e64 <LOOP_FAULT_HANDLE+0x3db>
+10024ae6:	e663      	b.n	100247b0 <patch_Telemetry_Sample+0x160>
+		}
+
+	}
+
+  //ATSEN_TELEM
+	tempa = Telemetry_get(PMBUS_PAGE_0, ATSEN_TELEM);
+10024ae8:	2104      	movs	r1, #4
+10024aea:	2000      	movs	r0, #0
+10024aec:	f7e5 fa24 	bl	10009f38 <Telemetry_drv_init+0x47>
+10024af0:	9003      	str	r0, [sp, #12]
+	TELEM_DATA.temperature[0] = tempa;
+10024af2:	4c4b      	ldr	r4, [pc, #300]	; (10024c20 <patch_Telemetry_Sample+0x5d0>)
+10024af4:	6620      	str	r0, [r4, #96]	; 0x60
+  //BTSEN_TELEM
+	tempb = Telemetry_get(PMBUS_PAGE_0, BTSEN_TELEM);
+10024af6:	2105      	movs	r1, #5
+10024af8:	2000      	movs	r0, #0
+10024afa:	f7e5 fa1d 	bl	10009f38 <Telemetry_drv_init+0x47>
+10024afe:	0005      	movs	r5, r0
+	TELEM_DATA.temperature[1] = tempb;
+10024b00:	6660      	str	r0, [r4, #100]	; 0x64
+  //ITSEN_TELEM
+	tempi = Telemetry_get_tempi();
+10024b02:	f7e5 fb89 	bl	1000a218 <Telemetry_get_power+0x2f>
+10024b06:	9005      	str	r0, [sp, #20]
+	TELEM_DATA.temperature[2] = tempi;
+10024b08:	66a0      	str	r0, [r4, #104]	; 0x68
+	//tempa = Telemetry_get((PMBUS_PAGE_t)loop, ITSEN_TELEM);
+
+	// Here we determine which READ_TEMPERATURE gets tempA, tempB, and tempI
+	for(loop=0; loop<NUM_LOOPS; loop++)
+10024b0a:	2400      	movs	r4, #0
+	{
+		switch ((PMBUS_Get_Command_Byte ((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_MFR_SELECT_TEMPERATURE_SENSOR)) & 0x7 )
+10024b0c:	2707      	movs	r7, #7
+		{
+			case 0:
+				temp_1 = tempa;
+				temp_2 = tempb;
+10024b0e:	9504      	str	r5, [sp, #16]
+10024b10:	e026      	b.n	10024b60 <patch_Telemetry_Sample+0x510>
+				break;
+			case 1:
+				temp_1 = tempa;
+				temp_2 = tempi;
+10024b12:	9d05      	ldr	r5, [sp, #20]
+				temp_1 = tempa;
+10024b14:	9e03      	ldr	r6, [sp, #12]
+10024b16:	e00d      	b.n	10024b34 <patch_Telemetry_Sample+0x4e4>
+				break;
+			case 2:
+				temp_1 = tempb;
+				temp_2 = tempa;
+10024b18:	9d03      	ldr	r5, [sp, #12]
+				temp_1 = tempb;
+10024b1a:	9e04      	ldr	r6, [sp, #16]
+				break;
+10024b1c:	e00a      	b.n	10024b34 <patch_Telemetry_Sample+0x4e4>
+			case 3:
+				temp_1 = tempb;
+				temp_2 = tempi;
+10024b1e:	9d05      	ldr	r5, [sp, #20]
+				temp_1 = tempb;
+10024b20:	9e04      	ldr	r6, [sp, #16]
+				break;
+10024b22:	e007      	b.n	10024b34 <patch_Telemetry_Sample+0x4e4>
+			case 4:
+				temp_1 = tempi;
+				temp_2 = tempa;
+10024b24:	9d03      	ldr	r5, [sp, #12]
+				temp_1 = tempi;
+10024b26:	9e05      	ldr	r6, [sp, #20]
+				break;
+10024b28:	e004      	b.n	10024b34 <patch_Telemetry_Sample+0x4e4>
+			case 5:
+				temp_1 = tempi;
+				temp_2 = tempb;
+10024b2a:	9d04      	ldr	r5, [sp, #16]
+				temp_1 = tempi;
+10024b2c:	9e05      	ldr	r6, [sp, #20]
+				break;
+10024b2e:	e001      	b.n	10024b34 <patch_Telemetry_Sample+0x4e4>
+				temp_2 = tempb;
+10024b30:	9d04      	ldr	r5, [sp, #16]
+				temp_1 = tempa;
+10024b32:	9e03      	ldr	r6, [sp, #12]
+				temp_1 = tempa;
+				temp_2 = tempb;
+				break;
+		}
+
+		if (Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_FW_FILTER_EN) == 1) {
+10024b34:	2103      	movs	r1, #3
+10024b36:	0020      	movs	r0, r4
+10024b38:	f7e4 faf8 	bl	1000912c <Telemetry_GetVersion+0x17>
+10024b3c:	2801      	cmp	r0, #1
+10024b3e:	d01b      	beq.n	10024b78 <patch_Telemetry_Sample+0x528>
+			temp_1 = (temp_1 + (LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_TEMPERATURE_1))))>>1u;
+			/*lint -e702 */
+			temp_2 = (temp_2 + (LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_TEMPERATURE_2))))>>1u;
+		}
+
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, PMBUS_CMDCODE_READ_TEMPERATURE_1, ((uint16_t)temp_1 & 0x7ff));
+10024b40:	0572      	lsls	r2, r6, #21
+10024b42:	0d52      	lsrs	r2, r2, #21
+10024b44:	218d      	movs	r1, #141	; 0x8d
+10024b46:	0020      	movs	r0, r4
+10024b48:	f7dc febc 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+		PMBUS_Set_Command_Word((PMBUS_PAGE_W_BROADCAST_t)loop, PMBUS_CMDCODE_READ_TEMPERATURE_2, ((uint16_t)temp_2 & 0x7ff));
+10024b4c:	056a      	lsls	r2, r5, #21
+10024b4e:	0d52      	lsrs	r2, r2, #21
+10024b50:	218e      	movs	r1, #142	; 0x8e
+10024b52:	0020      	movs	r0, r4
+10024b54:	f7dc feb6 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+	for(loop=0; loop<NUM_LOOPS; loop++)
+10024b58:	3401      	adds	r4, #1
+10024b5a:	b2e4      	uxtb	r4, r4
+10024b5c:	2c02      	cmp	r4, #2
+10024b5e:	d024      	beq.n	10024baa <patch_Telemetry_Sample+0x55a>
+		switch ((PMBUS_Get_Command_Byte ((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_MFR_SELECT_TEMPERATURE_SENSOR)) & 0x7 )
+10024b60:	21dc      	movs	r1, #220	; 0xdc
+10024b62:	0020      	movs	r0, r4
+10024b64:	f7dc fd3c 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+10024b68:	4038      	ands	r0, r7
+10024b6a:	b2c3      	uxtb	r3, r0
+10024b6c:	2b05      	cmp	r3, #5
+10024b6e:	d8df      	bhi.n	10024b30 <patch_Telemetry_Sample+0x4e0>
+10024b70:	0080      	lsls	r0, r0, #2
+10024b72:	4b2c      	ldr	r3, [pc, #176]	; (10024c24 <patch_Telemetry_Sample+0x5d4>)
+10024b74:	581b      	ldr	r3, [r3, r0]
+10024b76:	469f      	mov	pc, r3
+			temp_1 = (temp_1 + (LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_TEMPERATURE_1))))>>1u;
+10024b78:	218d      	movs	r1, #141	; 0x8d
+10024b7a:	0020      	movs	r0, r4
+10024b7c:	f7dc fd6c 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024b80:	0543      	lsls	r3, r0, #21
+10024b82:	0d5b      	lsrs	r3, r3, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024b84:	0542      	lsls	r2, r0, #21
+10024b86:	d501      	bpl.n	10024b8c <patch_Telemetry_Sample+0x53c>
+10024b88:	4a27      	ldr	r2, [pc, #156]	; (10024c28 <patch_Telemetry_Sample+0x5d8>)
+10024b8a:	4313      	orrs	r3, r2
+10024b8c:	18f6      	adds	r6, r6, r3
+10024b8e:	1076      	asrs	r6, r6, #1
+			temp_2 = (temp_2 + (LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_READ_TEMPERATURE_2))))>>1u;
+10024b90:	218e      	movs	r1, #142	; 0x8e
+10024b92:	0020      	movs	r0, r4
+10024b94:	f7dc fd60 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024b98:	0543      	lsls	r3, r0, #21
+10024b9a:	0d5b      	lsrs	r3, r3, #21
+10024b9c:	0542      	lsls	r2, r0, #21
+10024b9e:	d501      	bpl.n	10024ba4 <patch_Telemetry_Sample+0x554>
+10024ba0:	4a21      	ldr	r2, [pc, #132]	; (10024c28 <patch_Telemetry_Sample+0x5d8>)
+10024ba2:	4313      	orrs	r3, r2
+10024ba4:	18ed      	adds	r5, r5, r3
+10024ba6:	106d      	asrs	r5, r5, #1
+10024ba8:	e7ca      	b.n	10024b40 <patch_Telemetry_Sample+0x4f0>
+	}
+
+	uint16_t fan_speed1 = Telemetry_get_fan_speed(FAN1);
+10024baa:	2000      	movs	r0, #0
+10024bac:	f7e5 fb0c 	bl	1000a1c8 <Telemetry_get_adc_code+0x3f>
+10024bb0:	4680      	mov	r8, r0
+	uint16_t fan_speed2 = Telemetry_get_fan_speed(FAN2);
+10024bb2:	2001      	movs	r0, #1
+10024bb4:	f7e5 fb08 	bl	1000a1c8 <Telemetry_get_adc_code+0x3f>
+10024bb8:	0006      	movs	r6, r0
+
+	// Get fan speed, replicate on both loops
+	// since the bottom 8 lsb's of fan_speed register are always zero we shift those off and use +6 exponent to get 64 to 65k rpm
+	int32_t temp = SHIFT_EXPONENT(fan_speed1, -(fan_read_exp[PMBUS_PAGE_0]));
+10024bba:	ab11      	add	r3, sp, #68	; 0x44
+10024bbc:	2500      	movs	r5, #0
+10024bbe:	575d      	ldrsb	r5, [r3, r5]
+10024bc0:	426f      	negs	r7, r5
+	if ( exponent <= 0)
+10024bc2:	2f00      	cmp	r7, #0
+10024bc4:	dd34      	ble.n	10024c30 <patch_Telemetry_Sample+0x5e0>
+	if (temp > 0x3ff) temp = 0x3ff;  // clamp fan speed at mantissa size
+	PMBUS_Set_Command_Word(PMBUS_PAGE_WB_BROADCAST, (uint8_t)PMBUS_CMDCODE_READ_FAN_SPEED_1, (uint16_t)(((TWOS_COMPLEMENT (5, fan_read_exp[PMBUS_PAGE_0]))<<11)
+10024bc6:	241f      	movs	r4, #31
+10024bc8:	402c      	ands	r4, r5
+10024bca:	02e4      	lsls	r4, r4, #11
+			| temp));
+10024bcc:	b224      	sxth	r4, r4
+		value = value << (exponent);
+10024bce:	4640      	mov	r0, r8
+10024bd0:	40b8      	lsls	r0, r7
+10024bd2:	4b16      	ldr	r3, [pc, #88]	; (10024c2c <patch_Telemetry_Sample+0x5dc>)
+10024bd4:	4298      	cmp	r0, r3
+10024bd6:	dd00      	ble.n	10024bda <patch_Telemetry_Sample+0x58a>
+10024bd8:	0018      	movs	r0, r3
+10024bda:	4320      	orrs	r0, r4
+	PMBUS_Set_Command_Word(PMBUS_PAGE_WB_BROADCAST, (uint8_t)PMBUS_CMDCODE_READ_FAN_SPEED_1, (uint16_t)(((TWOS_COMPLEMENT (5, fan_read_exp[PMBUS_PAGE_0]))<<11)
+10024bdc:	b282      	uxth	r2, r0
+10024bde:	2190      	movs	r1, #144	; 0x90
+10024be0:	20ff      	movs	r0, #255	; 0xff
+10024be2:	f7dc fe6f 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+10024be6:	0032      	movs	r2, r6
+10024be8:	40ba      	lsls	r2, r7
+	temp = SHIFT_EXPONENT(fan_speed2, -(fan_read_exp[PMBUS_PAGE_0]));  // shift the fan speed by the exponent
+	if (temp > 0x3ff) temp = 0x3ff;  // clamp fan speed at mantissa size
+	PMBUS_Set_Command_Word(PMBUS_PAGE_WB_BROADCAST, (uint8_t)PMBUS_CMDCODE_READ_FAN_SPEED_2, (uint16_t)(((TWOS_COMPLEMENT (5, fan_read_exp[PMBUS_PAGE_0]))<<11)
+			| temp));
+10024bea:	4b10      	ldr	r3, [pc, #64]	; (10024c2c <patch_Telemetry_Sample+0x5dc>)
+10024bec:	429a      	cmp	r2, r3
+10024bee:	dd00      	ble.n	10024bf2 <patch_Telemetry_Sample+0x5a2>
+10024bf0:	001a      	movs	r2, r3
+10024bf2:	4322      	orrs	r2, r4
+	PMBUS_Set_Command_Word(PMBUS_PAGE_WB_BROADCAST, (uint8_t)PMBUS_CMDCODE_READ_FAN_SPEED_2, (uint16_t)(((TWOS_COMPLEMENT (5, fan_read_exp[PMBUS_PAGE_0]))<<11)
+10024bf4:	b292      	uxth	r2, r2
+10024bf6:	2191      	movs	r1, #145	; 0x91
+10024bf8:	20ff      	movs	r0, #255	; 0xff
+10024bfa:	f7dc fe63 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+
+	call_system_cb(TELEMETRY_SAMPLE);
+10024bfe:	2000      	movs	r0, #0
+10024c00:	f7dd fe1e 	bl	10002840 <call_module_init_cb+0x13>
+}
+10024c04:	b013      	add	sp, #76	; 0x4c
+10024c06:	bc3c      	pop	{r2, r3, r4, r5}
+10024c08:	4690      	mov	r8, r2
+10024c0a:	4699      	mov	r9, r3
+10024c0c:	46a2      	mov	sl, r4
+10024c0e:	46ab      	mov	fp, r5
+10024c10:	bdf0      	pop	{r4, r5, r6, r7, pc}
+10024c12:	46c0      	nop			; (mov r8, r8)
+10024c14:	0000ffff 	.word	0x0000ffff
+10024c18:	fffffc01 	.word	0xfffffc01
+10024c1c:	2005d290 	.word	0x2005d290
+10024c20:	200614d0 	.word	0x200614d0
+10024c24:	10024e48 	.word	0x10024e48
+10024c28:	fffff800 	.word	0xfffff800
+10024c2c:	000003ff 	.word	0x000003ff
+	PMBUS_Set_Command_Word(PMBUS_PAGE_WB_BROADCAST, (uint8_t)PMBUS_CMDCODE_READ_FAN_SPEED_1, (uint16_t)(((TWOS_COMPLEMENT (5, fan_read_exp[PMBUS_PAGE_0]))<<11)
+10024c30:	341d      	adds	r4, #29
+10024c32:	402c      	ands	r4, r5
+10024c34:	02e4      	lsls	r4, r4, #11
+			| temp));
+10024c36:	b224      	sxth	r4, r4
+		value = value >> (exponent);
+10024c38:	4640      	mov	r0, r8
+10024c3a:	4128      	asrs	r0, r5
+10024c3c:	4b06      	ldr	r3, [pc, #24]	; (10024c58 <patch_Telemetry_Sample+0x608>)
+10024c3e:	4298      	cmp	r0, r3
+10024c40:	dd00      	ble.n	10024c44 <patch_Telemetry_Sample+0x5f4>
+10024c42:	0018      	movs	r0, r3
+10024c44:	4320      	orrs	r0, r4
+	PMBUS_Set_Command_Word(PMBUS_PAGE_WB_BROADCAST, (uint8_t)PMBUS_CMDCODE_READ_FAN_SPEED_1, (uint16_t)(((TWOS_COMPLEMENT (5, fan_read_exp[PMBUS_PAGE_0]))<<11)
+10024c46:	b282      	uxth	r2, r0
+10024c48:	2190      	movs	r1, #144	; 0x90
+10024c4a:	20ff      	movs	r0, #255	; 0xff
+10024c4c:	f7dc fe3a 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+10024c50:	0032      	movs	r2, r6
+10024c52:	412a      	asrs	r2, r5
+10024c54:	e7c9      	b.n	10024bea <patch_Telemetry_Sample+0x59a>
+10024c56:	46c0      	nop			; (mov r8, r8)
+10024c58:	000003ff 	.word	0x000003ff
+
+10024c5c <pmbus_mfr_autogen_init>:
+ */
+void pmbus_mfr_autogen_init(void)
+{
+
+
+}
+10024c5c:	4770      	bx	lr
+
+10024c5e <AT_TARGET_ENABLE>:
+}
+
+void AT_TARGET_ENABLE(PMBUS_PAGE_t loop)
+{
+
+}
+10024c5e:	4770      	bx	lr
+
+10024c60 <regulation_sm_callbacks_init>:
+{
+10024c60:	b510      	push	{r4, lr}
+	Regulation_set_regulation_event_cb(REGULATION_STATE_AT_TARGET_VID, REGULATION_CONTROLS_ENABLE,
+10024c62:	4a03      	ldr	r2, [pc, #12]	; (10024c70 <regulation_sm_callbacks_init+0x10>)
+10024c64:	2109      	movs	r1, #9
+10024c66:	2003      	movs	r0, #3
+10024c68:	f7e2 ff7a 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+}
+10024c6c:	bd10      	pop	{r4, pc}
+10024c6e:	46c0      	nop			; (mov r8, r8)
+10024c70:	10024c5f 	.word	0x10024c5f
+
+10024c74 <patch_pmbus_mfr_autogen_iout_range>:
+ * Initializes pmbus handle changes related to IOUT_SCALE
+ * Function reset specific pmbus handle related to IOUT_SCALE.
+ * Refer to user_app/iout_range_patch.xlsx
+ */
+void patch_pmbus_mfr_autogen_iout_range(void)
+{
+10024c74:	b510      	push	{r4, lr}
+	pmbus_mfr_autogen_init();
+10024c76:	f7ff fff1 	bl	10024c5c <pmbus_mfr_autogen_init>
+
+	// initialize and re-map PMBUS handler related to output current scales
+	ptr_pmbus_callback[PMBUS_CMDCODE_IOUT_CAL_OFFSET] = patch_PMBUS_HANDLE_IOUT_CAL_OFFSET;
+10024c7a:	4b10      	ldr	r3, [pc, #64]	; (10024cbc <patch_pmbus_mfr_autogen_iout_range+0x48>)
+10024c7c:	4910      	ldr	r1, [pc, #64]	; (10024cc0 <patch_pmbus_mfr_autogen_iout_range+0x4c>)
+10024c7e:	22e4      	movs	r2, #228	; 0xe4
+10024c80:	5099      	str	r1, [r3, r2]
+	ptr_pmbus_callback[PMBUS_CMDCODE_IOUT_OC_FAULT_LIMIT] = patch_PMBUS_HANDLE_IOUT_OC_FAULT_LIMIT;
+10024c82:	4910      	ldr	r1, [pc, #64]	; (10024cc4 <patch_pmbus_mfr_autogen_iout_range+0x50>)
+10024c84:	3234      	adds	r2, #52	; 0x34
+10024c86:	5099      	str	r1, [r3, r2]
+	ptr_pmbus_callback[PMBUS_CMDCODE_IOUT_OC_WARN_LIMIT] = patch_PMBUS_HANDLE_IOUT_OC_WARN_LIMIT;
+10024c88:	490f      	ldr	r1, [pc, #60]	; (10024cc8 <patch_pmbus_mfr_autogen_iout_range+0x54>)
+10024c8a:	3210      	adds	r2, #16
+10024c8c:	5099      	str	r1, [r3, r2]
+	ptr_pmbus_callback[PMBUS_CMDCODE_IOUT_UC_FAULT_LIMIT] = patch_PMBUS_HANDLE_IOUT_UC_FAULT_LIMIT;
+10024c8e:	490f      	ldr	r1, [pc, #60]	; (10024ccc <patch_pmbus_mfr_autogen_iout_range+0x58>)
+10024c90:	3204      	adds	r2, #4
+10024c92:	5099      	str	r1, [r3, r2]
+	ptr_pmbus_callback[PMBUS_CMDCODE_IIN_OC_FAULT_LIMIT] = patch_PMBUS_HANDLE_IIN_OC_FAULT_LIMIT;
+10024c94:	490e      	ldr	r1, [pc, #56]	; (10024cd0 <patch_pmbus_mfr_autogen_iout_range+0x5c>)
+10024c96:	3240      	adds	r2, #64	; 0x40
+10024c98:	5099      	str	r1, [r3, r2]
+	ptr_pmbus_callback[PMBUS_CMDCODE_IIN_OC_WARN_LIMIT] = patch_PMBUS_HANDLE_IIN_OC_WARN_LIMIT;
+10024c9a:	490e      	ldr	r1, [pc, #56]	; (10024cd4 <patch_pmbus_mfr_autogen_iout_range+0x60>)
+10024c9c:	3208      	adds	r2, #8
+10024c9e:	5099      	str	r1, [r3, r2]
+	ptr_pmbus_callback[PMBUS_CMDCODE_VOUT_DROOP] = patch_PMBUS_HANDLE_VOUT_DROOP;
+10024ca0:	490d      	ldr	r1, [pc, #52]	; (10024cd8 <patch_pmbus_mfr_autogen_iout_range+0x64>)
+10024ca2:	3ad4      	subs	r2, #212	; 0xd4
+10024ca4:	5099      	str	r1, [r3, r2]
+	ptr_pmbus_callback[PMBUS_CMDCODE_FW_CONFIG_REGULATION] = patch_PMBUS_HANDLE_FW_CONFIG_REGULATION;
+10024ca6:	490d      	ldr	r1, [pc, #52]	; (10024cdc <patch_pmbus_mfr_autogen_iout_range+0x68>)
+10024ca8:	22c5      	movs	r2, #197	; 0xc5
+10024caa:	0092      	lsls	r2, r2, #2
+10024cac:	5099      	str	r1, [r3, r2]
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_IOUT_OC_FAST_FAULT_LIMIT] = patch_PMBUS_HANDLE_MFR_IOUT_OC_FAST_FAULT_LIMIT;
+10024cae:	490c      	ldr	r1, [pc, #48]	; (10024ce0 <patch_pmbus_mfr_autogen_iout_range+0x6c>)
+10024cb0:	3230      	adds	r2, #48	; 0x30
+10024cb2:	5099      	str	r1, [r3, r2]
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_IOUT_APC] = patch_PMBUS_HANDLE_MFR_IOUT_APC;
+10024cb4:	490b      	ldr	r1, [pc, #44]	; (10024ce4 <patch_pmbus_mfr_autogen_iout_range+0x70>)
+10024cb6:	3264      	adds	r2, #100	; 0x64
+10024cb8:	5099      	str	r1, [r3, r2]
+}
+10024cba:	bd10      	pop	{r4, pc}
+10024cbc:	2005d954 	.word	0x2005d954
+10024cc0:	1002407d 	.word	0x1002407d
+10024cc4:	100240f9 	.word	0x100240f9
+10024cc8:	100241e1 	.word	0x100241e1
+10024ccc:	1002416d 	.word	0x1002416d
+10024cd0:	10024251 	.word	0x10024251
+10024cd4:	100242c5 	.word	0x100242c5
+10024cd8:	10024335 	.word	0x10024335
+10024cdc:	100243b1 	.word	0x100243b1
+10024ce0:	10024561 	.word	0x10024561
+10024ce4:	100245d5 	.word	0x100245d5
+
+10024ce8 <user_drv_init>:
+/*
+ * Main entry point of the user application.  Good place to set breakpoint when debugging a patch.
+ * This will only get executed a single time prior to configuration loading and before RTOS starts
+ */
+void user_drv_init(void)
+{
+10024ce8:	b510      	push	{r4, lr}
+	memset(&user_data, 0, sizeof(USER_DATA_t));  // ZI the user data
+10024cea:	2274      	movs	r2, #116	; 0x74
+10024cec:	2100      	movs	r1, #0
+10024cee:	480a      	ldr	r0, [pc, #40]	; (10024d18 <user_drv_init+0x30>)
+10024cf0:	f000 f860 	bl	10024db4 <memset>
+
+	/* iout scale Example Modification Start */
+	patch_rom_table.patch_Telemetry_Sample = patch_Telemetry_Sample;
+10024cf4:	4909      	ldr	r1, [pc, #36]	; (10024d1c <user_drv_init+0x34>)
+10024cf6:	2381      	movs	r3, #129	; 0x81
+10024cf8:	009b      	lsls	r3, r3, #2
+10024cfa:	4a09      	ldr	r2, [pc, #36]	; (10024d20 <user_drv_init+0x38>)
+10024cfc:	50d1      	str	r1, [r2, r3]
+
+	// this is the initialization of user pmbus commands autogenerated from pmbus spreadsheet
+	ptr_mfr_specific_init = (mfr_specific_init_ptr) patch_pmbus_mfr_autogen_init;
+
+	/* iout scale Example Modification Start */
+	ptr_mfr_specific_init = (mfr_specific_init_ptr) patch_pmbus_mfr_autogen_iout_range;
+10024cfe:	4a09      	ldr	r2, [pc, #36]	; (10024d24 <user_drv_init+0x3c>)
+10024d00:	4b09      	ldr	r3, [pc, #36]	; (10024d28 <user_drv_init+0x40>)
+10024d02:	601a      	str	r2, [r3, #0]
+	/* iout scale Example Modification End */
+
+	// set the pointer funtion in init of regulation state machine to user callback setup for each state
+	set_module_init_cb(MODULE_REGULATION, regulation_sm_callbacks_init);
+10024d04:	4909      	ldr	r1, [pc, #36]	; (10024d2c <user_drv_init+0x44>)
+10024d06:	2002      	movs	r0, #2
+10024d08:	f7df fdf0 	bl	100048ec <scratchpad_semaphore_release+0x33>
+
+	add_on_features_init();
+10024d0c:	f7ff f9b4 	bl	10024078 <add_on_features_init>
+	regulation_sm_callbacks_init();
+10024d10:	f7ff ffa6 	bl	10024c60 <regulation_sm_callbacks_init>
+}
+10024d14:	bd10      	pop	{r4, pc}
+10024d16:	46c0      	nop			; (mov r8, r8)
+10024d18:	20063800 	.word	0x20063800
+10024d1c:	10024651 	.word	0x10024651
+10024d20:	2005d074 	.word	0x2005d074
+10024d24:	10024c75 	.word	0x10024c75
+10024d28:	2005d468 	.word	0x2005d468
+10024d2c:	10024c61 	.word	0x10024c61
+
+10024d30 <memcpy>:
+10024d30:	b5f0      	push	{r4, r5, r6, r7, lr}
+10024d32:	0005      	movs	r5, r0
+10024d34:	2a0f      	cmp	r2, #15
+10024d36:	d92f      	bls.n	10024d98 <memcpy+0x68>
+10024d38:	000b      	movs	r3, r1
+10024d3a:	4303      	orrs	r3, r0
+10024d3c:	079b      	lsls	r3, r3, #30
+10024d3e:	d134      	bne.n	10024daa <memcpy+0x7a>
+10024d40:	0016      	movs	r6, r2
+10024d42:	000c      	movs	r4, r1
+10024d44:	0003      	movs	r3, r0
+10024d46:	3e10      	subs	r6, #16
+10024d48:	0935      	lsrs	r5, r6, #4
+10024d4a:	3501      	adds	r5, #1
+10024d4c:	012d      	lsls	r5, r5, #4
+10024d4e:	1945      	adds	r5, r0, r5
+10024d50:	6827      	ldr	r7, [r4, #0]
+10024d52:	601f      	str	r7, [r3, #0]
+10024d54:	6867      	ldr	r7, [r4, #4]
+10024d56:	605f      	str	r7, [r3, #4]
+10024d58:	68a7      	ldr	r7, [r4, #8]
+10024d5a:	609f      	str	r7, [r3, #8]
+10024d5c:	68e7      	ldr	r7, [r4, #12]
+10024d5e:	3410      	adds	r4, #16
+10024d60:	60df      	str	r7, [r3, #12]
+10024d62:	3310      	adds	r3, #16
+10024d64:	429d      	cmp	r5, r3
+10024d66:	d1f3      	bne.n	10024d50 <memcpy+0x20>
+10024d68:	230f      	movs	r3, #15
+10024d6a:	439e      	bics	r6, r3
+10024d6c:	3610      	adds	r6, #16
+10024d6e:	1985      	adds	r5, r0, r6
+10024d70:	1989      	adds	r1, r1, r6
+10024d72:	4013      	ands	r3, r2
+10024d74:	2b03      	cmp	r3, #3
+10024d76:	d91a      	bls.n	10024dae <memcpy+0x7e>
+10024d78:	1f1e      	subs	r6, r3, #4
+10024d7a:	2300      	movs	r3, #0
+10024d7c:	08b4      	lsrs	r4, r6, #2
+10024d7e:	3401      	adds	r4, #1
+10024d80:	00a4      	lsls	r4, r4, #2
+10024d82:	58cf      	ldr	r7, [r1, r3]
+10024d84:	50ef      	str	r7, [r5, r3]
+10024d86:	3304      	adds	r3, #4
+10024d88:	42a3      	cmp	r3, r4
+10024d8a:	d1fa      	bne.n	10024d82 <memcpy+0x52>
+10024d8c:	2403      	movs	r4, #3
+10024d8e:	43a6      	bics	r6, r4
+10024d90:	1d33      	adds	r3, r6, #4
+10024d92:	4022      	ands	r2, r4
+10024d94:	18c9      	adds	r1, r1, r3
+10024d96:	18ed      	adds	r5, r5, r3
+10024d98:	2a00      	cmp	r2, #0
+10024d9a:	d005      	beq.n	10024da8 <memcpy+0x78>
+10024d9c:	2300      	movs	r3, #0
+10024d9e:	5ccc      	ldrb	r4, [r1, r3]
+10024da0:	54ec      	strb	r4, [r5, r3]
+10024da2:	3301      	adds	r3, #1
+10024da4:	4293      	cmp	r3, r2
+10024da6:	d1fa      	bne.n	10024d9e <memcpy+0x6e>
+10024da8:	bdf0      	pop	{r4, r5, r6, r7, pc}
+10024daa:	0005      	movs	r5, r0
+10024dac:	e7f6      	b.n	10024d9c <memcpy+0x6c>
+10024dae:	001a      	movs	r2, r3
+10024db0:	e7f2      	b.n	10024d98 <memcpy+0x68>
+10024db2:	46c0      	nop			; (mov r8, r8)
+
+10024db4 <memset>:
+10024db4:	b5f0      	push	{r4, r5, r6, r7, lr}
+10024db6:	0783      	lsls	r3, r0, #30
+10024db8:	d043      	beq.n	10024e42 <memset+0x8e>
+10024dba:	1e54      	subs	r4, r2, #1
+10024dbc:	2a00      	cmp	r2, #0
+10024dbe:	d03f      	beq.n	10024e40 <memset+0x8c>
+10024dc0:	b2ce      	uxtb	r6, r1
+10024dc2:	0002      	movs	r2, r0
+10024dc4:	2503      	movs	r5, #3
+10024dc6:	e002      	b.n	10024dce <memset+0x1a>
+10024dc8:	001a      	movs	r2, r3
+10024dca:	3c01      	subs	r4, #1
+10024dcc:	d338      	bcc.n	10024e40 <memset+0x8c>
+10024dce:	1c53      	adds	r3, r2, #1
+10024dd0:	7016      	strb	r6, [r2, #0]
+10024dd2:	422b      	tst	r3, r5
+10024dd4:	d1f8      	bne.n	10024dc8 <memset+0x14>
+10024dd6:	2c03      	cmp	r4, #3
+10024dd8:	d92a      	bls.n	10024e30 <memset+0x7c>
+10024dda:	22ff      	movs	r2, #255	; 0xff
+10024ddc:	400a      	ands	r2, r1
+10024dde:	0215      	lsls	r5, r2, #8
+10024de0:	4315      	orrs	r5, r2
+10024de2:	042a      	lsls	r2, r5, #16
+10024de4:	4315      	orrs	r5, r2
+10024de6:	2c0f      	cmp	r4, #15
+10024de8:	d914      	bls.n	10024e14 <memset+0x60>
+10024dea:	0027      	movs	r7, r4
+10024dec:	001a      	movs	r2, r3
+10024dee:	3f10      	subs	r7, #16
+10024df0:	093e      	lsrs	r6, r7, #4
+10024df2:	3601      	adds	r6, #1
+10024df4:	0136      	lsls	r6, r6, #4
+10024df6:	199e      	adds	r6, r3, r6
+10024df8:	6015      	str	r5, [r2, #0]
+10024dfa:	6055      	str	r5, [r2, #4]
+10024dfc:	6095      	str	r5, [r2, #8]
+10024dfe:	60d5      	str	r5, [r2, #12]
+10024e00:	3210      	adds	r2, #16
+10024e02:	4296      	cmp	r6, r2
+10024e04:	d1f8      	bne.n	10024df8 <memset+0x44>
+10024e06:	220f      	movs	r2, #15
+10024e08:	4397      	bics	r7, r2
+10024e0a:	3710      	adds	r7, #16
+10024e0c:	19db      	adds	r3, r3, r7
+10024e0e:	4014      	ands	r4, r2
+10024e10:	2c03      	cmp	r4, #3
+10024e12:	d90d      	bls.n	10024e30 <memset+0x7c>
+10024e14:	001a      	movs	r2, r3
+10024e16:	1f27      	subs	r7, r4, #4
+10024e18:	08be      	lsrs	r6, r7, #2
+10024e1a:	3601      	adds	r6, #1
+10024e1c:	00b6      	lsls	r6, r6, #2
+10024e1e:	199e      	adds	r6, r3, r6
+10024e20:	c220      	stmia	r2!, {r5}
+10024e22:	42b2      	cmp	r2, r6
+10024e24:	d1fc      	bne.n	10024e20 <memset+0x6c>
+10024e26:	2203      	movs	r2, #3
+10024e28:	4397      	bics	r7, r2
+10024e2a:	3704      	adds	r7, #4
+10024e2c:	19db      	adds	r3, r3, r7
+10024e2e:	4014      	ands	r4, r2
+10024e30:	2c00      	cmp	r4, #0
+10024e32:	d005      	beq.n	10024e40 <memset+0x8c>
+10024e34:	b2c9      	uxtb	r1, r1
+10024e36:	191c      	adds	r4, r3, r4
+10024e38:	7019      	strb	r1, [r3, #0]
+10024e3a:	3301      	adds	r3, #1
+10024e3c:	429c      	cmp	r4, r3
+10024e3e:	d1fb      	bne.n	10024e38 <memset+0x84>
+10024e40:	bdf0      	pop	{r4, r5, r6, r7, pc}
+10024e42:	0014      	movs	r4, r2
+10024e44:	0003      	movs	r3, r0
+10024e46:	e7c6      	b.n	10024dd6 <memset+0x22>
+10024e48:	10024b30 	.word	0x10024b30
+10024e4c:	10024b12 	.word	0x10024b12
+10024e50:	10024b18 	.word	0x10024b18
+10024e54:	10024b1e 	.word	0x10024b1e
+10024e58:	10024b24 	.word	0x10024b24
+10024e5c:	10024b2a 	.word	0x10024b2a

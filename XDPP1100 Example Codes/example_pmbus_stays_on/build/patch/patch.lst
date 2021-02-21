@@ -1,0 +1,898 @@
+
+.\build\patch/patch.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .bss          00000074  20063800  20063800  00023800  2**2
+                  ALLOC
+  1 .otp_data     00004000  10020000  10020000  00010000  2**0
+                  ALLOC
+  2 .otp_header   0000001c  10024000  10024000  00010000  2**0
+                  ALLOC
+  3 .txt          000004e0  1002401c  1002401c  0001401c  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  4 .otp_patch2   00004000  100244fc  100244fc  000144fc  2**0
+                  ALLOC
+  5 .otp_patch3   00004000  100284fc  100284fc  000144fc  2**0
+                  ALLOC
+  6 .debug_info   0001dea9  00000000  00000000  000144fc  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 000011ca  00000000  00000000  000323a5  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_loc    000007fa  00000000  00000000  0003356f  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_aranges 000000f8  00000000  00000000  00033d69  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000140  00000000  00000000  00033e61  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_macro  0000a85a  00000000  00000000  00033fa1  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_line   000037b5  00000000  00000000  0003e7fb  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_str    000655ca  00000000  00000000  00041fb0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 14 .comment      0000007f  00000000  00000000  000a757a  2**0
+                  CONTENTS, READONLY
+ 15 .ARM.attributes 00000031  00000000  00000000  000a75f9  2**0
+                  CONTENTS, READONLY
+ 16 .debug_frame  000001d8  00000000  00000000  000a762c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .txt:
+
+1002401c <patch_entry>:
+/**
+ * This is the patch entry point, which is called after the patch got
+ * successfully loaded into RAM.
+ */
+void patch_entry(void)
+{
+1002401c:	b510      	push	{r4, lr}
+    // Initialize the .bss and .data section
+    memset(SECTION_BASE_ZI, 0, SECTION_LENGTH_ZI);
+1002401e:	480c      	ldr	r0, [pc, #48]	; (10024050 <patch_entry+0x34>)
+10024020:	4a0c      	ldr	r2, [pc, #48]	; (10024054 <patch_entry+0x38>)
+10024022:	1a12      	subs	r2, r2, r0
+10024024:	2100      	movs	r1, #0
+10024026:	f000 fa11 	bl	1002444c <memset>
+    memcpy(SECTION_BASE_RW_DESTINATION, SECTION_BASE_RW_SOURCE, SECTION_LENGTH_RW);
+1002402a:	480b      	ldr	r0, [pc, #44]	; (10024058 <patch_entry+0x3c>)
+1002402c:	4a0b      	ldr	r2, [pc, #44]	; (1002405c <patch_entry+0x40>)
+1002402e:	1a12      	subs	r2, r2, r0
+10024030:	490b      	ldr	r1, [pc, #44]	; (10024060 <patch_entry+0x44>)
+10024032:	f000 f9c9 	bl	100243c8 <memcpy>
+    // Initialize ram execution section
+    memcpy(SECTION_BASE_RAM_EXEC_DESTINATION, SECTION_BASE_RAM_EXEC_SOURCE, SECTION_LENGTH_RAM_EXEC);
+10024036:	480b      	ldr	r0, [pc, #44]	; (10024064 <patch_entry+0x48>)
+10024038:	4a0b      	ldr	r2, [pc, #44]	; (10024068 <patch_entry+0x4c>)
+1002403a:	1a12      	subs	r2, r2, r0
+1002403c:	490b      	ldr	r1, [pc, #44]	; (1002406c <patch_entry+0x50>)
+1002403e:	f000 f9c3 	bl	100243c8 <memcpy>
+/* lint requires us to have both a declaration and a definition ... we
+ * could probably bail out through some local lint, but her we simply
+ * play to the rules.
+ */
+HAL_INLINE void HAL_SET32(volatile uint32_t* addr, uint32_t val) {
+    *addr = val;
+10024042:	4a0b      	ldr	r2, [pc, #44]	; (10024070 <patch_entry+0x54>)
+10024044:	4b0b      	ldr	r3, [pc, #44]	; (10024074 <patch_entry+0x58>)
+10024046:	601a      	str	r2, [r3, #0]
+
+
+    SCU_SPARE_FF__SET(0x5971BBBBUL);  // write the patch id to SCU spare for simple test that patch loaded
+    user_drv_init();
+10024048:	f000 f984 	bl	10024354 <user_drv_init>
+}
+1002404c:	bd10      	pop	{r4, pc}
+1002404e:	46c0      	nop			; (mov r8, r8)
+10024050:	20063800 	.word	0x20063800
+10024054:	20063874 	.word	0x20063874
+10024058:	20063800 	.word	0x20063800
+1002405c:	20063800 	.word	0x20063800
+10024060:	100244fc 	.word	0x100244fc
+10024064:	20063874 	.word	0x20063874
+10024068:	20063874 	.word	0x20063874
+1002406c:	100244fc 	.word	0x100244fc
+10024070:	5971bbbb 	.word	0x5971bbbb
+10024074:	40000020 	.word	0x40000020
+
+10024078 <add_on_features_init>:
+#include "pmbus_mfr_autogen.h"
+
+void add_on_features_init (void)
+{
+	uint8_t test1 = 0;
+}
+10024078:	4770      	bx	lr
+	...
+
+1002407c <patch_Regulation_Shutdown_Sequence>:
+
+#include "patch_pmbus_stays_on.h"
+
+/*  Patch: PMBus stays ON */
+void patch_Regulation_Shutdown_Sequence (PMBUS_PAGE_t loop, REGULATION_STATE state, REGULATION_CONTROLS control)
+{
+1002407c:	b530      	push	{r4, r5, lr}
+1002407e:	b083      	sub	sp, #12
+10024080:	0004      	movs	r4, r0
+10024082:	000d      	movs	r5, r1
+
+	//////////////SHUTDOWN SEQUENCE//////////////
+	//Mask faults
+	Regulation_Fault_Mask (loop, state, control);
+10024084:	f7e1 fcae 	bl	100059e4 <Regulation_FAULT_Timer_Activation+0x73>
+{
+	uint32_t config;
+	uint16_t srfet_mask;
+	uint16_t fet_mask;
+
+	config = PMBUS_Get_Command_Dword(loop, PMBUS_CMDCODE_FW_CONFIG_PWM);
+10024088:	21c4      	movs	r1, #196	; 0xc4
+1002408a:	0020      	movs	r0, r4
+1002408c:	f7dd fac4 	bl	10001618 <PMBUS_Get_Command_Byte+0x37>
+ * HW 'behind' this address, changing the address' content.
+ */
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr);
+
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr) {
+    return *addr;
+10024090:	492b      	ldr	r1, [pc, #172]	; (10024140 <patch_Regulation_Shutdown_Sequence+0xc4>)
+10024092:	680b      	ldr	r3, [r1, #0]
+	fet_mask = config & 0x0fff;
+	srfet_mask = (config & 0x0fff0000)>>16;
+10024094:	0102      	lsls	r2, r0, #4
+			break;
+		case REGULATION_SRFET_ON:
+			PWM_PWM_ON__SET((PWM_PWM_ON__GET()) | fet_mask | srfet_mask);  // primary side PWM's on, SR's off (reset setting)
+			break;
+		case REGULATION_PWMS_OFF:
+			PWM_PWM_ON__SET((PWM_PWM_ON__GET()) & (~srfet_mask) & (~fet_mask) );  // zero out all fets associated with the loop
+10024096:	0d12      	lsrs	r2, r2, #20
+	fet_mask = config & 0x0fff;
+10024098:	0500      	lsls	r0, r0, #20
+			PWM_PWM_ON__SET((PWM_PWM_ON__GET()) & (~srfet_mask) & (~fet_mask) );  // zero out all fets associated with the loop
+1002409a:	0d00      	lsrs	r0, r0, #20
+1002409c:	4383      	bics	r3, r0
+1002409e:	4393      	bics	r3, r2
+    *addr = val;
+100240a0:	600b      	str	r3, [r1, #0]
+
+	Regulation_PWM_Control(loop, REGULATION_PWMS_OFF);  // ALL FET's OFF
+	Regulation_Set_VID(loop, 0, 0, 0, 0, 1);
+100240a2:	2301      	movs	r3, #1
+100240a4:	9301      	str	r3, [sp, #4]
+100240a6:	2300      	movs	r3, #0
+100240a8:	9300      	str	r3, [sp, #0]
+100240aa:	2200      	movs	r2, #0
+100240ac:	2100      	movs	r1, #0
+100240ae:	0020      	movs	r0, r4
+100240b0:	f7e2 f9fe 	bl	100064b0 <Regulation_Power_Mode+0x1b7>
+ * @param idp index of peripheral
+ * @return base address of peripheral's instance
+ */
+__VCONTROL_INLINE uint32_t* __VCONTROL_BASE_PTR(vcontrol_idx_t idp)
+{
+    return (uint32_t*)(VCONTROL_BASE + (uint32_t)((uint32_t)idp * VCONTROL_STRIDE));
+100240b4:	4b23      	ldr	r3, [pc, #140]	; (10024144 <patch_Regulation_Shutdown_Sequence+0xc8>)
+100240b6:	18e3      	adds	r3, r4, r3
+100240b8:	029b      	lsls	r3, r3, #10
+    return *addr;
+100240ba:	685a      	ldr	r2, [r3, #4]
+ * @param bf_value new value for VC_VRAMP1.VC_VRAMP_ON
+ */
+__VCONTROL_INLINE void VCONTROL_VC_VRAMP1__VC_VRAMP_ON__SET(vcontrol_idx_t idp, uint32_t bf_value)
+{
+    uint32_t reg = VCONTROL_VC_VRAMP1__GET(idp);
+    reg = (reg & ~VCONTROL_VC_VRAMP1__VC_VRAMP_ON__Msk);
+100240bc:	4922      	ldr	r1, [pc, #136]	; (10024148 <patch_Regulation_Shutdown_Sequence+0xcc>)
+100240be:	400a      	ands	r2, r1
+    *addr = val;
+100240c0:	605a      	str	r2, [r3, #4]
+    return *addr;
+100240c2:	6a1a      	ldr	r2, [r3, #32]
+ * @param bf_value new value for VC_IRQ.VC_VCONTROL_IRQ_EN
+ */
+__VCONTROL_INLINE void VCONTROL_VC_IRQ__VC_VCONTROL_IRQ_EN__SET(vcontrol_idx_t idp, uint32_t bf_value)
+{
+    uint32_t reg = VCONTROL_VC_IRQ__GET(idp);
+    reg = (reg & ~VCONTROL_VC_IRQ__VC_VCONTROL_IRQ_EN__Msk);
+100240c4:	2103      	movs	r1, #3
+100240c6:	438a      	bics	r2, r1
+    *addr = val;
+100240c8:	621a      	str	r2, [r3, #32]
+	VCONTROL_VC_VRAMP1__VC_VRAMP_ON__SET((vcontrol_idx_t)loop, 0);  // turn off vramp_on signal to allow pwms to stop regulation
+	// clear the interrupt here in case it was left over from a fault
+	VCONTROL_VC_IRQ__VC_VCONTROL_IRQ_EN__SET((vcontrol_idx_t) loop, 0);
+
+	//disable the hardware blocks: (telemetry and faults are always active but masked at different times)
+	Regulation_Power_Mode (loop, state);
+100240ca:	0029      	movs	r1, r5
+100240cc:	0020      	movs	r0, r4
+100240ce:	f7e2 f913 	bl	100062f8 <Regulation_PWM_Deadtime_Set+0x33>
+
+	if (loop == PMBUS_PAGE_0)
+100240d2:	2c00      	cmp	r4, #0
+100240d4:	d11c      	bne.n	10024110 <patch_Regulation_Shutdown_Sequence+0x94>
+    return *addr;
+100240d6:	491d      	ldr	r1, [pc, #116]	; (1002414c <patch_Regulation_Shutdown_Sequence+0xd0>)
+100240d8:	680b      	ldr	r3, [r1, #0]
+100240da:	680a      	ldr	r2, [r1, #0]
+ * @param bf_value new value for TLM_IRQ_EN.TLM_IRQ_EN
+ */
+__TLMCOM_INLINE void TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__SET(uint32_t bf_value)
+{
+    uint32_t reg = TLMCOM_TLM_IRQ_EN__GET();
+    reg = (reg & ~TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__Msk);
+100240dc:	0c12      	lsrs	r2, r2, #16
+100240de:	0412      	lsls	r2, r2, #16
+	{
+		// disable ton_max interrupts
+		TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__SET(TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__GET() &
+100240e0:	481b      	ldr	r0, [pc, #108]	; (10024150 <patch_Regulation_Shutdown_Sequence+0xd4>)
+100240e2:	4003      	ands	r3, r0
+    reg = (reg | (TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__Shift((uint32_t)bf_value)));
+100240e4:	4313      	orrs	r3, r2
+    *addr = val;
+100240e6:	600b      	str	r3, [r1, #0]
+		TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__SET(TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__GET() &
+																		~((1u<<(uint32_t)VOUT_UV_TON_MAX_DISABLE_1)));
+	}
+
+	// update status word from result:
+	PMBUS_Inter_Thread_Set_Command((PMBUS_PAGE_W_BROADCAST_t)loop, PMBUS_CMDCODE_STATUS_WORD, PMBUS_READ);
+100240e8:	2201      	movs	r2, #1
+100240ea:	2179      	movs	r1, #121	; 0x79
+100240ec:	2000      	movs	r0, #0
+100240ee:	f7dd fb2d 	bl	1000174c <PMBUS_Get_Vout_Scale+0x1d>
+
+	// Clear HW Fault Shutdown mask
+	FAULT_FAULT_SHUT_CLR_LOOP__FAULT_SHUT_CLR_LOOP__SET((fault_idx_t) REGULATION_APP.loop, 1) ;
+100240f2:	4b18      	ldr	r3, [pc, #96]	; (10024154 <patch_Regulation_Shutdown_Sequence+0xd8>)
+ * @param idp index of peripheral
+ * @return base address of peripheral's instance
+ */
+__FAULT_INLINE uint32_t* __FAULT_BASE_PTR(fault_idx_t idp)
+{
+    return (uint32_t*)(FAULT_BASE + (uint32_t)((uint32_t)idp * FAULT_STRIDE));
+100240f4:	781b      	ldrb	r3, [r3, #0]
+100240f6:	4a18      	ldr	r2, [pc, #96]	; (10024158 <patch_Regulation_Shutdown_Sequence+0xdc>)
+100240f8:	4694      	mov	ip, r2
+100240fa:	4463      	add	r3, ip
+100240fc:	029b      	lsls	r3, r3, #10
+100240fe:	2201      	movs	r2, #1
+10024100:	669a      	str	r2, [r3, #104]	; 0x68
+10024102:	4b16      	ldr	r3, [pc, #88]	; (1002415c <patch_Regulation_Shutdown_Sequence+0xe0>)
+10024104:	601a      	str	r2, [r3, #0]
+	if (loop == PMBUS_PAGE_0)
+	{
+	FAULTCOM_FAULT_SHUT_CLR_COM__FAULT_SHUT_CLR_COM__SET(1) ;
+	}
+
+	call_system_cb(SHUTDOWN_SEQUENCE);
+10024106:	2001      	movs	r0, #1
+10024108:	f7de fb9a 	bl	10002840 <call_module_init_cb+0x13>
+
+}
+1002410c:	b003      	add	sp, #12
+1002410e:	bd30      	pop	{r4, r5, pc}
+    return *addr;
+10024110:	490e      	ldr	r1, [pc, #56]	; (1002414c <patch_Regulation_Shutdown_Sequence+0xd0>)
+10024112:	680b      	ldr	r3, [r1, #0]
+10024114:	680a      	ldr	r2, [r1, #0]
+    reg = (reg & ~TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__Msk);
+10024116:	0c12      	lsrs	r2, r2, #16
+10024118:	0412      	lsls	r2, r2, #16
+		TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__SET(TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__GET() &
+1002411a:	4811      	ldr	r0, [pc, #68]	; (10024160 <patch_Regulation_Shutdown_Sequence+0xe4>)
+1002411c:	4003      	ands	r3, r0
+    reg = (reg | (TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__Shift((uint32_t)bf_value)));
+1002411e:	4313      	orrs	r3, r2
+    *addr = val;
+10024120:	600b      	str	r3, [r1, #0]
+	PMBUS_Inter_Thread_Set_Command((PMBUS_PAGE_W_BROADCAST_t)loop, PMBUS_CMDCODE_STATUS_WORD, PMBUS_READ);
+10024122:	2201      	movs	r2, #1
+10024124:	2179      	movs	r1, #121	; 0x79
+10024126:	0020      	movs	r0, r4
+10024128:	f7dd fb10 	bl	1000174c <PMBUS_Get_Vout_Scale+0x1d>
+	FAULT_FAULT_SHUT_CLR_LOOP__FAULT_SHUT_CLR_LOOP__SET((fault_idx_t) REGULATION_APP.loop, 1) ;
+1002412c:	4b09      	ldr	r3, [pc, #36]	; (10024154 <patch_Regulation_Shutdown_Sequence+0xd8>)
+1002412e:	781b      	ldrb	r3, [r3, #0]
+10024130:	4a09      	ldr	r2, [pc, #36]	; (10024158 <patch_Regulation_Shutdown_Sequence+0xdc>)
+10024132:	4694      	mov	ip, r2
+10024134:	4463      	add	r3, ip
+10024136:	029b      	lsls	r3, r3, #10
+10024138:	2201      	movs	r2, #1
+1002413a:	669a      	str	r2, [r3, #104]	; 0x68
+1002413c:	e7e3      	b.n	10024106 <patch_Regulation_Shutdown_Sequence+0x8a>
+1002413e:	46c0      	nop			; (mov r8, r8)
+10024140:	70002c28 	.word	0x70002c28
+10024144:	001c0005 	.word	0x001c0005
+10024148:	feffffff 	.word	0xfeffffff
+1002414c:	70005060 	.word	0x70005060
+10024150:	0000ffef 	.word	0x0000ffef
+10024154:	2005ea54 	.word	0x2005ea54
+10024158:	001c000f 	.word	0x001c000f
+1002415c:	70005410 	.word	0x70005410
+10024160:	0000ffdf 	.word	0x0000ffdf
+
+10024164 <patch_Regulation_Power_Mode>:
+
+void patch_Regulation_Power_Mode (PMBUS_PAGE_t loop, REGULATION_STATE state)
+{
+10024164:	b5f0      	push	{r4, r5, r6, r7, lr}
+10024166:	46de      	mov	lr, fp
+10024168:	4657      	mov	r7, sl
+1002416a:	464e      	mov	r6, r9
+1002416c:	4645      	mov	r5, r8
+1002416e:	b5e0      	push	{r5, r6, r7, lr}
+10024170:	b083      	sub	sp, #12
+10024172:	0004      	movs	r4, r0
+10024174:	000d      	movs	r5, r1
+    return *addr;
+10024176:	4b61      	ldr	r3, [pc, #388]	; (100242fc <patch_Regulation_Power_Mode+0x198>)
+10024178:	681b      	ldr	r3, [r3, #0]
+1002417a:	469a      	mov	sl, r3
+1002417c:	4b60      	ldr	r3, [pc, #384]	; (10024300 <patch_Regulation_Power_Mode+0x19c>)
+1002417e:	681f      	ldr	r7, [r3, #0]
+10024180:	4b60      	ldr	r3, [pc, #384]	; (10024304 <patch_Regulation_Power_Mode+0x1a0>)
+10024182:	681b      	ldr	r3, [r3, #0]
+10024184:	4699      	mov	r9, r3
+
+	uint32_t reg1 = COMMON_EN_REG1__GET();
+	uint32_t reg2 = COMMON_EN_REG2__GET();
+	uint32_t common = COMMON_EN_REG3__GET();
+	uint8_t topo = (uint8_t)Regulation_Get_PMBUS_Configuration(loop, REGULATION_CONFIG_TOPOLOGY);
+10024186:	210d      	movs	r1, #13
+10024188:	f7e1 fd92 	bl	10005cb0 <Regulation_Get_All_Q_Messages_By_Priority+0x147>
+1002418c:	b2c6      	uxtb	r6, r0
+	boolean interleave_enable = (uint8_t)Regulation_Get_PMBUS_Configuration(loop, REGULATION_CONFIG_INTERLEAVE_ENABLE);
+1002418e:	2108      	movs	r1, #8
+10024190:	0020      	movs	r0, r4
+10024192:	f7e1 fd8d 	bl	10005cb0 <Regulation_Get_All_Q_Messages_By_Priority+0x147>
+10024196:	b2c3      	uxtb	r3, r0
+10024198:	4698      	mov	r8, r3
+	boolean second_current_sense = (Regulation_Get_PMBUS_Configuration(loop, REGULATION_CONFIG_CURRENT_DOUBLER_ENABLE))
+1002419a:	210c      	movs	r1, #12
+1002419c:	0020      	movs	r0, r4
+1002419e:	f7e1 fd87 	bl	10005cb0 <Regulation_Get_All_Q_Messages_By_Priority+0x147>
+			|| (Regulation_Get_PMBUS_Configuration(loop, REGULATION_CONFIG_EN_PRIM_ISENSE));
+100241a2:	2301      	movs	r3, #1
+100241a4:	469b      	mov	fp, r3
+100241a6:	2800      	cmp	r0, #0
+100241a8:	d00d      	beq.n	100241c6 <patch_Regulation_Power_Mode+0x62>
+	uint32_t power_mode = PMBUS_Get_Command_Byte(loop, PMBUS_CMDCODE_POWER_MODE);
+100241aa:	2134      	movs	r1, #52	; 0x34
+100241ac:	0020      	movs	r0, r4
+100241ae:	f7dd fa17 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+100241b2:	9001      	str	r0, [sp, #4]
+	TELEMETRY_VIN_SOURCE source = Telemetry_get_vin_source(loop);
+100241b4:	0020      	movs	r0, r4
+100241b6:	f7e6 f85d 	bl	1000a274 <Telemetry_get_tempi+0x5b>
+	boolean vrect_sense = 0;
+	if ( (source == (TELEMETRY_VIN_SOURCE)TELEMETRY_VIN_SOURCE_VRECT1) || (source == (TELEMETRY_VIN_SOURCE)TELEMETRY_VIN_SOURCE_VRECT2) )
+	{
+		vrect_sense = 1;
+	}
+	switch (state)
+100241ba:	2d06      	cmp	r5, #6
+100241bc:	d81a      	bhi.n	100241f4 <patch_Regulation_Power_Mode+0x90>
+100241be:	00ad      	lsls	r5, r5, #2
+100241c0:	4b51      	ldr	r3, [pc, #324]	; (10024308 <patch_Regulation_Power_Mode+0x1a4>)
+100241c2:	595b      	ldr	r3, [r3, r5]
+100241c4:	469f      	mov	pc, r3
+			|| (Regulation_Get_PMBUS_Configuration(loop, REGULATION_CONFIG_EN_PRIM_ISENSE));
+100241c6:	2101      	movs	r1, #1
+100241c8:	0020      	movs	r0, r4
+100241ca:	f7e1 fd71 	bl	10005cb0 <Regulation_Get_All_Q_Messages_By_Priority+0x147>
+100241ce:	0003      	movs	r3, r0
+100241d0:	1e58      	subs	r0, r3, #1
+100241d2:	4183      	sbcs	r3, r0
+100241d4:	469b      	mov	fp, r3
+100241d6:	e7e8      	b.n	100241aa <patch_Regulation_Power_Mode+0x46>
+			// first we or in the static enables for common these are always enabled in all topologies for either loop:
+			common |= (COMMON_EN_REG3__EN_TSP__Msk | COMMON_EN_REG3__EN_TSEN__Msk
+						| COMMON_EN_REG3__EN_TS__Msk | COMMON_EN_REG3__EN_TELEMC__Msk
+						| COMMON_EN_REG3__EN_FAULTC__Msk);
+
+			common &= ~(COMMON_EN_REG3__EN_IBAL__Msk
+100241d8:	4b4c      	ldr	r3, [pc, #304]	; (1002430c <patch_Regulation_Power_Mode+0x1a8>)
+100241da:	464a      	mov	r2, r9
+100241dc:	401a      	ands	r2, r3
+100241de:	0013      	movs	r3, r2
+100241e0:	22f1      	movs	r2, #241	; 0xf1
+100241e2:	4313      	orrs	r3, r2
+100241e4:	4699      	mov	r9, r3
+						| COMMON_EN_REG3__EN_FBAL2__Msk
+						| COMMON_EN_REG3__EN_ISHARE__Msk);  // clear ibal and fbal enables in all topos (re-enable in later state)
+
+
+			// now zero out loop specific bits not enabled in off state (things that have integrators that need reset:
+			if(loop == PMBUS_PAGE_0)
+100241e6:	2c00      	cmp	r4, #0
+100241e8:	d013      	beq.n	10024212 <patch_Regulation_Power_Mode+0xae>
+			else  // loop 1
+			{
+				reg2 &= (COMMON_EN_REG2__EN_RAMP1__Msk);  // zero others
+
+				/*  Patch: PMBus stays ON */
+				reg2 |= (COMMON_EN_REG2__EN_RAMP1__Msk
+100241ea:	4f49      	ldr	r7, [pc, #292]	; (10024310 <patch_Regulation_Power_Mode+0x1ac>)
+
+			}
+
+			// shasta-578 if we are using vrect sense as the prisen
+			// for faster feed forward then enable vs/vsp in off state:
+			if(source == (TELEMETRY_VIN_SOURCE)TELEMETRY_VIN_SOURCE_VRECT1_VIN_PRISEN)
+100241ec:	2806      	cmp	r0, #6
+100241ee:	d013      	beq.n	10024218 <patch_Regulation_Power_Mode+0xb4>
+			{
+				reg1 |= COMMON_EN_REG1__EN_VSP1__Msk | COMMON_EN_REG1__EN_VS1__Msk;
+			}
+			else if(source == (TELEMETRY_VIN_SOURCE)TELEMETRY_VIN_SOURCE_VRECT2_VIN_PRISEN)
+100241f0:	2807      	cmp	r0, #7
+100241f2:	d017      	beq.n	10024224 <patch_Regulation_Power_Mode+0xc0>
+    *addr = val;
+100241f4:	4b43      	ldr	r3, [pc, #268]	; (10024304 <patch_Regulation_Power_Mode+0x1a0>)
+100241f6:	464a      	mov	r2, r9
+100241f8:	601a      	str	r2, [r3, #0]
+100241fa:	4b40      	ldr	r3, [pc, #256]	; (100242fc <patch_Regulation_Power_Mode+0x198>)
+100241fc:	4652      	mov	r2, sl
+100241fe:	601a      	str	r2, [r3, #0]
+10024200:	4b3f      	ldr	r3, [pc, #252]	; (10024300 <patch_Regulation_Power_Mode+0x19c>)
+10024202:	601f      	str	r7, [r3, #0]
+			break;
+	}
+	COMMON_EN_REG3__SET(common);
+	COMMON_EN_REG1__SET(reg1);
+	COMMON_EN_REG2__SET(reg2);
+}
+10024204:	b003      	add	sp, #12
+10024206:	bc3c      	pop	{r2, r3, r4, r5}
+10024208:	4690      	mov	r8, r2
+1002420a:	4699      	mov	r9, r3
+1002420c:	46a2      	mov	sl, r4
+1002420e:	46ab      	mov	fp, r5
+10024210:	bdf0      	pop	{r4, r5, r6, r7, pc}
+				reg1 |= ( COMMON_EN_REG1__EN_RAMP0__Msk
+10024212:	4b40      	ldr	r3, [pc, #256]	; (10024314 <patch_Regulation_Power_Mode+0x1b0>)
+10024214:	469a      	mov	sl, r3
+10024216:	e7e9      	b.n	100241ec <patch_Regulation_Power_Mode+0x88>
+				reg1 |= COMMON_EN_REG1__EN_VSP1__Msk | COMMON_EN_REG1__EN_VS1__Msk;
+10024218:	23c0      	movs	r3, #192	; 0xc0
+1002421a:	01db      	lsls	r3, r3, #7
+1002421c:	4652      	mov	r2, sl
+1002421e:	431a      	orrs	r2, r3
+10024220:	4692      	mov	sl, r2
+10024222:	e7e7      	b.n	100241f4 <patch_Regulation_Power_Mode+0x90>
+				reg2 |= COMMON_EN_REG2__EN_VSP2__Msk | COMMON_EN_REG2__EN_VS2__Msk;
+10024224:	2306      	movs	r3, #6
+10024226:	431f      	orrs	r7, r3
+10024228:	e7e4      	b.n	100241f4 <patch_Regulation_Power_Mode+0x90>
+			if(loop == PMBUS_PAGE_0)
+1002422a:	2c00      	cmp	r4, #0
+1002422c:	d111      	bne.n	10024252 <patch_Regulation_Power_Mode+0xee>
+				reg1 |= COMMON_EN_REG1__EN_VSP0__Msk | COMMON_EN_REG1__EN_VS0__Msk | COMMON_EN_REG1__EN_CE0__Msk
+1002422e:	4b3a      	ldr	r3, [pc, #232]	; (10024318 <patch_Regulation_Power_Mode+0x1b4>)
+10024230:	4652      	mov	r2, sl
+10024232:	431a      	orrs	r2, r3
+10024234:	4692      	mov	sl, r2
+			if (interleave_enable!=0)  // disable loop 1 things when here
+10024236:	4643      	mov	r3, r8
+10024238:	2b00      	cmp	r3, #0
+1002423a:	d004      	beq.n	10024246 <patch_Regulation_Power_Mode+0xe2>
+				reg2 &= ~(COMMON_EN_REG2__EN_VCONTROL1__Msk | COMMON_EN_REG2__EN_PID1__Msk
+1002423c:	4b37      	ldr	r3, [pc, #220]	; (1002431c <patch_Regulation_Power_Mode+0x1b8>)
+1002423e:	401f      	ands	r7, r3
+				reg2 |= COMMON_EN_REG2__EN_CE1__Msk | COMMON_EN_REG2__EN_IS1__Msk | COMMON_EN_REG2__EN_ISP2__Msk
+10024240:	22bb      	movs	r2, #187	; 0xbb
+10024242:	0052      	lsls	r2, r2, #1
+10024244:	4317      	orrs	r7, r2
+			if (second_current_sense!=0)
+10024246:	465b      	mov	r3, fp
+10024248:	2b00      	cmp	r3, #0
+1002424a:	d0d3      	beq.n	100241f4 <patch_Regulation_Power_Mode+0x90>
+				reg2 |= (COMMON_EN_REG2__EN_CE1__Msk | COMMON_EN_REG2__EN_IS1__Msk | COMMON_EN_REG2__EN_ISP2__Msk);
+1002424c:	2370      	movs	r3, #112	; 0x70
+1002424e:	431f      	orrs	r7, r3
+10024250:	e7d0      	b.n	100241f4 <patch_Regulation_Power_Mode+0x90>
+				reg2 |= COMMON_EN_REG2__EN_CE1__Msk | COMMON_EN_REG2__EN_IS1__Msk | COMMON_EN_REG2__EN_ISP2__Msk
+10024252:	23f6      	movs	r3, #246	; 0xf6
+10024254:	431f      	orrs	r7, r3
+10024256:	e7ee      	b.n	10024236 <patch_Regulation_Power_Mode+0xd2>
+			if(loop == PMBUS_PAGE_0)
+10024258:	2c00      	cmp	r4, #0
+1002425a:	d11d      	bne.n	10024298 <patch_Regulation_Power_Mode+0x134>
+				reg1 |= COMMON_EN_REG1__EN_PWM0__Msk | COMMON_EN_REG1__EN_PID0__Msk
+1002425c:	4b30      	ldr	r3, [pc, #192]	; (10024320 <patch_Regulation_Power_Mode+0x1bc>)
+1002425e:	4652      	mov	r2, sl
+10024260:	431a      	orrs	r2, r3
+10024262:	4692      	mov	sl, r2
+			if (interleave_enable!=0)
+10024264:	4643      	mov	r3, r8
+10024266:	2b00      	cmp	r3, #0
+10024268:	d003      	beq.n	10024272 <patch_Regulation_Power_Mode+0x10e>
+				common |= COMMON_EN_REG3__EN_IBAL__Msk;
+1002426a:	2304      	movs	r3, #4
+1002426c:	464a      	mov	r2, r9
+1002426e:	431a      	orrs	r2, r3
+10024270:	4691      	mov	r9, r2
+			if ((topo==(uint8_t)REGULATION_TOPOLOGY_FB_CT)
+10024272:	1f73      	subs	r3, r6, #5
+10024274:	2b01      	cmp	r3, #1
+10024276:	d902      	bls.n	1002427e <patch_Regulation_Power_Mode+0x11a>
+								|| (topo==(uint8_t)REGULATION_TOPOLOGY_HB_CT)
+10024278:	3e02      	subs	r6, #2
+1002427a:	2e01      	cmp	r6, #1
+1002427c:	d8ba      	bhi.n	100241f4 <patch_Regulation_Power_Mode+0x90>
+    return *addr;
+1002427e:	4b29      	ldr	r3, [pc, #164]	; (10024324 <patch_Regulation_Power_Mode+0x1c0>)
+10024280:	681b      	ldr	r3, [r3, #0]
+ */
+__PWM_INLINE uint32_t PWM_RAMP_CONFIG__MODE_CONTROL_LOOP0__GET(void)
+{
+    uint32_t reg = PWM_RAMP_CONFIG__GET();
+    reg = (reg & PWM_RAMP_CONFIG__MODE_CONTROL_LOOP0__Msk);
+    reg = (reg >> PWM_RAMP_CONFIG__MODE_CONTROL_LOOP0__Pos);
+10024282:	049b      	lsls	r3, r3, #18
+10024284:	0f9b      	lsrs	r3, r3, #30
+				if (mode_control==0)
+10024286:	d1b5      	bne.n	100241f4 <patch_Regulation_Power_Mode+0x90>
+				if ((interleave_enable!=0)&&(mode_control==0))
+10024288:	4643      	mov	r3, r8
+1002428a:	2b00      	cmp	r3, #0
+1002428c:	d007      	beq.n	1002429e <patch_Regulation_Power_Mode+0x13a>
+					common |= COMMON_EN_REG3__EN_FBAL2__Msk;
+1002428e:	4b26      	ldr	r3, [pc, #152]	; (10024328 <patch_Regulation_Power_Mode+0x1c4>)
+10024290:	464a      	mov	r2, r9
+10024292:	431a      	orrs	r2, r3
+10024294:	4691      	mov	r9, r2
+10024296:	e7ad      	b.n	100241f4 <patch_Regulation_Power_Mode+0x90>
+				reg2 |= COMMON_EN_REG2__EN_PWM1__Msk | COMMON_EN_REG2__EN_PID1__Msk
+10024298:	4b21      	ldr	r3, [pc, #132]	; (10024320 <patch_Regulation_Power_Mode+0x1bc>)
+1002429a:	431f      	orrs	r7, r3
+1002429c:	e7e2      	b.n	10024264 <patch_Regulation_Power_Mode+0x100>
+					common |= COMMON_EN_REG3__EN_FBAL__Msk;
+1002429e:	3308      	adds	r3, #8
+100242a0:	464a      	mov	r2, r9
+100242a2:	431a      	orrs	r2, r3
+100242a4:	4691      	mov	r9, r2
+100242a6:	e7a5      	b.n	100241f4 <patch_Regulation_Power_Mode+0x90>
+			if(loop == PMBUS_PAGE_0)
+100242a8:	2c00      	cmp	r4, #0
+100242aa:	d113      	bne.n	100242d4 <patch_Regulation_Power_Mode+0x170>
+				reg1 &= ~COMMON_EN_REG1__EN_PID_OSP0__Msk;
+100242ac:	4b1f      	ldr	r3, [pc, #124]	; (1002432c <patch_Regulation_Power_Mode+0x1c8>)
+100242ae:	4652      	mov	r2, sl
+100242b0:	401a      	ands	r2, r3
+100242b2:	4692      	mov	sl, r2
+			if ((power_mode==0) && (topo!=(uint8_t)REGULATION_TOPOLOGY_ACF) && (!interleave_enable)) {
+100242b4:	9b01      	ldr	r3, [sp, #4]
+100242b6:	2b00      	cmp	r3, #0
+100242b8:	d19c      	bne.n	100241f4 <patch_Regulation_Power_Mode+0x90>
+100242ba:	2e00      	cmp	r6, #0
+100242bc:	d09a      	beq.n	100241f4 <patch_Regulation_Power_Mode+0x90>
+100242be:	4643      	mov	r3, r8
+100242c0:	2b00      	cmp	r3, #0
+100242c2:	d197      	bne.n	100241f4 <patch_Regulation_Power_Mode+0x90>
+				if(loop == PMBUS_PAGE_0)
+100242c4:	2c00      	cmp	r4, #0
+100242c6:	d108      	bne.n	100242da <patch_Regulation_Power_Mode+0x176>
+					reg1 |= (COMMON_EN_REG1__EN_BURST0__Msk);
+100242c8:	2380      	movs	r3, #128	; 0x80
+100242ca:	011b      	lsls	r3, r3, #4
+100242cc:	4652      	mov	r2, sl
+100242ce:	431a      	orrs	r2, r3
+100242d0:	4692      	mov	sl, r2
+100242d2:	e78f      	b.n	100241f4 <patch_Regulation_Power_Mode+0x90>
+				reg2 &= ~COMMON_EN_REG2__EN_PID_OSP1__Msk;
+100242d4:	4b15      	ldr	r3, [pc, #84]	; (1002432c <patch_Regulation_Power_Mode+0x1c8>)
+100242d6:	401f      	ands	r7, r3
+100242d8:	e7ec      	b.n	100242b4 <patch_Regulation_Power_Mode+0x150>
+					reg2 |= (COMMON_EN_REG2__EN_BURST1__Msk);
+100242da:	2380      	movs	r3, #128	; 0x80
+100242dc:	011b      	lsls	r3, r3, #4
+100242de:	431f      	orrs	r7, r3
+100242e0:	e788      	b.n	100241f4 <patch_Regulation_Power_Mode+0x90>
+			if (vrect_sense)
+100242e2:	2801      	cmp	r0, #1
+100242e4:	d900      	bls.n	100242e8 <patch_Regulation_Power_Mode+0x184>
+100242e6:	e785      	b.n	100241f4 <patch_Regulation_Power_Mode+0x90>
+				if(loop == PMBUS_PAGE_0)
+100242e8:	2c00      	cmp	r4, #0
+100242ea:	d002      	beq.n	100242f2 <patch_Regulation_Power_Mode+0x18e>
+					reg2 &= ~(COMMON_EN_REG2__EN_VSP2__Msk);
+100242ec:	2302      	movs	r3, #2
+100242ee:	439f      	bics	r7, r3
+100242f0:	e780      	b.n	100241f4 <patch_Regulation_Power_Mode+0x90>
+					reg1 &= ~(COMMON_EN_REG1__EN_VSP1__Msk);
+100242f2:	4b0f      	ldr	r3, [pc, #60]	; (10024330 <patch_Regulation_Power_Mode+0x1cc>)
+100242f4:	4652      	mov	r2, sl
+100242f6:	401a      	ands	r2, r3
+100242f8:	4692      	mov	sl, r2
+100242fa:	e77b      	b.n	100241f4 <patch_Regulation_Power_Mode+0x90>
+100242fc:	7000304c 	.word	0x7000304c
+10024300:	70003050 	.word	0x70003050
+10024304:	70003054 	.word	0x70003054
+10024308:	100244e0 	.word	0x100244e0
+1002430c:	ffffe7f3 	.word	0xffffe7f3
+10024310:	000003f7 	.word	0x000003f7
+10024314:	000063f7 	.word	0x000063f7
+10024318:	000060f6 	.word	0x000060f6
+1002431c:	fffffe76 	.word	0xfffffe76
+10024320:	00001409 	.word	0x00001409
+10024324:	70002c00 	.word	0x70002c00
+10024328:	00000808 	.word	0x00000808
+1002432c:	ffffefff 	.word	0xffffefff
+10024330:	ffffdfff 	.word	0xffffdfff
+
+10024334 <pmbus_mfr_autogen_init>:
+ */
+void pmbus_mfr_autogen_init(void)
+{
+
+
+}
+10024334:	4770      	bx	lr
+
+10024336 <AT_TARGET_ENABLE>:
+}
+
+void AT_TARGET_ENABLE(PMBUS_PAGE_t loop)
+{
+
+}
+10024336:	4770      	bx	lr
+
+10024338 <regulation_sm_callbacks_init>:
+{
+10024338:	b510      	push	{r4, lr}
+	Regulation_set_regulation_event_cb(REGULATION_STATE_AT_TARGET_VID, REGULATION_CONTROLS_ENABLE,
+1002433a:	4a03      	ldr	r2, [pc, #12]	; (10024348 <regulation_sm_callbacks_init+0x10>)
+1002433c:	2109      	movs	r1, #9
+1002433e:	2003      	movs	r0, #3
+10024340:	f7e3 fc0e 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+}
+10024344:	bd10      	pop	{r4, pc}
+10024346:	46c0      	nop			; (mov r8, r8)
+10024348:	10024337 	.word	0x10024337
+
+1002434c <patch_pmbus_mfr_autogen_init>:
+
+void patch_pmbus_mfr_autogen_init(void);
+
+
+void patch_pmbus_mfr_autogen_init(void)
+{
+1002434c:	b510      	push	{r4, lr}
+	pmbus_mfr_autogen_init();
+1002434e:	f7ff fff1 	bl	10024334 <pmbus_mfr_autogen_init>
+}
+10024352:	bd10      	pop	{r4, pc}
+
+10024354 <user_drv_init>:
+ * Main entry point of the user application.  Good place to set breakpoint when debugging a patch.
+ * This will only get executed a single time prior to configuration loading and before RTOS starts
+ */
+
+void user_drv_init(void)
+{
+10024354:	b510      	push	{r4, lr}
+	memset(&user_data, 0, sizeof(USER_DATA_t));  // ZI the user data
+10024356:	2274      	movs	r2, #116	; 0x74
+10024358:	2100      	movs	r1, #0
+1002435a:	4812      	ldr	r0, [pc, #72]	; (100243a4 <user_drv_init+0x50>)
+1002435c:	f000 f876 	bl	1002444c <memset>
+    *addr = val;
+10024360:	2300      	movs	r3, #0
+10024362:	4a11      	ldr	r2, [pc, #68]	; (100243a8 <user_drv_init+0x54>)
+10024364:	6013      	str	r3, [r2, #0]
+10024366:	4a11      	ldr	r2, [pc, #68]	; (100243ac <user_drv_init+0x58>)
+10024368:	6013      	str	r3, [r2, #0]
+	PMBUS_STATUS_OFF__SET(PMBUS_PAGE_0, 0);
+	PMBUS_STATUS_OFF__SET(PMBUS_PAGE_1, 0);
+	/*  Patch: PMBus stays ON */
+
+	// this is the initialization of user pmbus commands autogenerated from pmbus spreadsheet
+	ptr_mfr_specific_init = (mfr_specific_init_ptr) patch_pmbus_mfr_autogen_init;
+1002436a:	4a11      	ldr	r2, [pc, #68]	; (100243b0 <user_drv_init+0x5c>)
+1002436c:	4b11      	ldr	r3, [pc, #68]	; (100243b4 <user_drv_init+0x60>)
+1002436e:	601a      	str	r2, [r3, #0]
+
+	// set the pointer funtion in init of regulation state machine to user callback setup for each state
+	set_module_init_cb(MODULE_REGULATION, regulation_sm_callbacks_init);
+10024370:	4911      	ldr	r1, [pc, #68]	; (100243b8 <user_drv_init+0x64>)
+10024372:	2002      	movs	r0, #2
+10024374:	f7e0 faba 	bl	100048ec <scratchpad_semaphore_release+0x33>
+
+	add_on_features_init();
+10024378:	f7ff fe7e 	bl	10024078 <add_on_features_init>
+	regulation_sm_callbacks_init();
+1002437c:	f7ff ffdc 	bl	10024338 <regulation_sm_callbacks_init>
+
+	/*  Patch: PMBus stays ON */
+	patch_rom_table.patch_Regulation_Shutdown_Sequence = patch_Regulation_Shutdown_Sequence;
+10024380:	4b0e      	ldr	r3, [pc, #56]	; (100243bc <user_drv_init+0x68>)
+10024382:	490f      	ldr	r1, [pc, #60]	; (100243c0 <user_drv_init+0x6c>)
+10024384:	22d8      	movs	r2, #216	; 0xd8
+10024386:	0052      	lsls	r2, r2, #1
+10024388:	5099      	str	r1, [r3, r2]
+	patch_rom_table.patch_Regulation_Power_Mode = patch_Regulation_Power_Mode;
+1002438a:	490e      	ldr	r1, [pc, #56]	; (100243c4 <user_drv_init+0x70>)
+1002438c:	3a08      	subs	r2, #8
+1002438e:	5099      	str	r1, [r3, r2]
+
+	// Call this function to enable telemetry immediately
+	patch_Regulation_Power_Mode(PMBUS_PAGE_0, REGULATION_STATE_OFF);
+10024390:	2100      	movs	r1, #0
+10024392:	2000      	movs	r0, #0
+10024394:	f7ff fee6 	bl	10024164 <patch_Regulation_Power_Mode>
+	patch_Regulation_Power_Mode(PMBUS_PAGE_1, REGULATION_STATE_OFF);
+10024398:	2100      	movs	r1, #0
+1002439a:	2001      	movs	r0, #1
+1002439c:	f7ff fee2 	bl	10024164 <patch_Regulation_Power_Mode>
+	/*  Patch: PMBus stays ON */
+
+}
+100243a0:	bd10      	pop	{r4, pc}
+100243a2:	46c0      	nop			; (mov r8, r8)
+100243a4:	20063800 	.word	0x20063800
+100243a8:	70080150 	.word	0x70080150
+100243ac:	70080154 	.word	0x70080154
+100243b0:	1002434d 	.word	0x1002434d
+100243b4:	2005d468 	.word	0x2005d468
+100243b8:	10024339 	.word	0x10024339
+100243bc:	2005d074 	.word	0x2005d074
+100243c0:	1002407d 	.word	0x1002407d
+100243c4:	10024165 	.word	0x10024165
+
+100243c8 <memcpy>:
+100243c8:	b5f0      	push	{r4, r5, r6, r7, lr}
+100243ca:	0005      	movs	r5, r0
+100243cc:	2a0f      	cmp	r2, #15
+100243ce:	d92f      	bls.n	10024430 <memcpy+0x68>
+100243d0:	000b      	movs	r3, r1
+100243d2:	4303      	orrs	r3, r0
+100243d4:	079b      	lsls	r3, r3, #30
+100243d6:	d134      	bne.n	10024442 <memcpy+0x7a>
+100243d8:	0016      	movs	r6, r2
+100243da:	000c      	movs	r4, r1
+100243dc:	0003      	movs	r3, r0
+100243de:	3e10      	subs	r6, #16
+100243e0:	0935      	lsrs	r5, r6, #4
+100243e2:	3501      	adds	r5, #1
+100243e4:	012d      	lsls	r5, r5, #4
+100243e6:	1945      	adds	r5, r0, r5
+100243e8:	6827      	ldr	r7, [r4, #0]
+100243ea:	601f      	str	r7, [r3, #0]
+100243ec:	6867      	ldr	r7, [r4, #4]
+100243ee:	605f      	str	r7, [r3, #4]
+100243f0:	68a7      	ldr	r7, [r4, #8]
+100243f2:	609f      	str	r7, [r3, #8]
+100243f4:	68e7      	ldr	r7, [r4, #12]
+100243f6:	3410      	adds	r4, #16
+100243f8:	60df      	str	r7, [r3, #12]
+100243fa:	3310      	adds	r3, #16
+100243fc:	429d      	cmp	r5, r3
+100243fe:	d1f3      	bne.n	100243e8 <memcpy+0x20>
+10024400:	230f      	movs	r3, #15
+10024402:	439e      	bics	r6, r3
+10024404:	3610      	adds	r6, #16
+10024406:	1985      	adds	r5, r0, r6
+10024408:	1989      	adds	r1, r1, r6
+1002440a:	4013      	ands	r3, r2
+1002440c:	2b03      	cmp	r3, #3
+1002440e:	d91a      	bls.n	10024446 <memcpy+0x7e>
+10024410:	1f1e      	subs	r6, r3, #4
+10024412:	2300      	movs	r3, #0
+10024414:	08b4      	lsrs	r4, r6, #2
+10024416:	3401      	adds	r4, #1
+10024418:	00a4      	lsls	r4, r4, #2
+1002441a:	58cf      	ldr	r7, [r1, r3]
+1002441c:	50ef      	str	r7, [r5, r3]
+1002441e:	3304      	adds	r3, #4
+10024420:	42a3      	cmp	r3, r4
+10024422:	d1fa      	bne.n	1002441a <memcpy+0x52>
+10024424:	2403      	movs	r4, #3
+10024426:	43a6      	bics	r6, r4
+10024428:	1d33      	adds	r3, r6, #4
+1002442a:	4022      	ands	r2, r4
+1002442c:	18c9      	adds	r1, r1, r3
+1002442e:	18ed      	adds	r5, r5, r3
+10024430:	2a00      	cmp	r2, #0
+10024432:	d005      	beq.n	10024440 <memcpy+0x78>
+10024434:	2300      	movs	r3, #0
+10024436:	5ccc      	ldrb	r4, [r1, r3]
+10024438:	54ec      	strb	r4, [r5, r3]
+1002443a:	3301      	adds	r3, #1
+1002443c:	4293      	cmp	r3, r2
+1002443e:	d1fa      	bne.n	10024436 <memcpy+0x6e>
+10024440:	bdf0      	pop	{r4, r5, r6, r7, pc}
+10024442:	0005      	movs	r5, r0
+10024444:	e7f6      	b.n	10024434 <memcpy+0x6c>
+10024446:	001a      	movs	r2, r3
+10024448:	e7f2      	b.n	10024430 <memcpy+0x68>
+1002444a:	46c0      	nop			; (mov r8, r8)
+
+1002444c <memset>:
+1002444c:	b5f0      	push	{r4, r5, r6, r7, lr}
+1002444e:	0783      	lsls	r3, r0, #30
+10024450:	d043      	beq.n	100244da <memset+0x8e>
+10024452:	1e54      	subs	r4, r2, #1
+10024454:	2a00      	cmp	r2, #0
+10024456:	d03f      	beq.n	100244d8 <memset+0x8c>
+10024458:	b2ce      	uxtb	r6, r1
+1002445a:	0002      	movs	r2, r0
+1002445c:	2503      	movs	r5, #3
+1002445e:	e002      	b.n	10024466 <memset+0x1a>
+10024460:	001a      	movs	r2, r3
+10024462:	3c01      	subs	r4, #1
+10024464:	d338      	bcc.n	100244d8 <memset+0x8c>
+10024466:	1c53      	adds	r3, r2, #1
+10024468:	7016      	strb	r6, [r2, #0]
+1002446a:	422b      	tst	r3, r5
+1002446c:	d1f8      	bne.n	10024460 <memset+0x14>
+1002446e:	2c03      	cmp	r4, #3
+10024470:	d92a      	bls.n	100244c8 <memset+0x7c>
+10024472:	22ff      	movs	r2, #255	; 0xff
+10024474:	400a      	ands	r2, r1
+10024476:	0215      	lsls	r5, r2, #8
+10024478:	4315      	orrs	r5, r2
+1002447a:	042a      	lsls	r2, r5, #16
+1002447c:	4315      	orrs	r5, r2
+1002447e:	2c0f      	cmp	r4, #15
+10024480:	d914      	bls.n	100244ac <memset+0x60>
+10024482:	0027      	movs	r7, r4
+10024484:	001a      	movs	r2, r3
+10024486:	3f10      	subs	r7, #16
+10024488:	093e      	lsrs	r6, r7, #4
+1002448a:	3601      	adds	r6, #1
+1002448c:	0136      	lsls	r6, r6, #4
+1002448e:	199e      	adds	r6, r3, r6
+10024490:	6015      	str	r5, [r2, #0]
+10024492:	6055      	str	r5, [r2, #4]
+10024494:	6095      	str	r5, [r2, #8]
+10024496:	60d5      	str	r5, [r2, #12]
+10024498:	3210      	adds	r2, #16
+1002449a:	4296      	cmp	r6, r2
+1002449c:	d1f8      	bne.n	10024490 <memset+0x44>
+1002449e:	220f      	movs	r2, #15
+100244a0:	4397      	bics	r7, r2
+100244a2:	3710      	adds	r7, #16
+100244a4:	19db      	adds	r3, r3, r7
+100244a6:	4014      	ands	r4, r2
+100244a8:	2c03      	cmp	r4, #3
+100244aa:	d90d      	bls.n	100244c8 <memset+0x7c>
+100244ac:	001a      	movs	r2, r3
+100244ae:	1f27      	subs	r7, r4, #4
+100244b0:	08be      	lsrs	r6, r7, #2
+100244b2:	3601      	adds	r6, #1
+100244b4:	00b6      	lsls	r6, r6, #2
+100244b6:	199e      	adds	r6, r3, r6
+100244b8:	c220      	stmia	r2!, {r5}
+100244ba:	42b2      	cmp	r2, r6
+100244bc:	d1fc      	bne.n	100244b8 <memset+0x6c>
+100244be:	2203      	movs	r2, #3
+100244c0:	4397      	bics	r7, r2
+100244c2:	3704      	adds	r7, #4
+100244c4:	19db      	adds	r3, r3, r7
+100244c6:	4014      	ands	r4, r2
+100244c8:	2c00      	cmp	r4, #0
+100244ca:	d005      	beq.n	100244d8 <memset+0x8c>
+100244cc:	b2c9      	uxtb	r1, r1
+100244ce:	191c      	adds	r4, r3, r4
+100244d0:	7019      	strb	r1, [r3, #0]
+100244d2:	3301      	adds	r3, #1
+100244d4:	429c      	cmp	r4, r3
+100244d6:	d1fb      	bne.n	100244d0 <memset+0x84>
+100244d8:	bdf0      	pop	{r4, r5, r6, r7, pc}
+100244da:	0014      	movs	r4, r2
+100244dc:	0003      	movs	r3, r0
+100244de:	e7c6      	b.n	1002446e <memset+0x22>
+100244e0:	100241d8 	.word	0x100241d8
+100244e4:	1002422a 	.word	0x1002422a
+100244e8:	10024258 	.word	0x10024258
+100244ec:	100242a8 	.word	0x100242a8
+100244f0:	100241f4 	.word	0x100241f4
+100244f4:	100241f4 	.word	0x100241f4
+100244f8:	100242e2 	.word	0x100242e2

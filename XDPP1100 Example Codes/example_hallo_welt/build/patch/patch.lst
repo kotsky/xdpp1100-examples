@@ -1,0 +1,490 @@
+
+.\build\patch/patch.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .bss          0000008c  20063800  20063800  00023800  2**2
+                  ALLOC
+  1 .otp_data     00004000  10020000  10020000  00010000  2**0
+                  ALLOC
+  2 .otp_header   0000001c  10024000  10024000  00010000  2**0
+                  ALLOC
+  3 .txt          000002a8  1002401c  1002401c  0001401c  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  4 .otp_patch2   00004000  100242c4  100242c4  000142c4  2**0
+                  ALLOC
+  5 .otp_patch3   00004000  100282c4  100282c4  000142c4  2**0
+                  ALLOC
+  6 .debug_info   0001bf6e  00000000  00000000  000142c4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 0000122a  00000000  00000000  00030232  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_loc    00000228  00000000  00000000  0003145c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_aranges 00000110  00000000  00000000  00031684  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 000000a0  00000000  00000000  00031794  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_macro  0000adc4  00000000  00000000  00031834  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_line   000037ab  00000000  00000000  0003c5f8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_str    00069823  00000000  00000000  0003fda3  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 14 .comment      0000007f  00000000  00000000  000a95c6  2**0
+                  CONTENTS, READONLY
+ 15 .ARM.attributes 00000031  00000000  00000000  000a9645  2**0
+                  CONTENTS, READONLY
+ 16 .debug_frame  000001d8  00000000  00000000  000a9678  2**2
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .txt:
+
+1002401c <patch_entry>:
+/**
+ * This is the patch entry point, which is called after the patch got
+ * successfully loaded into RAM.
+ */
+void patch_entry(void)
+{
+1002401c:	b510      	push	{r4, lr}
+    // Initialize the .bss and .data section
+    memset(SECTION_BASE_ZI, 0, SECTION_LENGTH_ZI);
+1002401e:	480c      	ldr	r0, [pc, #48]	; (10024050 <patch_entry+0x34>)
+10024020:	4a0c      	ldr	r2, [pc, #48]	; (10024054 <patch_entry+0x38>)
+10024022:	1a12      	subs	r2, r2, r0
+10024024:	2100      	movs	r1, #0
+10024026:	f000 f8fd 	bl	10024224 <memset>
+    memcpy(SECTION_BASE_RW_DESTINATION, SECTION_BASE_RW_SOURCE, SECTION_LENGTH_RW);
+1002402a:	480b      	ldr	r0, [pc, #44]	; (10024058 <patch_entry+0x3c>)
+1002402c:	4a0b      	ldr	r2, [pc, #44]	; (1002405c <patch_entry+0x40>)
+1002402e:	1a12      	subs	r2, r2, r0
+10024030:	490b      	ldr	r1, [pc, #44]	; (10024060 <patch_entry+0x44>)
+10024032:	f000 f8b5 	bl	100241a0 <memcpy>
+    // Initialize ram execution section
+    memcpy(SECTION_BASE_RAM_EXEC_DESTINATION, SECTION_BASE_RAM_EXEC_SOURCE, SECTION_LENGTH_RAM_EXEC);
+10024036:	480b      	ldr	r0, [pc, #44]	; (10024064 <patch_entry+0x48>)
+10024038:	4a0b      	ldr	r2, [pc, #44]	; (10024068 <patch_entry+0x4c>)
+1002403a:	1a12      	subs	r2, r2, r0
+1002403c:	490b      	ldr	r1, [pc, #44]	; (1002406c <patch_entry+0x50>)
+1002403e:	f000 f8af 	bl	100241a0 <memcpy>
+/* lint requires us to have both a declaration and a definition ... we
+ * could probably bail out through some local lint, but her we simply
+ * play to the rules.
+ */
+HAL_INLINE void HAL_SET32(volatile uint32_t* addr, uint32_t val) {
+    *addr = val;
+10024042:	4a0b      	ldr	r2, [pc, #44]	; (10024070 <patch_entry+0x54>)
+10024044:	4b0b      	ldr	r3, [pc, #44]	; (10024074 <patch_entry+0x58>)
+10024046:	601a      	str	r2, [r3, #0]
+
+
+    SCU_SPARE_FF__SET(0x5971BBBBUL);  // write the patch id to SCU spare for simple test that patch loaded
+    user_drv_init();
+10024048:	f000 f88e 	bl	10024168 <user_drv_init>
+}
+1002404c:	bd10      	pop	{r4, pc}
+1002404e:	46c0      	nop			; (mov r8, r8)
+10024050:	20063800 	.word	0x20063800
+10024054:	2006388c 	.word	0x2006388c
+10024058:	20063800 	.word	0x20063800
+1002405c:	20063800 	.word	0x20063800
+10024060:	100242c4 	.word	0x100242c4
+10024064:	2006388c 	.word	0x2006388c
+10024068:	2006388c 	.word	0x2006388c
+1002406c:	100242c4 	.word	0x100242c4
+10024070:	5971bbbb 	.word	0x5971bbbb
+10024074:	40000020 	.word	0x40000020
+
+10024078 <add_on_features_init>:
+#include "pmbus_mfr_autogen.h"
+
+void add_on_features_init (void)
+{
+	uint8_t test1 = 0;
+}
+10024078:	4770      	bx	lr
+	...
+
+1002407c <hallo_welt>:
+/**
+ * Hallo Welt Example
+ * This function set the pin for UART TX and RX and send Hallo Welt.
+ */
+void hallo_welt(void)
+{
+1002407c:	b570      	push	{r4, r5, r6, lr}
+1002407e:	b084      	sub	sp, #16
+	char userstring[] = "Hallo Welt";
+10024080:	ac01      	add	r4, sp, #4
+10024082:	4b13      	ldr	r3, [pc, #76]	; (100240d0 <hallo_welt+0x54>)
+10024084:	0022      	movs	r2, r4
+10024086:	cb03      	ldmia	r3!, {r0, r1}
+10024088:	c203      	stmia	r2!, {r0, r1}
+1002408a:	8819      	ldrh	r1, [r3, #0]
+1002408c:	8011      	strh	r1, [r2, #0]
+1002408e:	789b      	ldrb	r3, [r3, #2]
+10024090:	7093      	strb	r3, [r2, #2]
+10024092:	2280      	movs	r2, #128	; 0x80
+10024094:	04d2      	lsls	r2, r2, #19
+10024096:	4b0f      	ldr	r3, [pc, #60]	; (100240d4 <hallo_welt+0x58>)
+10024098:	601a      	str	r2, [r3, #0]
+1002409a:	2224      	movs	r2, #36	; 0x24
+1002409c:	4b0e      	ldr	r3, [pc, #56]	; (100240d8 <hallo_welt+0x5c>)
+1002409e:	601a      	str	r2, [r3, #0]
+	COMMON_MP_FUNC4__SET(0X00000024);
+#endif
+
+
+	UARTdriver = &Driver_UART;
+	UARTdriver->Initialize(NULL);
+100240a0:	4d0e      	ldr	r5, [pc, #56]	; (100240dc <hallo_welt+0x60>)
+100240a2:	2000      	movs	r0, #0
+100240a4:	68ab      	ldr	r3, [r5, #8]
+100240a6:	4798      	blx	r3
+	UARTdriver->PowerControl (POWER_FULL);
+100240a8:	2002      	movs	r0, #2
+100240aa:	692b      	ldr	r3, [r5, #16]
+100240ac:	4798      	blx	r3
+
+	control = ARM_USART_MODE_ASYNCHRONOUS | ARM_USART_DATA_BITS_8 | ARM_USART_PARITY_NONE |
+			ARM_USART_STOP_BITS_1 | ARM_USART_FLOW_CONTROL_NONE | ARM_USART_TXIFLSEL_7_8;
+
+	UARTdriver->Control (control, 115200);
+100240ae:	6aae      	ldr	r6, [r5, #40]	; 0x28
+100240b0:	21e1      	movs	r1, #225	; 0xe1
+100240b2:	0249      	lsls	r1, r1, #9
+100240b4:	480a      	ldr	r0, [pc, #40]	; (100240e0 <hallo_welt+0x64>)
+100240b6:	47b0      	blx	r6
+	UARTdriver->Control (ARM_USART_CONTROL_TX,1);
+100240b8:	2101      	movs	r1, #1
+100240ba:	2015      	movs	r0, #21
+100240bc:	47b0      	blx	r6
+	UARTdriver->Control (ARM_USART_CONTROL_RX,1);
+100240be:	2101      	movs	r1, #1
+100240c0:	2016      	movs	r0, #22
+100240c2:	47b0      	blx	r6
+
+	UARTdriver->Send(&userstring, 11);
+100240c4:	696b      	ldr	r3, [r5, #20]
+100240c6:	210b      	movs	r1, #11
+100240c8:	0020      	movs	r0, r4
+100240ca:	4798      	blx	r3
+
+}
+100240cc:	b004      	add	sp, #16
+100240ce:	bd70      	pop	{r4, r5, r6, pc}
+100240d0:	100242b8 	.word	0x100242b8
+100240d4:	7000300c 	.word	0x7000300c
+100240d8:	70003010 	.word	0x70003010
+100240dc:	100055f8 	.word	0x100055f8
+100240e0:	02000001 	.word	0x02000001
+
+100240e4 <pmbus_mfr_autogen_init>:
+{
+
+
+	/* initialize command structure for MFR_Hallo_Welt. */
+	// MFR_Hallo_Welt COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_Hallo_Welt] = PMBUS_HANDLE_MFR_Hallo_Welt;
+100240e4:	22b1      	movs	r2, #177	; 0xb1
+100240e6:	0092      	lsls	r2, r2, #2
+100240e8:	4909      	ldr	r1, [pc, #36]	; (10024110 <pmbus_mfr_autogen_init+0x2c>)
+100240ea:	4b0a      	ldr	r3, [pc, #40]	; (10024114 <pmbus_mfr_autogen_init+0x30>)
+100240ec:	5099      	str	r1, [r3, r2]
+	//PMBUS_CMD_MFR_Hallo_Welt.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_Hallo_Welt.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_Hallo_Welt.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_Hallo_Welt.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_Hallo_Welt.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_Hallo_Welt.CMD_CONFIG = 0xc18123b1;
+100240ee:	4b0a      	ldr	r3, [pc, #40]	; (10024118 <pmbus_mfr_autogen_init+0x34>)
+100240f0:	490a      	ldr	r1, [pc, #40]	; (1002411c <pmbus_mfr_autogen_init+0x38>)
+100240f2:	6019      	str	r1, [r3, #0]
+	PMBUS_CMD_MFR_Hallo_Welt.DATA0 = &PMBUS_CMD_MFR_Hallo_Welt_DATA_LOOP0[0];  // set the pointer to the data array
+100240f4:	490a      	ldr	r1, [pc, #40]	; (10024120 <pmbus_mfr_autogen_init+0x3c>)
+100240f6:	6099      	str	r1, [r3, #8]
+	PMBUS_CMD_MFR_Hallo_Welt.DATA1 = &PMBUS_CMD_MFR_Hallo_Welt_DATA_LOOP1[0];  // set the pointer to the data array
+100240f8:	490a      	ldr	r1, [pc, #40]	; (10024124 <pmbus_mfr_autogen_init+0x40>)
+100240fa:	60d9      	str	r1, [r3, #12]
+	// RANGE SUPPORT for MFR_Hallo_Welt COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_Hallo_Welt] = &PMBUS_CMD_MFR_Hallo_Welt;
+100240fc:	490a      	ldr	r1, [pc, #40]	; (10024128 <pmbus_mfr_autogen_init+0x44>)
+100240fe:	508b      	str	r3, [r1, r2]
+	//PMBUS_CMD_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_Hallo_Welt] = &PMBUS_CMD_MFR_Hallo_Welt;
+	//lint -e{778} suppress "Constant expression evaluates to 0 in operation '&'" 
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_Hallo_Welt/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_Hallo_Welt&31u));
+10024100:	4a0a      	ldr	r2, [pc, #40]	; (1002412c <pmbus_mfr_autogen_init+0x48>)
+10024102:	2380      	movs	r3, #128	; 0x80
+10024104:	029b      	lsls	r3, r3, #10
+10024106:	6951      	ldr	r1, [r2, #20]
+10024108:	430b      	orrs	r3, r1
+1002410a:	6153      	str	r3, [r2, #20]
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_Hallo_Welt/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_Hallo_Welt&31u));
+
+}
+1002410c:	4770      	bx	lr
+1002410e:	46c0      	nop			; (mov r8, r8)
+10024110:	10024131 	.word	0x10024131
+10024114:	2005d954 	.word	0x2005d954
+10024118:	20063800 	.word	0x20063800
+1002411c:	c18123b1 	.word	0xc18123b1
+10024120:	20063814 	.word	0x20063814
+10024124:	20063810 	.word	0x20063810
+10024128:	2005d534 	.word	0x2005d534
+1002412c:	2005d934 	.word	0x2005d934
+
+10024130 <PMBUS_HANDLE_MFR_Hallo_Welt>:
+ * Hallo Welt send handler.
+ * @param page Selects the PMBus page to operate on.
+ * @param direction Can either be PMBUS_WRITE or PMBUS_READ types
+ */
+void PMBUS_HANDLE_MFR_Hallo_Welt(PMBUS_PAGE_t page, PMBUS_DIRECTION_e direction)
+{
+10024130:	b510      	push	{r4, lr}
+	uint8_t common;
+	if ((direction == PMBUS_WRITE)||(direction == OTP_RESTORE))
+10024132:	2304      	movs	r3, #4
+10024134:	4399      	bics	r1, r3
+10024136:	d000      	beq.n	1002413a <PMBUS_HANDLE_MFR_Hallo_Welt+0xa>
+		if (common == 0xff)// if command 0xff is received, initialize uart channel and send string
+		{
+			hallo_welt();
+		}
+	}
+}
+10024138:	bd10      	pop	{r4, pc}
+		common = PMBUS_Get_Command_Byte(page, PMBUS_CMDCODE_MFR_Hallo_Welt);
+1002413a:	31b1      	adds	r1, #177	; 0xb1
+1002413c:	f7dd fa50 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+		if (common == 0xff)// if command 0xff is received, initialize uart channel and send string
+10024140:	28ff      	cmp	r0, #255	; 0xff
+10024142:	d1f9      	bne.n	10024138 <PMBUS_HANDLE_MFR_Hallo_Welt+0x8>
+			hallo_welt();
+10024144:	f7ff ff9a 	bl	1002407c <hallo_welt>
+}
+10024148:	e7f6      	b.n	10024138 <PMBUS_HANDLE_MFR_Hallo_Welt+0x8>
+
+1002414a <AT_TARGET_ENABLE>:
+}
+
+void AT_TARGET_ENABLE(PMBUS_PAGE_t loop)
+{
+
+}
+1002414a:	4770      	bx	lr
+
+1002414c <regulation_sm_callbacks_init>:
+{
+1002414c:	b510      	push	{r4, lr}
+	Regulation_set_regulation_event_cb(REGULATION_STATE_AT_TARGET_VID, REGULATION_CONTROLS_ENABLE,
+1002414e:	4a03      	ldr	r2, [pc, #12]	; (1002415c <regulation_sm_callbacks_init+0x10>)
+10024150:	2109      	movs	r1, #9
+10024152:	2003      	movs	r0, #3
+10024154:	f7e3 fd04 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+}
+10024158:	bd10      	pop	{r4, pc}
+1002415a:	46c0      	nop			; (mov r8, r8)
+1002415c:	1002414b 	.word	0x1002414b
+
+10024160 <patch_pmbus_mfr_autogen_init>:
+
+void patch_pmbus_mfr_autogen_init(void);
+
+
+void patch_pmbus_mfr_autogen_init(void)
+{
+10024160:	b510      	push	{r4, lr}
+	pmbus_mfr_autogen_init();
+10024162:	f7ff ffbf 	bl	100240e4 <pmbus_mfr_autogen_init>
+}
+10024166:	bd10      	pop	{r4, pc}
+
+10024168 <user_drv_init>:
+ * Main entry point of the user application.  Good place to set breakpoint when debugging a patch.
+ * This will only get executed a single time prior to configuration loading and before RTOS starts
+ */
+
+void user_drv_init(void)
+{
+10024168:	b510      	push	{r4, lr}
+	memset(&user_data, 0, sizeof(USER_DATA_t));  // ZI the user data
+1002416a:	2274      	movs	r2, #116	; 0x74
+1002416c:	2100      	movs	r1, #0
+1002416e:	4808      	ldr	r0, [pc, #32]	; (10024190 <user_drv_init+0x28>)
+10024170:	f000 f858 	bl	10024224 <memset>
+
+	// this is the initialization of user pmbus commands autogenerated from pmbus spreadsheet
+	ptr_mfr_specific_init = (mfr_specific_init_ptr) patch_pmbus_mfr_autogen_init;
+10024174:	4a07      	ldr	r2, [pc, #28]	; (10024194 <user_drv_init+0x2c>)
+10024176:	4b08      	ldr	r3, [pc, #32]	; (10024198 <user_drv_init+0x30>)
+10024178:	601a      	str	r2, [r3, #0]
+
+	// set the pointer funtion in init of regulation state machine to user callback setup for each state
+	set_module_init_cb(MODULE_REGULATION, regulation_sm_callbacks_init);
+1002417a:	4908      	ldr	r1, [pc, #32]	; (1002419c <user_drv_init+0x34>)
+1002417c:	2002      	movs	r0, #2
+1002417e:	f7e0 fbb5 	bl	100048ec <scratchpad_semaphore_release+0x33>
+
+	add_on_features_init();
+10024182:	f7ff ff79 	bl	10024078 <add_on_features_init>
+	regulation_sm_callbacks_init();
+10024186:	f7ff ffe1 	bl	1002414c <regulation_sm_callbacks_init>
+	pmbus_mfr_autogen_init();
+1002418a:	f7ff ffab 	bl	100240e4 <pmbus_mfr_autogen_init>
+	patch_pmbus_mfr_autogen_init();
+
+}
+1002418e:	bd10      	pop	{r4, pc}
+10024190:	20063818 	.word	0x20063818
+10024194:	10024161 	.word	0x10024161
+10024198:	2005d468 	.word	0x2005d468
+1002419c:	1002414d 	.word	0x1002414d
+
+100241a0 <memcpy>:
+100241a0:	b5f0      	push	{r4, r5, r6, r7, lr}
+100241a2:	0005      	movs	r5, r0
+100241a4:	2a0f      	cmp	r2, #15
+100241a6:	d92f      	bls.n	10024208 <memcpy+0x68>
+100241a8:	000b      	movs	r3, r1
+100241aa:	4303      	orrs	r3, r0
+100241ac:	079b      	lsls	r3, r3, #30
+100241ae:	d134      	bne.n	1002421a <memcpy+0x7a>
+100241b0:	0016      	movs	r6, r2
+100241b2:	000c      	movs	r4, r1
+100241b4:	0003      	movs	r3, r0
+100241b6:	3e10      	subs	r6, #16
+100241b8:	0935      	lsrs	r5, r6, #4
+100241ba:	3501      	adds	r5, #1
+100241bc:	012d      	lsls	r5, r5, #4
+100241be:	1945      	adds	r5, r0, r5
+100241c0:	6827      	ldr	r7, [r4, #0]
+100241c2:	601f      	str	r7, [r3, #0]
+100241c4:	6867      	ldr	r7, [r4, #4]
+100241c6:	605f      	str	r7, [r3, #4]
+100241c8:	68a7      	ldr	r7, [r4, #8]
+100241ca:	609f      	str	r7, [r3, #8]
+100241cc:	68e7      	ldr	r7, [r4, #12]
+100241ce:	3410      	adds	r4, #16
+100241d0:	60df      	str	r7, [r3, #12]
+100241d2:	3310      	adds	r3, #16
+100241d4:	429d      	cmp	r5, r3
+100241d6:	d1f3      	bne.n	100241c0 <memcpy+0x20>
+100241d8:	230f      	movs	r3, #15
+100241da:	439e      	bics	r6, r3
+100241dc:	3610      	adds	r6, #16
+100241de:	1985      	adds	r5, r0, r6
+100241e0:	1989      	adds	r1, r1, r6
+100241e2:	4013      	ands	r3, r2
+100241e4:	2b03      	cmp	r3, #3
+100241e6:	d91a      	bls.n	1002421e <memcpy+0x7e>
+100241e8:	1f1e      	subs	r6, r3, #4
+100241ea:	2300      	movs	r3, #0
+100241ec:	08b4      	lsrs	r4, r6, #2
+100241ee:	3401      	adds	r4, #1
+100241f0:	00a4      	lsls	r4, r4, #2
+100241f2:	58cf      	ldr	r7, [r1, r3]
+100241f4:	50ef      	str	r7, [r5, r3]
+100241f6:	3304      	adds	r3, #4
+100241f8:	42a3      	cmp	r3, r4
+100241fa:	d1fa      	bne.n	100241f2 <memcpy+0x52>
+100241fc:	2403      	movs	r4, #3
+100241fe:	43a6      	bics	r6, r4
+10024200:	1d33      	adds	r3, r6, #4
+10024202:	4022      	ands	r2, r4
+10024204:	18c9      	adds	r1, r1, r3
+10024206:	18ed      	adds	r5, r5, r3
+10024208:	2a00      	cmp	r2, #0
+1002420a:	d005      	beq.n	10024218 <memcpy+0x78>
+1002420c:	2300      	movs	r3, #0
+1002420e:	5ccc      	ldrb	r4, [r1, r3]
+10024210:	54ec      	strb	r4, [r5, r3]
+10024212:	3301      	adds	r3, #1
+10024214:	4293      	cmp	r3, r2
+10024216:	d1fa      	bne.n	1002420e <memcpy+0x6e>
+10024218:	bdf0      	pop	{r4, r5, r6, r7, pc}
+1002421a:	0005      	movs	r5, r0
+1002421c:	e7f6      	b.n	1002420c <memcpy+0x6c>
+1002421e:	001a      	movs	r2, r3
+10024220:	e7f2      	b.n	10024208 <memcpy+0x68>
+10024222:	46c0      	nop			; (mov r8, r8)
+
+10024224 <memset>:
+10024224:	b5f0      	push	{r4, r5, r6, r7, lr}
+10024226:	0783      	lsls	r3, r0, #30
+10024228:	d043      	beq.n	100242b2 <memset+0x8e>
+1002422a:	1e54      	subs	r4, r2, #1
+1002422c:	2a00      	cmp	r2, #0
+1002422e:	d03f      	beq.n	100242b0 <memset+0x8c>
+10024230:	b2ce      	uxtb	r6, r1
+10024232:	0002      	movs	r2, r0
+10024234:	2503      	movs	r5, #3
+10024236:	e002      	b.n	1002423e <memset+0x1a>
+10024238:	001a      	movs	r2, r3
+1002423a:	3c01      	subs	r4, #1
+1002423c:	d338      	bcc.n	100242b0 <memset+0x8c>
+1002423e:	1c53      	adds	r3, r2, #1
+10024240:	7016      	strb	r6, [r2, #0]
+10024242:	422b      	tst	r3, r5
+10024244:	d1f8      	bne.n	10024238 <memset+0x14>
+10024246:	2c03      	cmp	r4, #3
+10024248:	d92a      	bls.n	100242a0 <memset+0x7c>
+1002424a:	22ff      	movs	r2, #255	; 0xff
+1002424c:	400a      	ands	r2, r1
+1002424e:	0215      	lsls	r5, r2, #8
+10024250:	4315      	orrs	r5, r2
+10024252:	042a      	lsls	r2, r5, #16
+10024254:	4315      	orrs	r5, r2
+10024256:	2c0f      	cmp	r4, #15
+10024258:	d914      	bls.n	10024284 <memset+0x60>
+1002425a:	0027      	movs	r7, r4
+1002425c:	001a      	movs	r2, r3
+1002425e:	3f10      	subs	r7, #16
+10024260:	093e      	lsrs	r6, r7, #4
+10024262:	3601      	adds	r6, #1
+10024264:	0136      	lsls	r6, r6, #4
+10024266:	199e      	adds	r6, r3, r6
+10024268:	6015      	str	r5, [r2, #0]
+1002426a:	6055      	str	r5, [r2, #4]
+1002426c:	6095      	str	r5, [r2, #8]
+1002426e:	60d5      	str	r5, [r2, #12]
+10024270:	3210      	adds	r2, #16
+10024272:	4296      	cmp	r6, r2
+10024274:	d1f8      	bne.n	10024268 <memset+0x44>
+10024276:	220f      	movs	r2, #15
+10024278:	4397      	bics	r7, r2
+1002427a:	3710      	adds	r7, #16
+1002427c:	19db      	adds	r3, r3, r7
+1002427e:	4014      	ands	r4, r2
+10024280:	2c03      	cmp	r4, #3
+10024282:	d90d      	bls.n	100242a0 <memset+0x7c>
+10024284:	001a      	movs	r2, r3
+10024286:	1f27      	subs	r7, r4, #4
+10024288:	08be      	lsrs	r6, r7, #2
+1002428a:	3601      	adds	r6, #1
+1002428c:	00b6      	lsls	r6, r6, #2
+1002428e:	199e      	adds	r6, r3, r6
+10024290:	c220      	stmia	r2!, {r5}
+10024292:	42b2      	cmp	r2, r6
+10024294:	d1fc      	bne.n	10024290 <memset+0x6c>
+10024296:	2203      	movs	r2, #3
+10024298:	4397      	bics	r7, r2
+1002429a:	3704      	adds	r7, #4
+1002429c:	19db      	adds	r3, r3, r7
+1002429e:	4014      	ands	r4, r2
+100242a0:	2c00      	cmp	r4, #0
+100242a2:	d005      	beq.n	100242b0 <memset+0x8c>
+100242a4:	b2c9      	uxtb	r1, r1
+100242a6:	191c      	adds	r4, r3, r4
+100242a8:	7019      	strb	r1, [r3, #0]
+100242aa:	3301      	adds	r3, #1
+100242ac:	429c      	cmp	r4, r3
+100242ae:	d1fb      	bne.n	100242a8 <memset+0x84>
+100242b0:	bdf0      	pop	{r4, r5, r6, r7, pc}
+100242b2:	0014      	movs	r4, r2
+100242b4:	0003      	movs	r3, r0
+100242b6:	e7c6      	b.n	10024246 <memset+0x22>
+100242b8:	6c6c6148 	.word	0x6c6c6148
+100242bc:	6557206f 	.word	0x6557206f
+100242c0:	0000746c 	.word	0x0000746c

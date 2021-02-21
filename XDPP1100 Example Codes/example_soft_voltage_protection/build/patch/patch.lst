@@ -1,0 +1,940 @@
+
+.\build\patch/patch.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .bss          000000e0  20063800  20063800  00023800  2**2
+                  ALLOC
+  1 .otp_data     00004000  10020000  10020000  00010000  2**0
+                  ALLOC
+  2 .otp_header   0000001c  10024000  10024000  00010000  2**0
+                  ALLOC
+  3 .txt          00000538  1002401c  1002401c  0001401c  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  4 .otp_patch2   00004000  10024554  10024554  00014554  2**0
+                  ALLOC
+  5 .otp_patch3   00004000  10028554  10028554  00014554  2**0
+                  ALLOC
+  6 .debug_info   0001c805  00000000  00000000  00014554  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 000012a6  00000000  00000000  00030d59  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_loc    00000676  00000000  00000000  00031fff  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_aranges 00000120  00000000  00000000  00032675  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000158  00000000  00000000  00032795  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_macro  0000a6fd  00000000  00000000  000328ed  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_line   0000387c  00000000  00000000  0003cfea  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_str    00065838  00000000  00000000  00040866  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 14 .comment      0000007f  00000000  00000000  000a609e  2**0
+                  CONTENTS, READONLY
+ 15 .ARM.attributes 00000031  00000000  00000000  000a611d  2**0
+                  CONTENTS, READONLY
+ 16 .debug_frame  00000224  00000000  00000000  000a6150  2**2
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .txt:
+
+1002401c <patch_entry>:
+/**
+ * This is the patch entry point, which is called after the patch got
+ * successfully loaded into RAM.
+ */
+void patch_entry(void)
+{
+1002401c:	b510      	push	{r4, lr}
+    // Initialize the .bss and .data section
+    memset(SECTION_BASE_ZI, 0, SECTION_LENGTH_ZI);
+1002401e:	480c      	ldr	r0, [pc, #48]	; (10024050 <patch_entry+0x34>)
+10024020:	4a0c      	ldr	r2, [pc, #48]	; (10024054 <patch_entry+0x38>)
+10024022:	1a12      	subs	r2, r2, r0
+10024024:	2100      	movs	r1, #0
+10024026:	f000 fa43 	bl	100244b0 <memset>
+    memcpy(SECTION_BASE_RW_DESTINATION, SECTION_BASE_RW_SOURCE, SECTION_LENGTH_RW);
+1002402a:	480b      	ldr	r0, [pc, #44]	; (10024058 <patch_entry+0x3c>)
+1002402c:	4a0b      	ldr	r2, [pc, #44]	; (1002405c <patch_entry+0x40>)
+1002402e:	1a12      	subs	r2, r2, r0
+10024030:	490b      	ldr	r1, [pc, #44]	; (10024060 <patch_entry+0x44>)
+10024032:	f000 f9fb 	bl	1002442c <memcpy>
+    // Initialize ram execution section
+    memcpy(SECTION_BASE_RAM_EXEC_DESTINATION, SECTION_BASE_RAM_EXEC_SOURCE, SECTION_LENGTH_RAM_EXEC);
+10024036:	480b      	ldr	r0, [pc, #44]	; (10024064 <patch_entry+0x48>)
+10024038:	4a0b      	ldr	r2, [pc, #44]	; (10024068 <patch_entry+0x4c>)
+1002403a:	1a12      	subs	r2, r2, r0
+1002403c:	490b      	ldr	r1, [pc, #44]	; (1002406c <patch_entry+0x50>)
+1002403e:	f000 f9f5 	bl	1002442c <memcpy>
+/* lint requires us to have both a declaration and a definition ... we
+ * could probably bail out through some local lint, but her we simply
+ * play to the rules.
+ */
+HAL_INLINE void HAL_SET32(volatile uint32_t* addr, uint32_t val) {
+    *addr = val;
+10024042:	4a0b      	ldr	r2, [pc, #44]	; (10024070 <patch_entry+0x54>)
+10024044:	4b0b      	ldr	r3, [pc, #44]	; (10024074 <patch_entry+0x58>)
+10024046:	601a      	str	r2, [r3, #0]
+
+
+    SCU_SPARE_FF__SET(0x5971BBBBUL);  // write the patch id to SCU spare for simple test that patch loaded
+    user_drv_init();
+10024048:	f000 f912 	bl	10024270 <user_drv_init>
+}
+1002404c:	bd10      	pop	{r4, pc}
+1002404e:	46c0      	nop			; (mov r8, r8)
+10024050:	20063800 	.word	0x20063800
+10024054:	200638e0 	.word	0x200638e0
+10024058:	20063800 	.word	0x20063800
+1002405c:	20063800 	.word	0x20063800
+10024060:	10024554 	.word	0x10024554
+10024064:	200638e0 	.word	0x200638e0
+10024068:	200638e0 	.word	0x200638e0
+1002406c:	10024554 	.word	0x10024554
+10024070:	5971bbbb 	.word	0x5971bbbb
+10024074:	40000020 	.word	0x40000020
+
+10024078 <add_on_features_init>:
+#include "pmbus_mfr_autogen.h"
+
+void add_on_features_init (void)
+{
+	uint8_t test1 = 0;
+}
+10024078:	4770      	bx	lr
+	...
+
+1002407c <Telemetry_IRQ_VOUT_MFR_OVP_FAULT_HANDLE>:
+/**
+ * This function is Telem event callback for soft-OVP.
+ * @param Telemetry_type
+ */
+void Telemetry_IRQ_VOUT_MFR_OVP_FAULT_HANDLE(Telemetry_IRQ_TYPE_t Telemetry_type)
+{
+1002407c:	b510      	push	{r4, lr}
+1002407e:	b082      	sub	sp, #8
+ * @return pointer to _FAULT_s struct from array
+ */
+__TLMCOM_INLINE _Telemetry_s * Telemetry_GET_ARRAY_POINTER(Telemetry_IRQ_TYPE_t Telemetry_type)
+{
+	// if fault type is 0-31 it is a loop fault which index in the array from 0-31 for loop0 and 32-63 for loop1
+	if (Telemetry_type < Telemetry_IRQ_TYPE__END_OF_Telemetry_IRQ_TYPES)
+10024080:	280f      	cmp	r0, #15
+10024082:	d816      	bhi.n	100240b2 <Telemetry_IRQ_VOUT_MFR_OVP_FAULT_HANDLE+0x36>
+	{
+		return (&Telemetry_ARRAY[Telemetry_type]);
+10024084:	0083      	lsls	r3, r0, #2
+10024086:	1818      	adds	r0, r3, r0
+10024088:	0080      	lsls	r0, r0, #2
+1002408a:	4b1e      	ldr	r3, [pc, #120]	; (10024104 <Telemetry_IRQ_VOUT_MFR_OVP_FAULT_HANDLE+0x88>)
+1002408c:	18c0      	adds	r0, r0, r3
+	_Telemetry_s * Telemetry_str = Telemetry_GET_ARRAY_POINTER(Telemetry_type);
+	if(Telemetry_str->polarity == 1)
+1002408e:	7843      	ldrb	r3, [r0, #1]
+10024090:	2b01      	cmp	r3, #1
+10024092:	d019      	beq.n	100240c8 <Telemetry_IRQ_VOUT_MFR_OVP_FAULT_HANDLE+0x4c>
+	{
+		//VOUT below hysteresis level
+
+		// set the delay to retry
+		_FAULT_DESC_s * fault;
+		fault = FAULTS_GET_ARRAY_POINTER(PMBUS_PAGE_0, FAULT_TYPE_OVP_FAULT);
+10024094:	2128      	movs	r1, #40	; 0x28
+10024096:	2000      	movs	r0, #0
+10024098:	f7e3 ff66 	bl	10007f68 <Clear_Firmware_Fault+0x3b>
+		if (fault == NULL)
+1002409c:	2800      	cmp	r0, #0
+1002409e:	d02a      	beq.n	100240f6 <Telemetry_IRQ_VOUT_MFR_OVP_FAULT_HANDLE+0x7a>
+			PMBUS_Log_Error(FAULTS, PROGRAM_COUNTER, PMBUS_STATUS_CML_PROCESSOR_FAULT);
+			return;
+		}
+
+		//set the delay to retry
+		fault->delay_time_ms = pmbus_mfr_ovp_fault_delay; //
+100240a0:	4b19      	ldr	r3, [pc, #100]	; (10024108 <Telemetry_IRQ_VOUT_MFR_OVP_FAULT_HANDLE+0x8c>)
+100240a2:	681b      	ldr	r3, [r3, #0]
+100240a4:	6043      	str	r3, [r0, #4]
+
+		Clear_Firmware_Fault(PMBUS_PAGE_0, FAULT_TYPE_OVP_FAULT);
+100240a6:	2128      	movs	r1, #40	; 0x28
+100240a8:	2000      	movs	r0, #0
+100240aa:	f7e3 ff3f 	bl	10007f2c <COMMON_FAULT_HANDLE+0x187>
+	}
+}
+100240ae:	b002      	add	sp, #8
+100240b0:	bd10      	pop	{r4, pc}
+
+	}
+	else // in the fw faults and hw common cases we are using the fault types above 32 so just add 32 to the type to get an index between 64-95
+	{
+		LOG_ERROR_TYPE(TELEMETRY, WARNING, ILLEGAL_PARAMETER);
+100240b2:	466a      	mov	r2, sp
+100240b4:	4b15      	ldr	r3, [pc, #84]	; (1002410c <Telemetry_IRQ_VOUT_MFR_OVP_FAULT_HANDLE+0x90>)
+100240b6:	4669      	mov	r1, sp
+100240b8:	cb11      	ldmia	r3!, {r0, r4}
+100240ba:	c111      	stmia	r1!, {r0, r4}
+100240bc:	2101      	movs	r1, #1
+100240be:	2009      	movs	r0, #9
+100240c0:	f7de ff1c 	bl	10002efc <log_buffer_reset+0x2f>
+		return NULL;
+100240c4:	2000      	movs	r0, #0
+100240c6:	e7e2      	b.n	1002408e <Telemetry_IRQ_VOUT_MFR_OVP_FAULT_HANDLE+0x12>
+		fault = FAULTS_GET_ARRAY_POINTER(PMBUS_PAGE_0, FAULT_TYPE_OVP_FAULT);
+100240c8:	2128      	movs	r1, #40	; 0x28
+100240ca:	2000      	movs	r0, #0
+100240cc:	f7e3 ff4c 	bl	10007f68 <Clear_Firmware_Fault+0x3b>
+		if (fault == NULL)
+100240d0:	2800      	cmp	r0, #0
+100240d2:	d009      	beq.n	100240e8 <Telemetry_IRQ_VOUT_MFR_OVP_FAULT_HANDLE+0x6c>
+		pmbus_mfr_ovp_fault_delay = fault->delay_time_ms; //save the value of delay from pmbus command
+100240d4:	4b0c      	ldr	r3, [pc, #48]	; (10024108 <Telemetry_IRQ_VOUT_MFR_OVP_FAULT_HANDLE+0x8c>)
+100240d6:	6842      	ldr	r2, [r0, #4]
+100240d8:	601a      	str	r2, [r3, #0]
+		fault->delay_time_ms = 10; //set the delay to shutdown
+100240da:	230a      	movs	r3, #10
+100240dc:	6043      	str	r3, [r0, #4]
+		Set_Firmware_Fault(PMBUS_PAGE_0, FAULT_TYPE_OVP_FAULT);
+100240de:	2128      	movs	r1, #40	; 0x28
+100240e0:	2000      	movs	r0, #0
+100240e2:	f7e4 febf 	bl	10008e64 <LOOP_FAULT_HANDLE+0x3db>
+100240e6:	e7e2      	b.n	100240ae <Telemetry_IRQ_VOUT_MFR_OVP_FAULT_HANDLE+0x32>
+			PMBUS_Log_Error(FAULTS, PROGRAM_COUNTER, PMBUS_STATUS_CML_PROCESSOR_FAULT);
+100240e8:	2203      	movs	r2, #3
+100240ea:	2101      	movs	r1, #1
+100240ec:	4249      	negs	r1, r1
+100240ee:	3008      	adds	r0, #8
+100240f0:	f7dd fb68 	bl	100017c4 <PMBUS_Inter_Thread_Set_Command+0x77>
+			return;
+100240f4:	e7db      	b.n	100240ae <Telemetry_IRQ_VOUT_MFR_OVP_FAULT_HANDLE+0x32>
+			PMBUS_Log_Error(FAULTS, PROGRAM_COUNTER, PMBUS_STATUS_CML_PROCESSOR_FAULT);
+100240f6:	2203      	movs	r2, #3
+100240f8:	2101      	movs	r1, #1
+100240fa:	4249      	negs	r1, r1
+100240fc:	3008      	adds	r0, #8
+100240fe:	f7dd fb61 	bl	100017c4 <PMBUS_Inter_Thread_Set_Command+0x77>
+			return;
+10024102:	e7d4      	b.n	100240ae <Telemetry_IRQ_VOUT_MFR_OVP_FAULT_HANDLE+0x32>
+10024104:	2006134c 	.word	0x2006134c
+10024108:	20063800 	.word	0x20063800
+1002410c:	10024544 	.word	0x10024544
+
+10024110 <PMBUS_HANDLE_MFR_OVP_FAULT_LIMIT>:
+{
+10024110:	b570      	push	{r4, r5, r6, lr}
+10024112:	b084      	sub	sp, #16
+	if ((direction == PMBUS_WRITE) && (page == PMBUS_PAGE_0)) //loop0 only
+10024114:	2900      	cmp	r1, #0
+10024116:	d101      	bne.n	1002411c <PMBUS_HANDLE_MFR_OVP_FAULT_LIMIT+0xc>
+10024118:	2800      	cmp	r0, #0
+1002411a:	d001      	beq.n	10024120 <PMBUS_HANDLE_MFR_OVP_FAULT_LIMIT+0x10>
+}
+1002411c:	b004      	add	sp, #16
+1002411e:	bd70      	pop	{r4, r5, r6, pc}
+		uint16_t mantissa = PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_MFR_OVP_FAULT_LIMIT);
+10024120:	31b1      	adds	r1, #177	; 0xb1
+10024122:	f7dd fa99 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024126:	0006      	movs	r6, r0
+		int32_t  exponent = PMBUS_Get_Vout_Mode_Exponent(page);
+10024128:	2000      	movs	r0, #0
+1002412a:	f7dd faf1 	bl	10001710 <PMBUS_Get_On_Off_State+0x7b>
+		uint16_t hysteresis_mantissa = mantissa - (mantissa >> 3);
+1002412e:	08f4      	lsrs	r4, r6, #3
+10024130:	1b34      	subs	r4, r6, r4
+10024132:	b2a4      	uxth	r4, r4
+		Telemetry_Set_Irq_Threshold(TELEM_IRQ_OVP_FAULT, (int32_t)mantissa, (int8_t)exponent);
+10024134:	b245      	sxtb	r5, r0
+10024136:	002a      	movs	r2, r5
+10024138:	0031      	movs	r1, r6
+1002413a:	2006      	movs	r0, #6
+1002413c:	f7e5 fc8c 	bl	10009a58 <Telemetry_Set_Irq_Polarity+0x9b>
+		Telemetry_Set_Irq_Hysteresis_Threshold(TELEM_IRQ_OVP_FAULT, (int32_t)hysteresis_mantissa, (int8_t)hysteresis_exponent);
+10024140:	002a      	movs	r2, r5
+10024142:	0021      	movs	r1, r4
+10024144:	2006      	movs	r0, #6
+10024146:	f7e5 fc13 	bl	10009970 <Telemetry_Sample+0x52b>
+		Telemetry_Setup_Irq(page, VOUT_0, TELEM_IRQ_OVP_FAULT, Telemetry_IRQ_VOUT_MFR_OVP_FAULT_HANDLE);
+1002414a:	4b0e      	ldr	r3, [pc, #56]	; (10024184 <PMBUS_HANDLE_MFR_OVP_FAULT_LIMIT+0x74>)
+1002414c:	2206      	movs	r2, #6
+1002414e:	2102      	movs	r1, #2
+10024150:	2000      	movs	r0, #0
+10024152:	f7e5 fca7 	bl	10009aa4 <Telemetry_Set_Irq_Threshold+0x4b>
+		uint8_t fault_response_cmd_byte = PMBUS_Get_Command_Byte(page, PMBUS_CMDCODE_MFR_OVP_FAULT_RESPONSE);
+10024156:	21b2      	movs	r1, #178	; 0xb2
+10024158:	2000      	movs	r0, #0
+1002415a:	f7dd fa41 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+1002415e:	0002      	movs	r2, r0
+		FAULTS_SETUP_FAULT(page, FAULT_TYPE_OVP_FAULT, fault_response_cmd_byte,
+10024160:	2328      	movs	r3, #40	; 0x28
+10024162:	9303      	str	r3, [sp, #12]
+10024164:	3b27      	subs	r3, #39	; 0x27
+10024166:	9302      	str	r3, [sp, #8]
+10024168:	337f      	adds	r3, #127	; 0x7f
+1002416a:	9301      	str	r3, [sp, #4]
+1002416c:	2300      	movs	r3, #0
+1002416e:	9300      	str	r3, [sp, #0]
+10024170:	3306      	adds	r3, #6
+10024172:	2128      	movs	r1, #40	; 0x28
+10024174:	2000      	movs	r0, #0
+10024176:	f7e4 f88d 	bl	10008294 <FAULTS_Resolve_Shutdown_Priority+0xa7>
+		Telemetry_Enable_IRQ_Type(TELEM_IRQ_OVP_FAULT);
+1002417a:	2006      	movs	r0, #6
+1002417c:	f7e4 ff42 	bl	10009004 <TWOS_UNCOMPLEMENT_telemetry_drv+0x25>
+}
+10024180:	e7cc      	b.n	1002411c <PMBUS_HANDLE_MFR_OVP_FAULT_LIMIT+0xc>
+10024182:	46c0      	nop			; (mov r8, r8)
+10024184:	1002407d 	.word	0x1002407d
+
+10024188 <pmbus_mfr_autogen_init>:
+/*
+ * Initializes all of our pmbus structs that were generated by the script
+ * Function gets called to setup command support array, initialize pointers to command data, and describe commands 
+ */
+void pmbus_mfr_autogen_init(void)
+{
+10024188:	b570      	push	{r4, r5, r6, lr}
+
+
+	/* initialize command structure for MFR_OVP_FAULT_LIMIT. */
+	// MFR_OVP_FAULT_LIMIT COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_OVP_FAULT_LIMIT] = PMBUS_HANDLE_MFR_OVP_FAULT_LIMIT;
+1002418a:	491b      	ldr	r1, [pc, #108]	; (100241f8 <pmbus_mfr_autogen_init+0x70>)
+1002418c:	20b1      	movs	r0, #177	; 0xb1
+1002418e:	0080      	lsls	r0, r0, #2
+10024190:	4d1a      	ldr	r5, [pc, #104]	; (100241fc <pmbus_mfr_autogen_init+0x74>)
+10024192:	500d      	str	r5, [r1, r0]
+	//PMBUS_CMD_MFR_OVP_FAULT_LIMIT.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_OVP_FAULT_LIMIT.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_OVP_FAULT_LIMIT.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_OVP_FAULT_LIMIT.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_OVP_FAULT_LIMIT.RANGE_TYPE = (uint8_t) PMBUS_RANGE_VOUT_MODE;
+	PMBUS_CMD_MFR_OVP_FAULT_LIMIT.RANGE = &PMBUS_CMD_MFR_OVP_FAULT_LIMIT_RANGE[0];
+10024194:	4b1a      	ldr	r3, [pc, #104]	; (10024200 <pmbus_mfr_autogen_init+0x78>)
+10024196:	4a1b      	ldr	r2, [pc, #108]	; (10024204 <pmbus_mfr_autogen_init+0x7c>)
+10024198:	605a      	str	r2, [r3, #4]
+	PMBUS_CMD_MFR_OVP_FAULT_LIMIT.CMD_CONFIG = 0xc88223b1;
+1002419a:	4a1b      	ldr	r2, [pc, #108]	; (10024208 <pmbus_mfr_autogen_init+0x80>)
+1002419c:	601a      	str	r2, [r3, #0]
+	PMBUS_CMD_MFR_OVP_FAULT_LIMIT.DATA0 = &PMBUS_CMD_MFR_OVP_FAULT_LIMIT_DATA_LOOP0[0];  // set the pointer to the data array
+1002419e:	4a1b      	ldr	r2, [pc, #108]	; (1002420c <pmbus_mfr_autogen_init+0x84>)
+100241a0:	609a      	str	r2, [r3, #8]
+	PMBUS_CMD_MFR_OVP_FAULT_LIMIT.DATA1 = &PMBUS_CMD_MFR_OVP_FAULT_LIMIT_DATA_LOOP1[0];  // set the pointer to the data array
+100241a2:	4a1b      	ldr	r2, [pc, #108]	; (10024210 <pmbus_mfr_autogen_init+0x88>)
+100241a4:	60da      	str	r2, [r3, #12]
+	// RANGE SUPPORT for MFR_OVP_FAULT_LIMIT COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_OVP_FAULT_LIMIT] = &PMBUS_CMD_MFR_OVP_FAULT_LIMIT;
+100241a6:	4a1b      	ldr	r2, [pc, #108]	; (10024214 <pmbus_mfr_autogen_init+0x8c>)
+100241a8:	5013      	str	r3, [r2, r0]
+	//PMBUS_CMD_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_OVP_FAULT_LIMIT] = &PMBUS_CMD_MFR_OVP_FAULT_LIMIT;
+	//lint -e{778} suppress "Constant expression evaluates to 0 in operation '&'" 
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_OVP_FAULT_LIMIT/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_OVP_FAULT_LIMIT&31u));
+100241aa:	481b      	ldr	r0, [pc, #108]	; (10024218 <pmbus_mfr_autogen_init+0x90>)
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_OVP_FAULT_LIMIT/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_OVP_FAULT_LIMIT&31u));
+
+	/* initialize command structure for MFR_OVP_FAULT_RESPONSE. */
+	// MFR_OVP_FAULT_RESPONSE COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_OVP_FAULT_RESPONSE] = PMBUS_HANDLE_MFR_OVP_FAULT_LIMIT;
+100241ac:	24b2      	movs	r4, #178	; 0xb2
+100241ae:	00a4      	lsls	r4, r4, #2
+100241b0:	510d      	str	r5, [r1, r4]
+	//PMBUS_CMD_MFR_OVP_FAULT_RESPONSE.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_OVP_FAULT_RESPONSE.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_OVP_FAULT_RESPONSE.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_OVP_FAULT_RESPONSE.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_OVP_FAULT_RESPONSE.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_OVP_FAULT_RESPONSE.CMD_CONFIG = 0xc18123b2;
+100241b2:	4b1a      	ldr	r3, [pc, #104]	; (1002421c <pmbus_mfr_autogen_init+0x94>)
+100241b4:	4d1a      	ldr	r5, [pc, #104]	; (10024220 <pmbus_mfr_autogen_init+0x98>)
+100241b6:	601d      	str	r5, [r3, #0]
+	PMBUS_CMD_MFR_OVP_FAULT_RESPONSE.DATA0 = &PMBUS_CMD_MFR_OVP_FAULT_RESPONSE_DATA_LOOP0[0];  // set the pointer to the data array
+100241b8:	4d1a      	ldr	r5, [pc, #104]	; (10024224 <pmbus_mfr_autogen_init+0x9c>)
+100241ba:	609d      	str	r5, [r3, #8]
+	PMBUS_CMD_MFR_OVP_FAULT_RESPONSE.DATA1 = &PMBUS_CMD_MFR_OVP_FAULT_RESPONSE_DATA_LOOP1[0];  // set the pointer to the data array
+100241bc:	4d1a      	ldr	r5, [pc, #104]	; (10024228 <pmbus_mfr_autogen_init+0xa0>)
+100241be:	60dd      	str	r5, [r3, #12]
+	// RANGE SUPPORT for MFR_OVP_FAULT_RESPONSE COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_OVP_FAULT_RESPONSE] = &PMBUS_CMD_MFR_OVP_FAULT_RESPONSE;
+100241c0:	5113      	str	r3, [r2, r4]
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_OVP_FAULT_RESPONSE/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_OVP_FAULT_RESPONSE&31u));
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_OVP_FAULT_RESPONSE/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_OVP_FAULT_RESPONSE&31u));
+
+	/* initialize command structure for MFR_VIN_UV_FAULT_LIMIT. */
+	// MFR_VIN_UV_FAULT_LIMIT COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_VIN_UV_FAULT_LIMIT] = PMBUS_HANDLE_MFR_VIN_UV_FAULT_LIMIT;
+100241c2:	3404      	adds	r4, #4
+100241c4:	4d19      	ldr	r5, [pc, #100]	; (1002422c <pmbus_mfr_autogen_init+0xa4>)
+100241c6:	510d      	str	r5, [r1, r4]
+	//PMBUS_CMD_MFR_VIN_UV_FAULT_LIMIT.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_VIN_UV_FAULT_LIMIT.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_VIN_UV_FAULT_LIMIT.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_VIN_UV_FAULT_LIMIT.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_VIN_UV_FAULT_LIMIT.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_VIN_UV_FAULT_LIMIT.CMD_CONFIG = 0xc18223b3;
+100241c8:	4b19      	ldr	r3, [pc, #100]	; (10024230 <pmbus_mfr_autogen_init+0xa8>)
+100241ca:	4e1a      	ldr	r6, [pc, #104]	; (10024234 <pmbus_mfr_autogen_init+0xac>)
+100241cc:	601e      	str	r6, [r3, #0]
+	PMBUS_CMD_MFR_VIN_UV_FAULT_LIMIT.DATA0 = &PMBUS_CMD_MFR_VIN_UV_FAULT_LIMIT_DATA_LOOP0[0];  // set the pointer to the data array
+100241ce:	4e1a      	ldr	r6, [pc, #104]	; (10024238 <pmbus_mfr_autogen_init+0xb0>)
+100241d0:	609e      	str	r6, [r3, #8]
+	PMBUS_CMD_MFR_VIN_UV_FAULT_LIMIT.DATA1 = &PMBUS_CMD_MFR_VIN_UV_FAULT_LIMIT_DATA_LOOP1[0];  // set the pointer to the data array
+100241d2:	4e1a      	ldr	r6, [pc, #104]	; (1002423c <pmbus_mfr_autogen_init+0xb4>)
+100241d4:	60de      	str	r6, [r3, #12]
+	// RANGE SUPPORT for MFR_VIN_UV_FAULT_LIMIT COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_VIN_UV_FAULT_LIMIT] = &PMBUS_CMD_MFR_VIN_UV_FAULT_LIMIT;
+100241d6:	5113      	str	r3, [r2, r4]
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_VIN_UV_FAULT_LIMIT/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_VIN_UV_FAULT_LIMIT&31u));
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_VIN_UV_FAULT_LIMIT/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_VIN_UV_FAULT_LIMIT&31u));
+
+	/* initialize command structure for MFR_VIN_UV_FAULT_RESPONSE. */
+	// MFR_VIN_UV_FAULT_RESPONSE COMMAND:
+	ptr_pmbus_callback[PMBUS_CMDCODE_MFR_VIN_UV_FAULT_RESPONSE] = PMBUS_HANDLE_MFR_VIN_UV_FAULT_LIMIT;
+100241d8:	3404      	adds	r4, #4
+100241da:	510d      	str	r5, [r1, r4]
+	//PMBUS_CMD_MFR_VIN_UV_FAULT_RESPONSE.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_VIN_UV_FAULT_RESPONSE.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_VIN_UV_FAULT_RESPONSE.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_VIN_UV_FAULT_RESPONSE.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_VIN_UV_FAULT_RESPONSE.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_VIN_UV_FAULT_RESPONSE.CMD_CONFIG = 0xc18123b4;
+100241dc:	4b18      	ldr	r3, [pc, #96]	; (10024240 <pmbus_mfr_autogen_init+0xb8>)
+100241de:	4919      	ldr	r1, [pc, #100]	; (10024244 <pmbus_mfr_autogen_init+0xbc>)
+100241e0:	6019      	str	r1, [r3, #0]
+	PMBUS_CMD_MFR_VIN_UV_FAULT_RESPONSE.DATA0 = &PMBUS_CMD_MFR_VIN_UV_FAULT_RESPONSE_DATA_LOOP0[0];  // set the pointer to the data array
+100241e2:	4919      	ldr	r1, [pc, #100]	; (10024248 <pmbus_mfr_autogen_init+0xc0>)
+100241e4:	6099      	str	r1, [r3, #8]
+	PMBUS_CMD_MFR_VIN_UV_FAULT_RESPONSE.DATA1 = &PMBUS_CMD_MFR_VIN_UV_FAULT_RESPONSE_DATA_LOOP1[0];  // set the pointer to the data array
+100241e6:	4919      	ldr	r1, [pc, #100]	; (1002424c <pmbus_mfr_autogen_init+0xc4>)
+100241e8:	60d9      	str	r1, [r3, #12]
+	// RANGE SUPPORT for MFR_VIN_UV_FAULT_RESPONSE COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_VIN_UV_FAULT_RESPONSE] = &PMBUS_CMD_MFR_VIN_UV_FAULT_RESPONSE;
+100241ea:	5113      	str	r3, [r2, r4]
+	//PMBUS_CMD_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_VIN_UV_FAULT_RESPONSE] = &PMBUS_CMD_MFR_VIN_UV_FAULT_RESPONSE;
+	//lint -e{778} suppress "Constant expression evaluates to 0 in operation '&'" 
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_VIN_UV_FAULT_RESPONSE/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_VIN_UV_FAULT_RESPONSE&31u));
+100241ec:	23f0      	movs	r3, #240	; 0xf0
+100241ee:	035b      	lsls	r3, r3, #13
+100241f0:	6942      	ldr	r2, [r0, #20]
+100241f2:	4313      	orrs	r3, r2
+100241f4:	6143      	str	r3, [r0, #20]
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_VIN_UV_FAULT_RESPONSE/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_VIN_UV_FAULT_RESPONSE&31u));
+
+}
+100241f6:	bd70      	pop	{r4, r5, r6, pc}
+100241f8:	2005d954 	.word	0x2005d954
+100241fc:	10024111 	.word	0x10024111
+10024200:	20063850 	.word	0x20063850
+10024204:	20063860 	.word	0x20063860
+10024208:	c88223b1 	.word	0xc88223b1
+1002420c:	20063864 	.word	0x20063864
+10024210:	20063848 	.word	0x20063848
+10024214:	2005d534 	.word	0x2005d534
+10024218:	2005d934 	.word	0x2005d934
+1002421c:	2006380c 	.word	0x2006380c
+10024220:	c18123b2 	.word	0xc18123b2
+10024224:	2006382c 	.word	0x2006382c
+10024228:	20063844 	.word	0x20063844
+1002422c:	1002433d 	.word	0x1002433d
+10024230:	2006381c 	.word	0x2006381c
+10024234:	c18223b3 	.word	0xc18223b3
+10024238:	20063808 	.word	0x20063808
+1002423c:	2006384c 	.word	0x2006384c
+10024240:	20063830 	.word	0x20063830
+10024244:	c18123b4 	.word	0xc18123b4
+10024248:	20063840 	.word	0x20063840
+1002424c:	20063804 	.word	0x20063804
+
+10024250 <AT_TARGET_ENABLE>:
+}
+
+void AT_TARGET_ENABLE(PMBUS_PAGE_t loop)
+{
+
+}
+10024250:	4770      	bx	lr
+	...
+
+10024254 <regulation_sm_callbacks_init>:
+{
+10024254:	b510      	push	{r4, lr}
+	Regulation_set_regulation_event_cb(REGULATION_STATE_AT_TARGET_VID, REGULATION_CONTROLS_ENABLE,
+10024256:	4a03      	ldr	r2, [pc, #12]	; (10024264 <regulation_sm_callbacks_init+0x10>)
+10024258:	2109      	movs	r1, #9
+1002425a:	2003      	movs	r0, #3
+1002425c:	f7e3 fc80 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+}
+10024260:	bd10      	pop	{r4, pc}
+10024262:	46c0      	nop			; (mov r8, r8)
+10024264:	10024251 	.word	0x10024251
+
+10024268 <patch_pmbus_mfr_autogen_init>:
+
+void patch_pmbus_mfr_autogen_init(void);
+
+
+void patch_pmbus_mfr_autogen_init(void)
+{
+10024268:	b510      	push	{r4, lr}
+	pmbus_mfr_autogen_init();
+1002426a:	f7ff ff8d 	bl	10024188 <pmbus_mfr_autogen_init>
+}
+1002426e:	bd10      	pop	{r4, pc}
+
+10024270 <user_drv_init>:
+ * Main entry point of the user application.  Good place to set breakpoint when debugging a patch.
+ * This will only get executed a single time prior to configuration loading and before RTOS starts
+ */
+
+void user_drv_init(void)
+{
+10024270:	b510      	push	{r4, lr}
+	memset(&user_data, 0, sizeof(USER_DATA_t));  // ZI the user data
+10024272:	2274      	movs	r2, #116	; 0x74
+10024274:	2100      	movs	r1, #0
+10024276:	4808      	ldr	r0, [pc, #32]	; (10024298 <user_drv_init+0x28>)
+10024278:	f000 f91a 	bl	100244b0 <memset>
+
+	// this is the initialization of user pmbus commands autogenerated from pmbus spreadsheet
+	ptr_mfr_specific_init = (mfr_specific_init_ptr) patch_pmbus_mfr_autogen_init;
+1002427c:	4a07      	ldr	r2, [pc, #28]	; (1002429c <user_drv_init+0x2c>)
+1002427e:	4b08      	ldr	r3, [pc, #32]	; (100242a0 <user_drv_init+0x30>)
+10024280:	601a      	str	r2, [r3, #0]
+
+	// set the pointer funtion in init of regulation state machine to user callback setup for each state
+	set_module_init_cb(MODULE_REGULATION, regulation_sm_callbacks_init);
+10024282:	4908      	ldr	r1, [pc, #32]	; (100242a4 <user_drv_init+0x34>)
+10024284:	2002      	movs	r0, #2
+10024286:	f7e0 fb31 	bl	100048ec <scratchpad_semaphore_release+0x33>
+
+	add_on_features_init();
+1002428a:	f7ff fef5 	bl	10024078 <add_on_features_init>
+	regulation_sm_callbacks_init();
+1002428e:	f7ff ffe1 	bl	10024254 <regulation_sm_callbacks_init>
+	pmbus_mfr_autogen_init();
+10024292:	f7ff ff79 	bl	10024188 <pmbus_mfr_autogen_init>
+	patch_pmbus_mfr_autogen_init();
+
+}
+10024296:	bd10      	pop	{r4, pc}
+10024298:	20063868 	.word	0x20063868
+1002429c:	10024269 	.word	0x10024269
+100242a0:	2005d468 	.word	0x2005d468
+100242a4:	10024255 	.word	0x10024255
+
+100242a8 <Telemetry_IRQ_VIN_MFR_UVP_FAULT_HANDLE>:
+/**
+ * This function is Telem event callback for soft-VIN_UVP.
+ * @param Telemetry_type
+ */
+void Telemetry_IRQ_VIN_MFR_UVP_FAULT_HANDLE(Telemetry_IRQ_TYPE_t Telemetry_type)
+{
+100242a8:	b510      	push	{r4, lr}
+100242aa:	b082      	sub	sp, #8
+	if (Telemetry_type < Telemetry_IRQ_TYPE__END_OF_Telemetry_IRQ_TYPES)
+100242ac:	280f      	cmp	r0, #15
+100242ae:	d817      	bhi.n	100242e0 <Telemetry_IRQ_VIN_MFR_UVP_FAULT_HANDLE+0x38>
+		return (&Telemetry_ARRAY[Telemetry_type]);
+100242b0:	0083      	lsls	r3, r0, #2
+100242b2:	1818      	adds	r0, r3, r0
+100242b4:	0080      	lsls	r0, r0, #2
+100242b6:	4b1e      	ldr	r3, [pc, #120]	; (10024330 <Telemetry_IRQ_VIN_MFR_UVP_FAULT_HANDLE+0x88>)
+100242b8:	18c0      	adds	r0, r0, r3
+	_Telemetry_s * Telemetry_str = Telemetry_GET_ARRAY_POINTER(Telemetry_type);
+	if(Telemetry_str->polarity == 0) // reverse the polarity
+100242ba:	7843      	ldrb	r3, [r0, #1]
+100242bc:	2b00      	cmp	r3, #0
+100242be:	d121      	bne.n	10024304 <Telemetry_IRQ_VIN_MFR_UVP_FAULT_HANDLE+0x5c>
+	{
+		//VIN below hysteresis level
+		_FAULT_DESC_s * fault;
+		//overwrite the delay to shutdown
+		fault = FAULTS_GET_ARRAY_POINTER(PMBUS_PAGE_0, FAULT_TYPE_VIN_UVP);
+100242c0:	2129      	movs	r1, #41	; 0x29
+100242c2:	2000      	movs	r0, #0
+100242c4:	f7e3 fe50 	bl	10007f68 <Clear_Firmware_Fault+0x3b>
+		if (fault == NULL)
+100242c8:	2800      	cmp	r0, #0
+100242ca:	d014      	beq.n	100242f6 <Telemetry_IRQ_VIN_MFR_UVP_FAULT_HANDLE+0x4e>
+		{
+			PMBUS_Log_Error(FAULTS, PROGRAM_COUNTER, PMBUS_STATUS_CML_PROCESSOR_FAULT);
+			return;
+		}
+
+		pmbus_mfr_uvp_warn_delay = fault->delay_time_ms; //save the value of delay from pmbus command
+100242cc:	4b19      	ldr	r3, [pc, #100]	; (10024334 <Telemetry_IRQ_VIN_MFR_UVP_FAULT_HANDLE+0x8c>)
+100242ce:	6842      	ldr	r2, [r0, #4]
+100242d0:	601a      	str	r2, [r3, #0]
+
+		fault->delay_time_ms = 10; //set the delay to shutdown
+100242d2:	230a      	movs	r3, #10
+100242d4:	6043      	str	r3, [r0, #4]
+
+		Set_Firmware_Fault(PMBUS_PAGE_0, FAULT_TYPE_VIN_UVP);
+100242d6:	2129      	movs	r1, #41	; 0x29
+100242d8:	2000      	movs	r0, #0
+100242da:	f7e4 fdc3 	bl	10008e64 <LOOP_FAULT_HANDLE+0x3db>
+100242de:	e01e      	b.n	1002431e <Telemetry_IRQ_VIN_MFR_UVP_FAULT_HANDLE+0x76>
+		LOG_ERROR_TYPE(TELEMETRY, WARNING, ILLEGAL_PARAMETER);
+100242e0:	466a      	mov	r2, sp
+100242e2:	4b15      	ldr	r3, [pc, #84]	; (10024338 <Telemetry_IRQ_VIN_MFR_UVP_FAULT_HANDLE+0x90>)
+100242e4:	4669      	mov	r1, sp
+100242e6:	cb11      	ldmia	r3!, {r0, r4}
+100242e8:	c111      	stmia	r1!, {r0, r4}
+100242ea:	2101      	movs	r1, #1
+100242ec:	2009      	movs	r0, #9
+100242ee:	f7de fe05 	bl	10002efc <log_buffer_reset+0x2f>
+		return NULL;
+100242f2:	2000      	movs	r0, #0
+100242f4:	e7e1      	b.n	100242ba <Telemetry_IRQ_VIN_MFR_UVP_FAULT_HANDLE+0x12>
+			PMBUS_Log_Error(FAULTS, PROGRAM_COUNTER, PMBUS_STATUS_CML_PROCESSOR_FAULT);
+100242f6:	2203      	movs	r2, #3
+100242f8:	2101      	movs	r1, #1
+100242fa:	4249      	negs	r1, r1
+100242fc:	3008      	adds	r0, #8
+100242fe:	f7dd fa61 	bl	100017c4 <PMBUS_Inter_Thread_Set_Command+0x77>
+			return;
+10024302:	e00c      	b.n	1002431e <Telemetry_IRQ_VIN_MFR_UVP_FAULT_HANDLE+0x76>
+	else
+	{
+		//VIN above the limit
+		// set the delay to retry
+		_FAULT_DESC_s * fault;
+		fault = FAULTS_GET_ARRAY_POINTER(PMBUS_PAGE_0, FAULT_TYPE_VIN_UVP);
+10024304:	2129      	movs	r1, #41	; 0x29
+10024306:	2000      	movs	r0, #0
+10024308:	f7e3 fe2e 	bl	10007f68 <Clear_Firmware_Fault+0x3b>
+		if (fault == NULL)
+1002430c:	2800      	cmp	r0, #0
+1002430e:	d008      	beq.n	10024322 <Telemetry_IRQ_VIN_MFR_UVP_FAULT_HANDLE+0x7a>
+			PMBUS_Log_Error(FAULTS, PROGRAM_COUNTER, PMBUS_STATUS_CML_PROCESSOR_FAULT);
+			return;
+		}
+
+		//set the delay to retry
+		fault->delay_time_ms = pmbus_mfr_uvp_warn_delay; //
+10024310:	4b08      	ldr	r3, [pc, #32]	; (10024334 <Telemetry_IRQ_VIN_MFR_UVP_FAULT_HANDLE+0x8c>)
+10024312:	681b      	ldr	r3, [r3, #0]
+10024314:	6043      	str	r3, [r0, #4]
+
+		Clear_Firmware_Fault(PMBUS_PAGE_0, FAULT_TYPE_VIN_UVP);
+10024316:	2129      	movs	r1, #41	; 0x29
+10024318:	2000      	movs	r0, #0
+1002431a:	f7e3 fe07 	bl	10007f2c <COMMON_FAULT_HANDLE+0x187>
+	}
+}
+1002431e:	b002      	add	sp, #8
+10024320:	bd10      	pop	{r4, pc}
+			PMBUS_Log_Error(FAULTS, PROGRAM_COUNTER, PMBUS_STATUS_CML_PROCESSOR_FAULT);
+10024322:	2203      	movs	r2, #3
+10024324:	2101      	movs	r1, #1
+10024326:	4249      	negs	r1, r1
+10024328:	3008      	adds	r0, #8
+1002432a:	f7dd fa4b 	bl	100017c4 <PMBUS_Inter_Thread_Set_Command+0x77>
+			return;
+1002432e:	e7f6      	b.n	1002431e <Telemetry_IRQ_VIN_MFR_UVP_FAULT_HANDLE+0x76>
+10024330:	2006134c 	.word	0x2006134c
+10024334:	200638dc 	.word	0x200638dc
+10024338:	1002454c 	.word	0x1002454c
+
+1002433c <PMBUS_HANDLE_MFR_VIN_UV_FAULT_LIMIT>:
+{
+1002433c:	b570      	push	{r4, r5, r6, lr}
+1002433e:	b084      	sub	sp, #16
+	if ((direction == PMBUS_WRITE) && (page == PMBUS_PAGE_0)) //loop0 only
+10024340:	2900      	cmp	r1, #0
+10024342:	d101      	bne.n	10024348 <PMBUS_HANDLE_MFR_VIN_UV_FAULT_LIMIT+0xc>
+10024344:	2800      	cmp	r0, #0
+10024346:	d001      	beq.n	1002434c <PMBUS_HANDLE_MFR_VIN_UV_FAULT_LIMIT+0x10>
+}
+10024348:	b004      	add	sp, #16
+1002434a:	bd70      	pop	{r4, r5, r6, pc}
+		int32_t hysteresis_exponent = LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_MFR_VIN_UV_FAULT_LIMIT));
+1002434c:	31b3      	adds	r1, #179	; 0xb3
+1002434e:	f7dd f983 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+ * Takes a linear11 format (16bit, 5bit exponent 11bit mantissa) number
+ * and extracts the exponent
+ */
+__DRIVER_INLINE int32_t LINEAR11_TO_EXPONENT(uint16_t packed_linear_format_number)
+{
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10024352:	0ac0      	lsrs	r0, r0, #11
+10024354:	b280      	uxth	r0, r0
+10024356:	0004      	movs	r4, r0
+	int32_t exp_signbit=exp_bits & 0x0010;
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10024358:	06c3      	lsls	r3, r0, #27
+1002435a:	d502      	bpl.n	10024362 <PMBUS_HANDLE_MFR_VIN_UV_FAULT_LIMIT+0x26>
+1002435c:	2420      	movs	r4, #32
+1002435e:	4264      	negs	r4, r4
+10024360:	4304      	orrs	r4, r0
+		uint16_t hysteresis_mantissa = (uint16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_MFR_VIN_UV_FAULT_LIMIT));
+10024362:	21b3      	movs	r1, #179	; 0xb3
+10024364:	2000      	movs	r0, #0
+10024366:	f7dd f977 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+1002436a:	0545      	lsls	r5, r0, #21
+1002436c:	0d6d      	lsrs	r5, r5, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+1002436e:	0543      	lsls	r3, r0, #21
+10024370:	d501      	bpl.n	10024376 <PMBUS_HANDLE_MFR_VIN_UV_FAULT_LIMIT+0x3a>
+10024372:	4929      	ldr	r1, [pc, #164]	; (10024418 <PMBUS_HANDLE_MFR_VIN_UV_FAULT_LIMIT+0xdc>)
+10024374:	430d      	orrs	r5, r1
+		int32_t exponent = LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_VIN_UV_WARN_LIMIT));
+10024376:	2158      	movs	r1, #88	; 0x58
+10024378:	2000      	movs	r0, #0
+1002437a:	f7dd f96d 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+1002437e:	0ac0      	lsrs	r0, r0, #11
+10024380:	b280      	uxth	r0, r0
+10024382:	0006      	movs	r6, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10024384:	06c3      	lsls	r3, r0, #27
+10024386:	d502      	bpl.n	1002438e <PMBUS_HANDLE_MFR_VIN_UV_FAULT_LIMIT+0x52>
+10024388:	2620      	movs	r6, #32
+1002438a:	4276      	negs	r6, r6
+1002438c:	4306      	orrs	r6, r0
+		uint16_t mantissa = (uint16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word(page, PMBUS_CMDCODE_VIN_UV_WARN_LIMIT));
+1002438e:	2158      	movs	r1, #88	; 0x58
+10024390:	2000      	movs	r0, #0
+10024392:	f7dd f961 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024396:	0543      	lsls	r3, r0, #21
+10024398:	0d5b      	lsrs	r3, r3, #21
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+1002439a:	0019      	movs	r1, r3
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+1002439c:	0542      	lsls	r2, r0, #21
+1002439e:	d501      	bpl.n	100243a4 <PMBUS_HANDLE_MFR_VIN_UV_FAULT_LIMIT+0x68>
+100243a0:	491d      	ldr	r1, [pc, #116]	; (10024418 <PMBUS_HANDLE_MFR_VIN_UV_FAULT_LIMIT+0xdc>)
+100243a2:	4319      	orrs	r1, r3
+		Telemetry_Set_Irq_Threshold(TELEM_IRQ_VIN_UVP, (int32_t)mantissa, (int8_t)exponent);
+100243a4:	b272      	sxtb	r2, r6
+100243a6:	0409      	lsls	r1, r1, #16
+100243a8:	0c09      	lsrs	r1, r1, #16
+100243aa:	2009      	movs	r0, #9
+100243ac:	f7e5 fb54 	bl	10009a58 <Telemetry_Set_Irq_Polarity+0x9b>
+		Telemetry_Set_Irq_Hysteresis_Threshold(TELEM_IRQ_VIN_UVP, (int32_t)hysteresis_mantissa, (int8_t)hysteresis_exponent);
+100243b0:	b262      	sxtb	r2, r4
+100243b2:	0429      	lsls	r1, r5, #16
+100243b4:	0c09      	lsrs	r1, r1, #16
+100243b6:	2009      	movs	r0, #9
+100243b8:	f7e5 fada 	bl	10009970 <Telemetry_Sample+0x52b>
+ * HW 'behind' this address, changing the address' content.
+ */
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr);
+
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr) {
+    return *addr;
+100243bc:	4917      	ldr	r1, [pc, #92]	; (1002441c <PMBUS_HANDLE_MFR_VIN_UV_FAULT_LIMIT+0xe0>)
+100243be:	680b      	ldr	r3, [r1, #0]
+100243c0:	680a      	ldr	r2, [r1, #0]
+ * @param bf_value new value for TLM_IRQ_EN.TLM_IRQ_EN
+ */
+__TLMCOM_INLINE void TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__SET(uint32_t bf_value)
+{
+    uint32_t reg = TLMCOM_TLM_IRQ_EN__GET();
+    reg = (reg & ~TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__Msk);
+100243c2:	0c12      	lsrs	r2, r2, #16
+100243c4:	0412      	lsls	r2, r2, #16
+		TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__SET(telem &~(1u<<(uint32_t)TELEM_IRQ_VIN_UVP));
+100243c6:	4816      	ldr	r0, [pc, #88]	; (10024420 <PMBUS_HANDLE_MFR_VIN_UV_FAULT_LIMIT+0xe4>)
+100243c8:	4003      	ands	r3, r0
+    reg = (reg | (TLMCOM_TLM_IRQ_EN__TLM_IRQ_EN__Shift((uint32_t)bf_value)));
+100243ca:	4313      	orrs	r3, r2
+    *addr = val;
+100243cc:	600b      	str	r3, [r1, #0]
+		Telemetry_str->loop = page;
+100243ce:	4b15      	ldr	r3, [pc, #84]	; (10024424 <PMBUS_HANDLE_MFR_VIN_UV_FAULT_LIMIT+0xe8>)
+100243d0:	2400      	movs	r4, #0
+100243d2:	22b4      	movs	r2, #180	; 0xb4
+100243d4:	549c      	strb	r4, [r3, r2]
+		Telemetry_str->source = VIN_0;
+100243d6:	2106      	movs	r1, #6
+100243d8:	3203      	adds	r2, #3
+100243da:	5499      	strb	r1, [r3, r2]
+		Telemetry_IRQ_Event_Handle_Set(TELEM_IRQ_VIN_UVP, Telemetry_IRQ_VIN_MFR_UVP_FAULT_HANDLE);
+100243dc:	4912      	ldr	r1, [pc, #72]	; (10024428 <PMBUS_HANDLE_MFR_VIN_UV_FAULT_LIMIT+0xec>)
+100243de:	2009      	movs	r0, #9
+100243e0:	f7e4 fff0 	bl	100093c4 <Telemetry_IRQHandler+0xff>
+		Telemetry_Set_Irq_Polarity(TELEM_IRQ_VIN_UVP, 1);
+100243e4:	2101      	movs	r1, #1
+100243e6:	2009      	movs	r0, #9
+100243e8:	f7e5 fae8 	bl	100099bc <Telemetry_Set_Irq_Hysteresis_Threshold+0x4b>
+		uint8_t fault_response_cmd_byte = PMBUS_Get_Command_Byte(page, PMBUS_CMDCODE_MFR_VIN_UV_FAULT_RESPONSE);
+100243ec:	21b4      	movs	r1, #180	; 0xb4
+100243ee:	2000      	movs	r0, #0
+100243f0:	f7dd f8f6 	bl	100015e0 <PMBUS_Copy_To_RAM+0x9f>
+100243f4:	0002      	movs	r2, r0
+		FAULTS_SETUP_FAULT(page, FAULT_TYPE_VIN_UVP, fault_response_cmd_byte,
+100243f6:	2329      	movs	r3, #41	; 0x29
+100243f8:	9303      	str	r3, [sp, #12]
+100243fa:	3b27      	subs	r3, #39	; 0x27
+100243fc:	9302      	str	r3, [sp, #8]
+100243fe:	337e      	adds	r3, #126	; 0x7e
+10024400:	9301      	str	r3, [sp, #4]
+10024402:	9400      	str	r4, [sp, #0]
+10024404:	3b7c      	subs	r3, #124	; 0x7c
+10024406:	2129      	movs	r1, #41	; 0x29
+10024408:	2000      	movs	r0, #0
+1002440a:	f7e3 ff43 	bl	10008294 <FAULTS_Resolve_Shutdown_Priority+0xa7>
+		Telemetry_Enable_IRQ_Type(TELEM_IRQ_VIN_UVP);
+1002440e:	2009      	movs	r0, #9
+10024410:	f7e4 fdf8 	bl	10009004 <TWOS_UNCOMPLEMENT_telemetry_drv+0x25>
+}
+10024414:	e798      	b.n	10024348 <PMBUS_HANDLE_MFR_VIN_UV_FAULT_LIMIT+0xc>
+10024416:	46c0      	nop			; (mov r8, r8)
+10024418:	fffff800 	.word	0xfffff800
+1002441c:	70005060 	.word	0x70005060
+10024420:	0000fdff 	.word	0x0000fdff
+10024424:	2006134c 	.word	0x2006134c
+10024428:	100242a9 	.word	0x100242a9
+
+1002442c <memcpy>:
+1002442c:	b5f0      	push	{r4, r5, r6, r7, lr}
+1002442e:	0005      	movs	r5, r0
+10024430:	2a0f      	cmp	r2, #15
+10024432:	d92f      	bls.n	10024494 <memcpy+0x68>
+10024434:	000b      	movs	r3, r1
+10024436:	4303      	orrs	r3, r0
+10024438:	079b      	lsls	r3, r3, #30
+1002443a:	d134      	bne.n	100244a6 <memcpy+0x7a>
+1002443c:	0016      	movs	r6, r2
+1002443e:	000c      	movs	r4, r1
+10024440:	0003      	movs	r3, r0
+10024442:	3e10      	subs	r6, #16
+10024444:	0935      	lsrs	r5, r6, #4
+10024446:	3501      	adds	r5, #1
+10024448:	012d      	lsls	r5, r5, #4
+1002444a:	1945      	adds	r5, r0, r5
+1002444c:	6827      	ldr	r7, [r4, #0]
+1002444e:	601f      	str	r7, [r3, #0]
+10024450:	6867      	ldr	r7, [r4, #4]
+10024452:	605f      	str	r7, [r3, #4]
+10024454:	68a7      	ldr	r7, [r4, #8]
+10024456:	609f      	str	r7, [r3, #8]
+10024458:	68e7      	ldr	r7, [r4, #12]
+1002445a:	3410      	adds	r4, #16
+1002445c:	60df      	str	r7, [r3, #12]
+1002445e:	3310      	adds	r3, #16
+10024460:	429d      	cmp	r5, r3
+10024462:	d1f3      	bne.n	1002444c <memcpy+0x20>
+10024464:	230f      	movs	r3, #15
+10024466:	439e      	bics	r6, r3
+10024468:	3610      	adds	r6, #16
+1002446a:	1985      	adds	r5, r0, r6
+1002446c:	1989      	adds	r1, r1, r6
+1002446e:	4013      	ands	r3, r2
+10024470:	2b03      	cmp	r3, #3
+10024472:	d91a      	bls.n	100244aa <memcpy+0x7e>
+10024474:	1f1e      	subs	r6, r3, #4
+10024476:	2300      	movs	r3, #0
+10024478:	08b4      	lsrs	r4, r6, #2
+1002447a:	3401      	adds	r4, #1
+1002447c:	00a4      	lsls	r4, r4, #2
+1002447e:	58cf      	ldr	r7, [r1, r3]
+10024480:	50ef      	str	r7, [r5, r3]
+10024482:	3304      	adds	r3, #4
+10024484:	42a3      	cmp	r3, r4
+10024486:	d1fa      	bne.n	1002447e <memcpy+0x52>
+10024488:	2403      	movs	r4, #3
+1002448a:	43a6      	bics	r6, r4
+1002448c:	1d33      	adds	r3, r6, #4
+1002448e:	4022      	ands	r2, r4
+10024490:	18c9      	adds	r1, r1, r3
+10024492:	18ed      	adds	r5, r5, r3
+10024494:	2a00      	cmp	r2, #0
+10024496:	d005      	beq.n	100244a4 <memcpy+0x78>
+10024498:	2300      	movs	r3, #0
+1002449a:	5ccc      	ldrb	r4, [r1, r3]
+1002449c:	54ec      	strb	r4, [r5, r3]
+1002449e:	3301      	adds	r3, #1
+100244a0:	4293      	cmp	r3, r2
+100244a2:	d1fa      	bne.n	1002449a <memcpy+0x6e>
+100244a4:	bdf0      	pop	{r4, r5, r6, r7, pc}
+100244a6:	0005      	movs	r5, r0
+100244a8:	e7f6      	b.n	10024498 <memcpy+0x6c>
+100244aa:	001a      	movs	r2, r3
+100244ac:	e7f2      	b.n	10024494 <memcpy+0x68>
+100244ae:	46c0      	nop			; (mov r8, r8)
+
+100244b0 <memset>:
+100244b0:	b5f0      	push	{r4, r5, r6, r7, lr}
+100244b2:	0783      	lsls	r3, r0, #30
+100244b4:	d043      	beq.n	1002453e <memset+0x8e>
+100244b6:	1e54      	subs	r4, r2, #1
+100244b8:	2a00      	cmp	r2, #0
+100244ba:	d03f      	beq.n	1002453c <memset+0x8c>
+100244bc:	b2ce      	uxtb	r6, r1
+100244be:	0002      	movs	r2, r0
+100244c0:	2503      	movs	r5, #3
+100244c2:	e002      	b.n	100244ca <memset+0x1a>
+100244c4:	001a      	movs	r2, r3
+100244c6:	3c01      	subs	r4, #1
+100244c8:	d338      	bcc.n	1002453c <memset+0x8c>
+100244ca:	1c53      	adds	r3, r2, #1
+100244cc:	7016      	strb	r6, [r2, #0]
+100244ce:	422b      	tst	r3, r5
+100244d0:	d1f8      	bne.n	100244c4 <memset+0x14>
+100244d2:	2c03      	cmp	r4, #3
+100244d4:	d92a      	bls.n	1002452c <memset+0x7c>
+100244d6:	22ff      	movs	r2, #255	; 0xff
+100244d8:	400a      	ands	r2, r1
+100244da:	0215      	lsls	r5, r2, #8
+100244dc:	4315      	orrs	r5, r2
+100244de:	042a      	lsls	r2, r5, #16
+100244e0:	4315      	orrs	r5, r2
+100244e2:	2c0f      	cmp	r4, #15
+100244e4:	d914      	bls.n	10024510 <memset+0x60>
+100244e6:	0027      	movs	r7, r4
+100244e8:	001a      	movs	r2, r3
+100244ea:	3f10      	subs	r7, #16
+100244ec:	093e      	lsrs	r6, r7, #4
+100244ee:	3601      	adds	r6, #1
+100244f0:	0136      	lsls	r6, r6, #4
+100244f2:	199e      	adds	r6, r3, r6
+100244f4:	6015      	str	r5, [r2, #0]
+100244f6:	6055      	str	r5, [r2, #4]
+100244f8:	6095      	str	r5, [r2, #8]
+100244fa:	60d5      	str	r5, [r2, #12]
+100244fc:	3210      	adds	r2, #16
+100244fe:	4296      	cmp	r6, r2
+10024500:	d1f8      	bne.n	100244f4 <memset+0x44>
+10024502:	220f      	movs	r2, #15
+10024504:	4397      	bics	r7, r2
+10024506:	3710      	adds	r7, #16
+10024508:	19db      	adds	r3, r3, r7
+1002450a:	4014      	ands	r4, r2
+1002450c:	2c03      	cmp	r4, #3
+1002450e:	d90d      	bls.n	1002452c <memset+0x7c>
+10024510:	001a      	movs	r2, r3
+10024512:	1f27      	subs	r7, r4, #4
+10024514:	08be      	lsrs	r6, r7, #2
+10024516:	3601      	adds	r6, #1
+10024518:	00b6      	lsls	r6, r6, #2
+1002451a:	199e      	adds	r6, r3, r6
+1002451c:	c220      	stmia	r2!, {r5}
+1002451e:	42b2      	cmp	r2, r6
+10024520:	d1fc      	bne.n	1002451c <memset+0x6c>
+10024522:	2203      	movs	r2, #3
+10024524:	4397      	bics	r7, r2
+10024526:	3704      	adds	r7, #4
+10024528:	19db      	adds	r3, r3, r7
+1002452a:	4014      	ands	r4, r2
+1002452c:	2c00      	cmp	r4, #0
+1002452e:	d005      	beq.n	1002453c <memset+0x8c>
+10024530:	b2c9      	uxtb	r1, r1
+10024532:	191c      	adds	r4, r3, r4
+10024534:	7019      	strb	r1, [r3, #0]
+10024536:	3301      	adds	r3, #1
+10024538:	429c      	cmp	r4, r3
+1002453a:	d1fb      	bne.n	10024534 <memset+0x84>
+1002453c:	bdf0      	pop	{r4, r5, r6, r7, pc}
+1002453e:	0014      	movs	r4, r2
+10024540:	0003      	movs	r3, r0
+10024542:	e7c6      	b.n	100244d2 <memset+0x22>
+10024544:	00000001 	.word	0x00000001
+10024548:	ffffffff 	.word	0xffffffff
+1002454c:	00000001 	.word	0x00000001
+10024550:	ffffffff 	.word	0xffffffff

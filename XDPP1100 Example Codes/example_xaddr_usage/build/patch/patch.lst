@@ -1,0 +1,785 @@
+
+.\build\patch/patch.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .bss          0000001e  20063800  20063800  00023800  2**2
+                  ALLOC
+  1 .otp_data     00004000  10020000  10020000  00010000  2**0
+                  ALLOC
+  2 .otp_header   0000001c  10024000  10024000  00010000  2**0
+                  ALLOC
+  3 .txt          0000041c  1002401c  1002401c  0001401c  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  4 .otp_patch2   00004000  10024438  10024438  00014438  2**0
+                  ALLOC
+  5 .otp_patch3   00004000  10028438  10028438  00014438  2**0
+                  ALLOC
+  6 .debug_info   000182f8  00000000  00000000  00014438  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 00001003  00000000  00000000  0002c730  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_loc    000007a7  00000000  00000000  0002d733  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_aranges 00000108  00000000  00000000  0002deda  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000120  00000000  00000000  0002dfe2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_macro  0000a147  00000000  00000000  0002e102  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_line   00002a69  00000000  00000000  00038249  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_str    00065f1e  00000000  00000000  0003acb2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 14 .comment      0000007f  00000000  00000000  000a0bd0  2**0
+                  CONTENTS, READONLY
+ 15 .ARM.attributes 00000031  00000000  00000000  000a0c4f  2**0
+                  CONTENTS, READONLY
+ 16 .debug_frame  00000208  00000000  00000000  000a0c80  2**2
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .txt:
+
+1002401c <patch_entry>:
+/**
+ * This is the patch entry point, which is called after the patch got
+ * successfully loaded into RAM.
+ */
+void patch_entry(void)
+{
+1002401c:	b510      	push	{r4, lr}
+    // Initialize the .bss and .data section
+    memset(SECTION_BASE_ZI, 0, SECTION_LENGTH_ZI);
+1002401e:	480c      	ldr	r0, [pc, #48]	; (10024050 <patch_entry+0x34>)
+10024020:	4a0c      	ldr	r2, [pc, #48]	; (10024054 <patch_entry+0x38>)
+10024022:	1a12      	subs	r2, r2, r0
+10024024:	2100      	movs	r1, #0
+10024026:	f000 f9b5 	bl	10024394 <memset>
+    memcpy(SECTION_BASE_RW_DESTINATION, SECTION_BASE_RW_SOURCE, SECTION_LENGTH_RW);
+1002402a:	480b      	ldr	r0, [pc, #44]	; (10024058 <patch_entry+0x3c>)
+1002402c:	4a0b      	ldr	r2, [pc, #44]	; (1002405c <patch_entry+0x40>)
+1002402e:	1a12      	subs	r2, r2, r0
+10024030:	490b      	ldr	r1, [pc, #44]	; (10024060 <patch_entry+0x44>)
+10024032:	f000 f96d 	bl	10024310 <memcpy>
+    // Initialize ram execution section
+    memcpy(SECTION_BASE_RAM_EXEC_DESTINATION, SECTION_BASE_RAM_EXEC_SOURCE, SECTION_LENGTH_RAM_EXEC);
+10024036:	480b      	ldr	r0, [pc, #44]	; (10024064 <patch_entry+0x48>)
+10024038:	4a0b      	ldr	r2, [pc, #44]	; (10024068 <patch_entry+0x4c>)
+1002403a:	1a12      	subs	r2, r2, r0
+1002403c:	490b      	ldr	r1, [pc, #44]	; (1002406c <patch_entry+0x50>)
+1002403e:	f000 f967 	bl	10024310 <memcpy>
+/* lint requires us to have both a declaration and a definition ... we
+ * could probably bail out through some local lint, but her we simply
+ * play to the rules.
+ */
+HAL_INLINE void HAL_SET32(volatile uint32_t* addr, uint32_t val) {
+    *addr = val;
+10024042:	4a0b      	ldr	r2, [pc, #44]	; (10024070 <patch_entry+0x54>)
+10024044:	4b0b      	ldr	r3, [pc, #44]	; (10024074 <patch_entry+0x58>)
+10024046:	601a      	str	r2, [r3, #0]
+
+
+    SCU_SPARE_FF__SET(0x5971BBBBUL);  // write the patch id to SCU spare for simple test that patch loaded
+    user_drv_init();
+10024048:	f000 f946 	bl	100242d8 <user_drv_init>
+}
+1002404c:	bd10      	pop	{r4, pc}
+1002404e:	46c0      	nop			; (mov r8, r8)
+10024050:	20063800 	.word	0x20063800
+10024054:	2006381e 	.word	0x2006381e
+10024058:	20063800 	.word	0x20063800
+1002405c:	20063800 	.word	0x20063800
+10024060:	10024438 	.word	0x10024438
+10024064:	2006381e 	.word	0x2006381e
+10024068:	2006381e 	.word	0x2006381e
+1002406c:	10024438 	.word	0x10024438
+10024070:	5971bbbb 	.word	0x5971bbbb
+10024074:	40000020 	.word	0x40000020
+
+10024078 <add_on_features_init>:
+#include "custom_vdac.h"
+
+void add_on_features_init(void)
+{
+
+}
+10024078:	4770      	bx	lr
+	...
+
+1002407c <vdac_config>:
+ * like desired idac, LUT settings, etc.
+ */
+
+void vdac_config()
+{
+	user_data.idac = 32;	// set your idac value, LSB = 0.625 uA
+1002407c:	4b02      	ldr	r3, [pc, #8]	; (10024088 <vdac_config+0xc>)
+1002407e:	2220      	movs	r2, #32
+10024080:	801a      	strh	r2, [r3, #0]
+	user_data.vout_command_exp = -8;
+10024082:	32d8      	adds	r2, #216	; 0xd8
+10024084:	715a      	strb	r2, [r3, #5]
+}
+10024086:	4770      	bx	lr
+10024088:	20063818 	.word	0x20063818
+
+1002408c <vdac_xaddr_measurement>:
+ * @param loop - index of current control loop
+ * @return vdac_xaddr - voltage level from XADDR
+ */
+
+uint16_t vdac_xaddr_measurement(PMBUS_PAGE_t loop)
+{
+1002408c:	b570      	push	{r4, r5, r6, lr}
+ * HW 'behind' this address, changing the address' content.
+ */
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr);
+
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr) {
+    return *addr;
+1002408e:	4b0a      	ldr	r3, [pc, #40]	; (100240b8 <vdac_xaddr_measurement+0x2c>)
+10024090:	681c      	ldr	r4, [r3, #0]
+ * @return current value of TLM_XADDR1_LPF.TLM_XADDR1_ADC_LPF
+ */
+__TLMCOM_INLINE uint32_t TLMCOM_TLM_XADDR1_LPF__TLM_XADDR1_ADC_LPF__GET(void)
+{
+    uint32_t reg = TLMCOM_TLM_XADDR1_LPF__GET();
+    reg = (reg & TLMCOM_TLM_XADDR1_LPF__TLM_XADDR1_ADC_LPF__Msk);
+10024092:	04a4      	lsls	r4, r4, #18
+	uint16_t vdac_xaddr;
+	// tlm_xaddr1_adc_lpf
+	vdac_xaddr = TLMCOM_TLM_XADDR1_LPF__TLM_XADDR1_ADC_LPF__GET();	// LSB = 0.1465 mV
+10024094:	0ca4      	lsrs	r4, r4, #18
+10024096:	2507      	movs	r5, #7
+10024098:	001e      	movs	r6, r3
+
+	// averaging with 8 samples
+	// which takes 700us max total
+	for(uint8_t i=0; i<7; i++)
+	{
+		 sys_delay_by_us(100);
+1002409a:	2064      	movs	r0, #100	; 0x64
+1002409c:	f7e0 fee8 	bl	10004e70 <sys_delay_by_nops_system_shasta+0x7>
+100240a0:	6833      	ldr	r3, [r6, #0]
+100240a2:	049b      	lsls	r3, r3, #18
+100240a4:	0c9b      	lsrs	r3, r3, #18
+		 vdac_xaddr += TLMCOM_TLM_XADDR1_LPF__TLM_XADDR1_ADC_LPF__GET();
+100240a6:	18e4      	adds	r4, r4, r3
+100240a8:	b2a4      	uxth	r4, r4
+100240aa:	3d01      	subs	r5, #1
+100240ac:	b2ed      	uxtb	r5, r5
+	for(uint8_t i=0; i<7; i++)
+100240ae:	2d00      	cmp	r5, #0
+100240b0:	d1f3      	bne.n	1002409a <vdac_xaddr_measurement+0xe>
+	}
+	vdac_xaddr >>= 3;
+	return vdac_xaddr;
+100240b2:	08e0      	lsrs	r0, r4, #3
+}
+100240b4:	bd70      	pop	{r4, r5, r6, pc}
+100240b6:	46c0      	nop			; (mov r8, r8)
+100240b8:	70005074 	.word	0x70005074
+
+100240bc <vout_command_set>:
+ * @param vdac_xaddr - voltage level from XADDR
+ * @return None
+ */
+
+void vout_command_set(PMBUS_PAGE_t loop, uint16_t vdac_xaddr)
+{
+100240bc:	b570      	push	{r4, r5, r6, lr}
+100240be:	0005      	movs	r5, r0
+	// Measured resistance res_xaddr = vdac / idac
+	// LSB res = LSB vdac / LSB idac = 0.1465 mV / 0.625 uA = 0.2344 kOhm
+	uint16_t res_xaddr;
+
+	res_xaddr = ((vdac_xaddr << 16) / user_data.idac) >> 15;  // LSB = 0.2344 kOhm / 2 => LSB = 0.1172 kOhm
+100240c0:	0408      	lsls	r0, r1, #16
+100240c2:	4e20      	ldr	r6, [pc, #128]	; (10024144 <vout_command_set+0x88>)
+100240c4:	8831      	ldrh	r1, [r6, #0]
+100240c6:	f7dc f996 	bl	100003f6 <__aeabi_idivmod>
+100240ca:	13c0      	asrs	r0, r0, #15
+100240cc:	b284      	uxth	r4, r0
+
+	// set calculated resistance with 0.1172 kOhm LSB to 0xB1 MFR PMBus Command MFR_VOUT_RES_MEAS
+	PMBUS_Set_Command_Word(loop, PMBUS_CMDCODE_MFR_VOUT_RES_MEAS, res_xaddr);
+100240ce:	0022      	movs	r2, r4
+100240d0:	21b1      	movs	r1, #177	; 0xb1
+100240d2:	0028      	movs	r0, r5
+100240d4:	f7dd fbf6 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+
+	user_data.vout_command = vout_command_lut[1][0];	// set "0" as default
+100240d8:	2300      	movs	r3, #0
+100240da:	8073      	strh	r3, [r6, #2]
+
+	// Matching measured resistance with Vout Command LUT
+	for (uint8_t i = 0; i < VOUT_COMMAND_ROWS; i++)
+	{
+		if (res_xaddr <= vout_command_lut[0][i])
+100240dc:	2c4b      	cmp	r4, #75	; 0x4b
+100240de:	d916      	bls.n	1002410e <vout_command_set+0x52>
+100240e0:	2c85      	cmp	r4, #133	; 0x85
+100240e2:	d910      	bls.n	10024106 <vout_command_set+0x4a>
+100240e4:	331f      	adds	r3, #31
+100240e6:	33ff      	adds	r3, #255	; 0xff
+100240e8:	429c      	cmp	r4, r3
+100240ea:	d90e      	bls.n	1002410a <vout_command_set+0x4e>
+100240ec:	334b      	adds	r3, #75	; 0x4b
+100240ee:	33ff      	adds	r3, #255	; 0xff
+100240f0:	429c      	cmp	r4, r3
+100240f2:	d906      	bls.n	10024102 <vout_command_set+0x46>
+			 break;
+		}
+	}
+
+	// set respective vout_command according to measured resistance res_tsadc_xaddr
+	PMBUS_Set_Command_Word(loop, PMBUS_CMDCODE_VOUT_COMMAND, user_data.vout_command);
+100240f4:	4b13      	ldr	r3, [pc, #76]	; (10024144 <vout_command_set+0x88>)
+100240f6:	885a      	ldrh	r2, [r3, #2]
+100240f8:	2121      	movs	r1, #33	; 0x21
+100240fa:	0028      	movs	r0, r5
+100240fc:	f7dd fbe2 	bl	100018c4 <PMBUS_Set_Command_Dword+0x53>
+}
+10024100:	bd70      	pop	{r4, r5, r6, pc}
+		if (res_xaddr <= vout_command_lut[0][i])
+10024102:	2303      	movs	r3, #3
+10024104:	e004      	b.n	10024110 <vout_command_set+0x54>
+10024106:	2301      	movs	r3, #1
+10024108:	e002      	b.n	10024110 <vout_command_set+0x54>
+1002410a:	2302      	movs	r3, #2
+1002410c:	e000      	b.n	10024110 <vout_command_set+0x54>
+1002410e:	2300      	movs	r3, #0
+			 user_data.vout_command = vout_command_lut[1][i];
+10024110:	4c0c      	ldr	r4, [pc, #48]	; (10024144 <vout_command_set+0x88>)
+10024112:	3304      	adds	r3, #4
+10024114:	005b      	lsls	r3, r3, #1
+10024116:	4a0c      	ldr	r2, [pc, #48]	; (10024148 <vout_command_set+0x8c>)
+10024118:	5a9b      	ldrh	r3, [r3, r2]
+1002411a:	8063      	strh	r3, [r4, #2]
+			 user_data.vout_mode = PMBUS_Get_Vout_Mode_Exponent(loop);
+1002411c:	0028      	movs	r0, r5
+1002411e:	f7dd faf7 	bl	10001710 <PMBUS_Get_On_Off_State+0x7b>
+10024122:	b243      	sxtb	r3, r0
+10024124:	7123      	strb	r3, [r4, #4]
+			 user_data.vout_command = SHIFT_EXPONENT_UNSIGNED(user_data.vout_command,
+10024126:	8862      	ldrh	r2, [r4, #2]
+																user_data.vout_command_exp - user_data.vout_mode);
+10024128:	2005      	movs	r0, #5
+1002412a:	5620      	ldrsb	r0, [r4, r0]
+1002412c:	1ac0      	subs	r0, r0, r3
+		exponent = -exponent;
+		value = value >> (exponent);
+	}
+	else
+	{
+		value = value << (exponent);
+1002412e:	0013      	movs	r3, r2
+10024130:	4083      	lsls	r3, r0
+	if ( exponent <= 0)
+10024132:	2800      	cmp	r0, #0
+10024134:	dd02      	ble.n	1002413c <vout_command_set+0x80>
+			 user_data.vout_command = SHIFT_EXPONENT_UNSIGNED(user_data.vout_command,
+10024136:	4a03      	ldr	r2, [pc, #12]	; (10024144 <vout_command_set+0x88>)
+10024138:	8053      	strh	r3, [r2, #2]
+			 break;
+1002413a:	e7db      	b.n	100240f4 <vout_command_set+0x38>
+		exponent = -exponent;
+1002413c:	4240      	negs	r0, r0
+		value = value >> (exponent);
+1002413e:	0013      	movs	r3, r2
+10024140:	40c3      	lsrs	r3, r0
+10024142:	e7f8      	b.n	10024136 <vout_command_set+0x7a>
+10024144:	20063818 	.word	0x20063818
+10024148:	10024428 	.word	0x10024428
+
+1002414c <xaddr_resistance_measurement>:
+{
+1002414c:	b5f0      	push	{r4, r5, r6, r7, lr}
+1002414e:	46ce      	mov	lr, r9
+10024150:	b500      	push	{lr}
+10024152:	b082      	sub	sp, #8
+10024154:	9001      	str	r0, [sp, #4]
+	vdac_config();
+10024156:	f7ff ff91 	bl	1002407c <vdac_config>
+1002415a:	4c3d      	ldr	r4, [pc, #244]	; (10024250 <xaddr_resistance_measurement+0x104>)
+1002415c:	6825      	ldr	r5, [r4, #0]
+ * @return current value of XADDR1.XADDR1_PD
+ */
+__COMMON_INLINE uint32_t COMMON_XADDR1__XADDR1_PD__GET(void)
+{
+    uint32_t reg = COMMON_XADDR1__GET();
+    reg = (reg & COMMON_XADDR1__XADDR1_PD__Msk);
+1002415e:	2301      	movs	r3, #1
+10024160:	469c      	mov	ip, r3
+10024162:	401d      	ands	r5, r3
+10024164:	4b3b      	ldr	r3, [pc, #236]	; (10024254 <xaddr_resistance_measurement+0x108>)
+10024166:	681f      	ldr	r7, [r3, #0]
+10024168:	681e      	ldr	r6, [r3, #0]
+1002416a:	681a      	ldr	r2, [r3, #0]
+ * @param bf_value new value for TSEN_EN.TS_MUXCTRL2
+ */
+__TSEN_INLINE void TSEN_TSEN_EN__TS_MUXCTRL2__SET(uint32_t bf_value)
+{
+    uint32_t reg = TSEN_TSEN_EN__GET();
+    reg = (reg & ~TSEN_TSEN_EN__TS_MUXCTRL2__Msk);
+1002416c:	493a      	ldr	r1, [pc, #232]	; (10024258 <xaddr_resistance_measurement+0x10c>)
+1002416e:	4011      	ands	r1, r2
+    reg = (reg | (TSEN_TSEN_EN__TS_MUXCTRL2__Shift((uint32_t)bf_value)));
+10024170:	22a0      	movs	r2, #160	; 0xa0
+10024172:	0312      	lsls	r2, r2, #12
+10024174:	430a      	orrs	r2, r1
+    *addr = val;
+10024176:	601a      	str	r2, [r3, #0]
+    return *addr;
+10024178:	681a      	ldr	r2, [r3, #0]
+    reg = (reg & ~TSEN_TSEN_EN__TS_MUXMODE__Msk);
+1002417a:	4938      	ldr	r1, [pc, #224]	; (1002425c <xaddr_resistance_measurement+0x110>)
+1002417c:	400a      	ands	r2, r1
+    *addr = val;
+1002417e:	601a      	str	r2, [r3, #0]
+    return *addr;
+10024180:	681a      	ldr	r2, [r3, #0]
+ * @param bf_value new value for TSEN_EN.TS_TSIDAC_XV1_SEL
+ */
+__TSEN_INLINE void TSEN_TSEN_EN__TS_TSIDAC_XV1_SEL__SET(uint32_t bf_value)
+{
+    uint32_t reg = TSEN_TSEN_EN__GET();
+    reg = (reg & ~TSEN_TSEN_EN__TS_TSIDAC_XV1_SEL__Msk);
+10024182:	4937      	ldr	r1, [pc, #220]	; (10024260 <xaddr_resistance_measurement+0x114>)
+10024184:	4689      	mov	r9, r1
+10024186:	400a      	ands	r2, r1
+    reg = (reg | (TSEN_TSEN_EN__TS_TSIDAC_XV1_SEL__Shift((uint32_t)bf_value)));
+10024188:	2080      	movs	r0, #128	; 0x80
+1002418a:	00c0      	lsls	r0, r0, #3
+1002418c:	4302      	orrs	r2, r0
+    *addr = val;
+1002418e:	601a      	str	r2, [r3, #0]
+    return *addr;
+10024190:	681a      	ldr	r2, [r3, #0]
+    reg = (reg & ~TSEN_TSEN_EN__XV_PINSET1_MEAS__Msk);
+10024192:	4934      	ldr	r1, [pc, #208]	; (10024264 <xaddr_resistance_measurement+0x118>)
+10024194:	4011      	ands	r1, r2
+    reg = (reg | (TSEN_TSEN_EN__XV_PINSET1_MEAS__Shift((uint32_t)bf_value)));
+10024196:	2280      	movs	r2, #128	; 0x80
+10024198:	0192      	lsls	r2, r2, #6
+1002419a:	430a      	orrs	r2, r1
+    *addr = val;
+1002419c:	601a      	str	r2, [r3, #0]
+    return *addr;
+1002419e:	681a      	ldr	r2, [r3, #0]
+    reg = (reg & ~TSEN_TSEN_EN__XV_DECODE_SEL__Msk);
+100241a0:	4931      	ldr	r1, [pc, #196]	; (10024268 <xaddr_resistance_measurement+0x11c>)
+100241a2:	4011      	ands	r1, r2
+    reg = (reg | (TSEN_TSEN_EN__XV_DECODE_SEL__Shift((uint32_t)bf_value)));
+100241a4:	2280      	movs	r2, #128	; 0x80
+100241a6:	0152      	lsls	r2, r2, #5
+100241a8:	430a      	orrs	r2, r1
+    *addr = val;
+100241aa:	601a      	str	r2, [r3, #0]
+    return *addr;
+100241ac:	492f      	ldr	r1, [pc, #188]	; (1002426c <xaddr_resistance_measurement+0x120>)
+100241ae:	680b      	ldr	r3, [r1, #0]
+    reg = (reg & ~COMMON_IDAC_FW__IDAC_FW_EN__Msk);
+100241b0:	464a      	mov	r2, r9
+100241b2:	4013      	ands	r3, r2
+    reg = (reg | (COMMON_IDAC_FW__IDAC_FW_EN__Shift((uint32_t)bf_value)));
+100241b4:	4318      	orrs	r0, r3
+    *addr = val;
+100241b6:	6008      	str	r0, [r1, #0]
+    return *addr;
+100241b8:	6823      	ldr	r3, [r4, #0]
+    reg = (reg & ~COMMON_XADDR1__XADDR1_PD__Msk);
+100241ba:	4662      	mov	r2, ip
+100241bc:	4393      	bics	r3, r2
+    *addr = val;
+100241be:	6023      	str	r3, [r4, #0]
+    return *addr;
+100241c0:	680b      	ldr	r3, [r1, #0]
+    reg = (reg & ~COMMON_IDAC_FW__IDAC_FW_FRC__Msk);
+100241c2:	0a9b      	lsrs	r3, r3, #10
+100241c4:	029a      	lsls	r2, r3, #10
+	COMMON_IDAC_FW__IDAC_FW_FRC__SET(user_data.idac);		// iadc current
+100241c6:	4b2a      	ldr	r3, [pc, #168]	; (10024270 <xaddr_resistance_measurement+0x124>)
+    reg = (reg | (COMMON_IDAC_FW__IDAC_FW_FRC__Shift((uint32_t)bf_value)));
+100241c8:	881b      	ldrh	r3, [r3, #0]
+100241ca:	059b      	lsls	r3, r3, #22
+100241cc:	0d9b      	lsrs	r3, r3, #22
+100241ce:	4313      	orrs	r3, r2
+    *addr = val;
+100241d0:	600b      	str	r3, [r1, #0]
+100241d2:	2464      	movs	r4, #100	; 0x64
+		 sys_delay_by_us(100);
+100241d4:	2064      	movs	r0, #100	; 0x64
+100241d6:	f7e0 fe4b 	bl	10004e70 <sys_delay_by_nops_system_shasta+0x7>
+100241da:	3c01      	subs	r4, #1
+	for(uint32_t i=0; i<100; i++)
+100241dc:	2c00      	cmp	r4, #0
+100241de:	d1f9      	bne.n	100241d4 <xaddr_resistance_measurement+0x88>
+	uint16_t vdac_xaddr = vdac_xaddr_measurement(loop);	// vdac measurement
+100241e0:	9c01      	ldr	r4, [sp, #4]
+100241e2:	0020      	movs	r0, r4
+100241e4:	f7ff ff52 	bl	1002408c <vdac_xaddr_measurement>
+100241e8:	0001      	movs	r1, r0
+	vout_command_set(loop, vdac_xaddr);	// set vout_command based on measured vdac
+100241ea:	0020      	movs	r0, r4
+100241ec:	f7ff ff66 	bl	100240bc <vout_command_set>
+    return *addr;
+100241f0:	4a1e      	ldr	r2, [pc, #120]	; (1002426c <xaddr_resistance_measurement+0x120>)
+100241f2:	6813      	ldr	r3, [r2, #0]
+    reg = (reg & ~COMMON_IDAC_FW__IDAC_FW_FRC__Msk);
+100241f4:	0a9b      	lsrs	r3, r3, #10
+100241f6:	029b      	lsls	r3, r3, #10
+    *addr = val;
+100241f8:	6013      	str	r3, [r2, #0]
+    return *addr;
+100241fa:	6813      	ldr	r3, [r2, #0]
+    reg = (reg & ~COMMON_IDAC_FW__IDAC_FW_EN__Msk);
+100241fc:	4818      	ldr	r0, [pc, #96]	; (10024260 <xaddr_resistance_measurement+0x114>)
+100241fe:	4003      	ands	r3, r0
+    *addr = val;
+10024200:	6013      	str	r3, [r2, #0]
+    return *addr;
+10024202:	4a13      	ldr	r2, [pc, #76]	; (10024250 <xaddr_resistance_measurement+0x104>)
+10024204:	6813      	ldr	r3, [r2, #0]
+    reg = (reg & ~COMMON_XADDR1__XADDR1_PD__Msk);
+10024206:	2101      	movs	r1, #1
+10024208:	438b      	bics	r3, r1
+    reg = (reg | (COMMON_XADDR1__XADDR1_PD__Shift((uint32_t)bf_value)));
+1002420a:	432b      	orrs	r3, r5
+    *addr = val;
+1002420c:	6013      	str	r3, [r2, #0]
+    return *addr;
+1002420e:	4b11      	ldr	r3, [pc, #68]	; (10024254 <xaddr_resistance_measurement+0x108>)
+10024210:	6819      	ldr	r1, [r3, #0]
+    reg = (reg & ~TSEN_TSEN_EN__XV_PINSET1_MEAS__Msk);
+10024212:	4a14      	ldr	r2, [pc, #80]	; (10024264 <xaddr_resistance_measurement+0x118>)
+10024214:	4011      	ands	r1, r2
+    *addr = val;
+10024216:	6019      	str	r1, [r3, #0]
+    return *addr;
+10024218:	681a      	ldr	r2, [r3, #0]
+    reg = (reg & ~TSEN_TSEN_EN__TS_TSIDAC_XV1_SEL__Msk);
+1002421a:	4002      	ands	r2, r0
+    *addr = val;
+1002421c:	601a      	str	r2, [r3, #0]
+    return *addr;
+1002421e:	681a      	ldr	r2, [r3, #0]
+    reg = (reg & ~TSEN_TSEN_EN__XV_DECODE_SEL__Msk);
+10024220:	4911      	ldr	r1, [pc, #68]	; (10024268 <xaddr_resistance_measurement+0x11c>)
+10024222:	400a      	ands	r2, r1
+    *addr = val;
+10024224:	601a      	str	r2, [r3, #0]
+    return *addr;
+10024226:	681a      	ldr	r2, [r3, #0]
+    reg = (reg & ~TSEN_TSEN_EN__TS_MUXCTRL2__Msk);
+10024228:	490b      	ldr	r1, [pc, #44]	; (10024258 <xaddr_resistance_measurement+0x10c>)
+1002422a:	400a      	ands	r2, r1
+    reg = (reg | (TSEN_TSEN_EN__TS_MUXCTRL2__Shift((uint32_t)bf_value)));
+1002422c:	21e0      	movs	r1, #224	; 0xe0
+1002422e:	0309      	lsls	r1, r1, #12
+10024230:	400f      	ands	r7, r1
+10024232:	4317      	orrs	r7, r2
+    *addr = val;
+10024234:	601f      	str	r7, [r3, #0]
+    return *addr;
+10024236:	681a      	ldr	r2, [r3, #0]
+    reg = (reg & ~TSEN_TSEN_EN__TS_MUXMODE__Msk);
+10024238:	4908      	ldr	r1, [pc, #32]	; (1002425c <xaddr_resistance_measurement+0x110>)
+1002423a:	400a      	ands	r2, r1
+    reg = (reg | (TSEN_TSEN_EN__TS_MUXMODE__Shift((uint32_t)bf_value)));
+1002423c:	21e0      	movs	r1, #224	; 0xe0
+1002423e:	03c9      	lsls	r1, r1, #15
+10024240:	400e      	ands	r6, r1
+10024242:	4316      	orrs	r6, r2
+    *addr = val;
+10024244:	601e      	str	r6, [r3, #0]
+}
+10024246:	b002      	add	sp, #8
+10024248:	bc04      	pop	{r2}
+1002424a:	4691      	mov	r9, r2
+1002424c:	bdf0      	pop	{r4, r5, r6, r7, pc}
+1002424e:	46c0      	nop			; (mov r8, r8)
+10024250:	7000308c 	.word	0x7000308c
+10024254:	70004c00 	.word	0x70004c00
+10024258:	fff1ffff 	.word	0xfff1ffff
+1002425c:	ff8fffff 	.word	0xff8fffff
+10024260:	fffffbff 	.word	0xfffffbff
+10024264:	ffffdfff 	.word	0xffffdfff
+10024268:	ffffefff 	.word	0xffffefff
+1002426c:	70003088 	.word	0x70003088
+10024270:	20063818 	.word	0x20063818
+
+10024274 <pmbus_mfr_autogen_init>:
+	//PMBUS_CMD_MFR_VOUT_RES_MEAS.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_VOUT_RES_MEAS.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_VOUT_RES_MEAS.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_VOUT_RES_MEAS.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_VOUT_RES_MEAS.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_VOUT_RES_MEAS.CMD_CONFIG = 0xc18223b1;
+10024274:	4b09      	ldr	r3, [pc, #36]	; (1002429c <pmbus_mfr_autogen_init+0x28>)
+10024276:	4a0a      	ldr	r2, [pc, #40]	; (100242a0 <pmbus_mfr_autogen_init+0x2c>)
+10024278:	601a      	str	r2, [r3, #0]
+	PMBUS_CMD_MFR_VOUT_RES_MEAS.DATA0 = &PMBUS_CMD_MFR_VOUT_RES_MEAS_DATA_LOOP0[0];  // set the pointer to the data array
+1002427a:	4a0a      	ldr	r2, [pc, #40]	; (100242a4 <pmbus_mfr_autogen_init+0x30>)
+1002427c:	609a      	str	r2, [r3, #8]
+	PMBUS_CMD_MFR_VOUT_RES_MEAS.DATA1 = &PMBUS_CMD_MFR_VOUT_RES_MEAS_DATA_LOOP0[0];  // set the pointer to the data array
+1002427e:	60da      	str	r2, [r3, #12]
+	PMBUS_CMD_MFR_VOUT_RES_MEAS_DATA_LOOP1 = &PMBUS_CMD_MFR_VOUT_RES_MEAS_DATA_LOOP0[0];
+10024280:	4909      	ldr	r1, [pc, #36]	; (100242a8 <pmbus_mfr_autogen_init+0x34>)
+10024282:	600a      	str	r2, [r1, #0]
+	// RANGE SUPPORT for MFR_VOUT_RES_MEAS COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_VOUT_RES_MEAS] = &PMBUS_CMD_MFR_VOUT_RES_MEAS;
+10024284:	22b1      	movs	r2, #177	; 0xb1
+10024286:	0092      	lsls	r2, r2, #2
+10024288:	4908      	ldr	r1, [pc, #32]	; (100242ac <pmbus_mfr_autogen_init+0x38>)
+1002428a:	508b      	str	r3, [r1, r2]
+	//PMBUS_CMD_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_VOUT_RES_MEAS] = &PMBUS_CMD_MFR_VOUT_RES_MEAS;
+	//lint -e{778} suppress "Constant expression evaluates to 0 in operation '&'" 
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_VOUT_RES_MEAS/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_VOUT_RES_MEAS&31u));
+1002428c:	4a08      	ldr	r2, [pc, #32]	; (100242b0 <pmbus_mfr_autogen_init+0x3c>)
+1002428e:	2380      	movs	r3, #128	; 0x80
+10024290:	029b      	lsls	r3, r3, #10
+10024292:	6951      	ldr	r1, [r2, #20]
+10024294:	430b      	orrs	r3, r1
+10024296:	6153      	str	r3, [r2, #20]
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_VOUT_RES_MEAS/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_VOUT_RES_MEAS&31u));
+
+}
+10024298:	4770      	bx	lr
+1002429a:	46c0      	nop			; (mov r8, r8)
+1002429c:	20063804 	.word	0x20063804
+100242a0:	c18223b1 	.word	0xc18223b1
+100242a4:	20063800 	.word	0x20063800
+100242a8:	20063814 	.word	0x20063814
+100242ac:	2005d534 	.word	0x2005d534
+100242b0:	2005d934 	.word	0x2005d934
+
+100242b4 <TON_DELAY_ENABLE>:
+{
+
+}
+
+void TON_DELAY_ENABLE(PMBUS_PAGE_t loop)
+{
+100242b4:	b510      	push	{r4, lr}
+	/* XADDR Usage: Custom VDAC Example Modification Start */
+	xaddr_resistance_measurement(loop);
+100242b6:	f7ff ff49 	bl	1002414c <xaddr_resistance_measurement>
+	/* XADDR Usage: Custom VDAC Example Modification End */
+}
+100242ba:	bd10      	pop	{r4, pc}
+
+100242bc <regulation_sm_callbacks_init>:
+{
+100242bc:	b510      	push	{r4, lr}
+	Regulation_set_regulation_event_cb(REGULATION_STATE_TON_DELAY, REGULATION_CONTROLS_TON_TOFF_DELAY_TIMER,
+100242be:	4a03      	ldr	r2, [pc, #12]	; (100242cc <regulation_sm_callbacks_init+0x10>)
+100242c0:	2106      	movs	r1, #6
+100242c2:	2001      	movs	r0, #1
+100242c4:	f7e3 fc4c 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+}
+100242c8:	bd10      	pop	{r4, pc}
+100242ca:	46c0      	nop			; (mov r8, r8)
+100242cc:	100242b5 	.word	0x100242b5
+
+100242d0 <patch_pmbus_mfr_autogen_init>:
+
+void patch_pmbus_mfr_autogen_init(void);
+
+
+void patch_pmbus_mfr_autogen_init(void)
+{
+100242d0:	b510      	push	{r4, lr}
+	pmbus_mfr_autogen_init();
+100242d2:	f7ff ffcf 	bl	10024274 <pmbus_mfr_autogen_init>
+}
+100242d6:	bd10      	pop	{r4, pc}
+
+100242d8 <user_drv_init>:
+ * Main entry point of the user application.  Good place to set breakpoint when debugging a patch.
+ * This will only get executed a single time prior to configuration loading and before RTOS starts
+ */
+
+void user_drv_init(void)
+{
+100242d8:	b510      	push	{r4, lr}
+	memset(&user_data, 0, sizeof(USER_DATA_t));  // ZI the user data
+100242da:	2206      	movs	r2, #6
+100242dc:	2100      	movs	r1, #0
+100242de:	4808      	ldr	r0, [pc, #32]	; (10024300 <user_drv_init+0x28>)
+100242e0:	f000 f858 	bl	10024394 <memset>
+
+	// this is the initialization of user pmbus commands autogenerated from pmbus spreadsheet
+	ptr_mfr_specific_init = (mfr_specific_init_ptr) patch_pmbus_mfr_autogen_init;
+100242e4:	4a07      	ldr	r2, [pc, #28]	; (10024304 <user_drv_init+0x2c>)
+100242e6:	4b08      	ldr	r3, [pc, #32]	; (10024308 <user_drv_init+0x30>)
+100242e8:	601a      	str	r2, [r3, #0]
+
+	// set the pointer funtion in init of regulation state machine to user callback setup for each state
+	set_module_init_cb(MODULE_REGULATION, regulation_sm_callbacks_init);
+100242ea:	4908      	ldr	r1, [pc, #32]	; (1002430c <user_drv_init+0x34>)
+100242ec:	2002      	movs	r0, #2
+100242ee:	f7e0 fafd 	bl	100048ec <scratchpad_semaphore_release+0x33>
+
+	add_on_features_init();
+100242f2:	f7ff fec1 	bl	10024078 <add_on_features_init>
+	regulation_sm_callbacks_init();
+100242f6:	f7ff ffe1 	bl	100242bc <regulation_sm_callbacks_init>
+	pmbus_mfr_autogen_init();
+100242fa:	f7ff ffbb 	bl	10024274 <pmbus_mfr_autogen_init>
+	patch_pmbus_mfr_autogen_init();
+
+}
+100242fe:	bd10      	pop	{r4, pc}
+10024300:	20063818 	.word	0x20063818
+10024304:	100242d1 	.word	0x100242d1
+10024308:	2005d468 	.word	0x2005d468
+1002430c:	100242bd 	.word	0x100242bd
+
+10024310 <memcpy>:
+10024310:	b5f0      	push	{r4, r5, r6, r7, lr}
+10024312:	0005      	movs	r5, r0
+10024314:	2a0f      	cmp	r2, #15
+10024316:	d92f      	bls.n	10024378 <memcpy+0x68>
+10024318:	000b      	movs	r3, r1
+1002431a:	4303      	orrs	r3, r0
+1002431c:	079b      	lsls	r3, r3, #30
+1002431e:	d134      	bne.n	1002438a <memcpy+0x7a>
+10024320:	0016      	movs	r6, r2
+10024322:	000c      	movs	r4, r1
+10024324:	0003      	movs	r3, r0
+10024326:	3e10      	subs	r6, #16
+10024328:	0935      	lsrs	r5, r6, #4
+1002432a:	3501      	adds	r5, #1
+1002432c:	012d      	lsls	r5, r5, #4
+1002432e:	1945      	adds	r5, r0, r5
+10024330:	6827      	ldr	r7, [r4, #0]
+10024332:	601f      	str	r7, [r3, #0]
+10024334:	6867      	ldr	r7, [r4, #4]
+10024336:	605f      	str	r7, [r3, #4]
+10024338:	68a7      	ldr	r7, [r4, #8]
+1002433a:	609f      	str	r7, [r3, #8]
+1002433c:	68e7      	ldr	r7, [r4, #12]
+1002433e:	3410      	adds	r4, #16
+10024340:	60df      	str	r7, [r3, #12]
+10024342:	3310      	adds	r3, #16
+10024344:	429d      	cmp	r5, r3
+10024346:	d1f3      	bne.n	10024330 <memcpy+0x20>
+10024348:	230f      	movs	r3, #15
+1002434a:	439e      	bics	r6, r3
+1002434c:	3610      	adds	r6, #16
+1002434e:	1985      	adds	r5, r0, r6
+10024350:	1989      	adds	r1, r1, r6
+10024352:	4013      	ands	r3, r2
+10024354:	2b03      	cmp	r3, #3
+10024356:	d91a      	bls.n	1002438e <memcpy+0x7e>
+10024358:	1f1e      	subs	r6, r3, #4
+1002435a:	2300      	movs	r3, #0
+1002435c:	08b4      	lsrs	r4, r6, #2
+1002435e:	3401      	adds	r4, #1
+10024360:	00a4      	lsls	r4, r4, #2
+10024362:	58cf      	ldr	r7, [r1, r3]
+10024364:	50ef      	str	r7, [r5, r3]
+10024366:	3304      	adds	r3, #4
+10024368:	42a3      	cmp	r3, r4
+1002436a:	d1fa      	bne.n	10024362 <memcpy+0x52>
+1002436c:	2403      	movs	r4, #3
+1002436e:	43a6      	bics	r6, r4
+10024370:	1d33      	adds	r3, r6, #4
+10024372:	4022      	ands	r2, r4
+10024374:	18c9      	adds	r1, r1, r3
+10024376:	18ed      	adds	r5, r5, r3
+10024378:	2a00      	cmp	r2, #0
+1002437a:	d005      	beq.n	10024388 <memcpy+0x78>
+1002437c:	2300      	movs	r3, #0
+1002437e:	5ccc      	ldrb	r4, [r1, r3]
+10024380:	54ec      	strb	r4, [r5, r3]
+10024382:	3301      	adds	r3, #1
+10024384:	4293      	cmp	r3, r2
+10024386:	d1fa      	bne.n	1002437e <memcpy+0x6e>
+10024388:	bdf0      	pop	{r4, r5, r6, r7, pc}
+1002438a:	0005      	movs	r5, r0
+1002438c:	e7f6      	b.n	1002437c <memcpy+0x6c>
+1002438e:	001a      	movs	r2, r3
+10024390:	e7f2      	b.n	10024378 <memcpy+0x68>
+10024392:	46c0      	nop			; (mov r8, r8)
+
+10024394 <memset>:
+10024394:	b5f0      	push	{r4, r5, r6, r7, lr}
+10024396:	0783      	lsls	r3, r0, #30
+10024398:	d043      	beq.n	10024422 <memset+0x8e>
+1002439a:	1e54      	subs	r4, r2, #1
+1002439c:	2a00      	cmp	r2, #0
+1002439e:	d03f      	beq.n	10024420 <memset+0x8c>
+100243a0:	b2ce      	uxtb	r6, r1
+100243a2:	0002      	movs	r2, r0
+100243a4:	2503      	movs	r5, #3
+100243a6:	e002      	b.n	100243ae <memset+0x1a>
+100243a8:	001a      	movs	r2, r3
+100243aa:	3c01      	subs	r4, #1
+100243ac:	d338      	bcc.n	10024420 <memset+0x8c>
+100243ae:	1c53      	adds	r3, r2, #1
+100243b0:	7016      	strb	r6, [r2, #0]
+100243b2:	422b      	tst	r3, r5
+100243b4:	d1f8      	bne.n	100243a8 <memset+0x14>
+100243b6:	2c03      	cmp	r4, #3
+100243b8:	d92a      	bls.n	10024410 <memset+0x7c>
+100243ba:	22ff      	movs	r2, #255	; 0xff
+100243bc:	400a      	ands	r2, r1
+100243be:	0215      	lsls	r5, r2, #8
+100243c0:	4315      	orrs	r5, r2
+100243c2:	042a      	lsls	r2, r5, #16
+100243c4:	4315      	orrs	r5, r2
+100243c6:	2c0f      	cmp	r4, #15
+100243c8:	d914      	bls.n	100243f4 <memset+0x60>
+100243ca:	0027      	movs	r7, r4
+100243cc:	001a      	movs	r2, r3
+100243ce:	3f10      	subs	r7, #16
+100243d0:	093e      	lsrs	r6, r7, #4
+100243d2:	3601      	adds	r6, #1
+100243d4:	0136      	lsls	r6, r6, #4
+100243d6:	199e      	adds	r6, r3, r6
+100243d8:	6015      	str	r5, [r2, #0]
+100243da:	6055      	str	r5, [r2, #4]
+100243dc:	6095      	str	r5, [r2, #8]
+100243de:	60d5      	str	r5, [r2, #12]
+100243e0:	3210      	adds	r2, #16
+100243e2:	4296      	cmp	r6, r2
+100243e4:	d1f8      	bne.n	100243d8 <memset+0x44>
+100243e6:	220f      	movs	r2, #15
+100243e8:	4397      	bics	r7, r2
+100243ea:	3710      	adds	r7, #16
+100243ec:	19db      	adds	r3, r3, r7
+100243ee:	4014      	ands	r4, r2
+100243f0:	2c03      	cmp	r4, #3
+100243f2:	d90d      	bls.n	10024410 <memset+0x7c>
+100243f4:	001a      	movs	r2, r3
+100243f6:	1f27      	subs	r7, r4, #4
+100243f8:	08be      	lsrs	r6, r7, #2
+100243fa:	3601      	adds	r6, #1
+100243fc:	00b6      	lsls	r6, r6, #2
+100243fe:	199e      	adds	r6, r3, r6
+10024400:	c220      	stmia	r2!, {r5}
+10024402:	42b2      	cmp	r2, r6
+10024404:	d1fc      	bne.n	10024400 <memset+0x6c>
+10024406:	2203      	movs	r2, #3
+10024408:	4397      	bics	r7, r2
+1002440a:	3704      	adds	r7, #4
+1002440c:	19db      	adds	r3, r3, r7
+1002440e:	4014      	ands	r4, r2
+10024410:	2c00      	cmp	r4, #0
+10024412:	d005      	beq.n	10024420 <memset+0x8c>
+10024414:	b2c9      	uxtb	r1, r1
+10024416:	191c      	adds	r4, r3, r4
+10024418:	7019      	strb	r1, [r3, #0]
+1002441a:	3301      	adds	r3, #1
+1002441c:	429c      	cmp	r4, r3
+1002441e:	d1fb      	bne.n	10024418 <memset+0x84>
+10024420:	bdf0      	pop	{r4, r5, r6, r7, pc}
+10024422:	0014      	movs	r4, r2
+10024424:	0003      	movs	r3, r0
+10024426:	e7c6      	b.n	100243b6 <memset+0x22>
+
+10024428 <vout_command_lut>:
+10024428:	004b 0085 011e 0268 0000 01cc 0280 034d     K.....h.......M.

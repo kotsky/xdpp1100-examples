@@ -1,0 +1,750 @@
+
+.\build\patch/patch.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .bss          00000074  20063800  20063800  00023800  2**2
+                  ALLOC
+  1 .otp_data     00004000  10020000  10020000  00010000  2**0
+                  ALLOC
+  2 .otp_header   0000001c  10024000  10024000  00010000  2**0
+                  ALLOC
+  3 .txt          00000390  1002401c  1002401c  0001401c  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  4 .otp_patch2   00004000  100243ac  100243ac  000143ac  2**0
+                  ALLOC
+  5 .otp_patch3   00004000  100283ac  100283ac  000143ac  2**0
+                  ALLOC
+  6 .debug_info   0001b041  00000000  00000000  000143ac  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 000010f2  00000000  00000000  0002f3ed  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_loc    000007f6  00000000  00000000  000304df  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_aranges 00000118  00000000  00000000  00030cd5  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000100  00000000  00000000  00030ded  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_macro  0000a470  00000000  00000000  00030eed  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_line   0000337a  00000000  00000000  0003b35d  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_str    00065318  00000000  00000000  0003e6d7  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 14 .comment      0000007f  00000000  00000000  000a39ef  2**0
+                  CONTENTS, READONLY
+ 15 .ARM.attributes 00000031  00000000  00000000  000a3a6e  2**0
+                  CONTENTS, READONLY
+ 16 .debug_frame  00000218  00000000  00000000  000a3aa0  2**2
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .txt:
+
+1002401c <patch_entry>:
+/**
+ * This is the patch entry point, which is called after the patch got
+ * successfully loaded into RAM.
+ */
+void patch_entry(void)
+{
+1002401c:	b510      	push	{r4, lr}
+    // Initialize the .bss and .data section
+    memset(SECTION_BASE_ZI, 0, SECTION_LENGTH_ZI);
+1002401e:	480c      	ldr	r0, [pc, #48]	; (10024050 <patch_entry+0x34>)
+10024020:	4a0c      	ldr	r2, [pc, #48]	; (10024054 <patch_entry+0x38>)
+10024022:	1a12      	subs	r2, r2, r0
+10024024:	2100      	movs	r1, #0
+10024026:	f000 f977 	bl	10024318 <memset>
+    memcpy(SECTION_BASE_RW_DESTINATION, SECTION_BASE_RW_SOURCE, SECTION_LENGTH_RW);
+1002402a:	480b      	ldr	r0, [pc, #44]	; (10024058 <patch_entry+0x3c>)
+1002402c:	4a0b      	ldr	r2, [pc, #44]	; (1002405c <patch_entry+0x40>)
+1002402e:	1a12      	subs	r2, r2, r0
+10024030:	490b      	ldr	r1, [pc, #44]	; (10024060 <patch_entry+0x44>)
+10024032:	f000 f92f 	bl	10024294 <memcpy>
+    // Initialize ram execution section
+    memcpy(SECTION_BASE_RAM_EXEC_DESTINATION, SECTION_BASE_RAM_EXEC_SOURCE, SECTION_LENGTH_RAM_EXEC);
+10024036:	480b      	ldr	r0, [pc, #44]	; (10024064 <patch_entry+0x48>)
+10024038:	4a0b      	ldr	r2, [pc, #44]	; (10024068 <patch_entry+0x4c>)
+1002403a:	1a12      	subs	r2, r2, r0
+1002403c:	490b      	ldr	r1, [pc, #44]	; (1002406c <patch_entry+0x50>)
+1002403e:	f000 f929 	bl	10024294 <memcpy>
+/* lint requires us to have both a declaration and a definition ... we
+ * could probably bail out through some local lint, but her we simply
+ * play to the rules.
+ */
+HAL_INLINE void HAL_SET32(volatile uint32_t* addr, uint32_t val) {
+    *addr = val;
+10024042:	4a0b      	ldr	r2, [pc, #44]	; (10024070 <patch_entry+0x54>)
+10024044:	4b0b      	ldr	r3, [pc, #44]	; (10024074 <patch_entry+0x58>)
+10024046:	601a      	str	r2, [r3, #0]
+
+
+    SCU_SPARE_FF__SET(0x5971BBBBUL);  // write the patch id to SCU spare for simple test that patch loaded
+    user_drv_init();
+10024048:	f000 f86c 	bl	10024124 <user_drv_init>
+}
+1002404c:	bd10      	pop	{r4, pc}
+1002404e:	46c0      	nop			; (mov r8, r8)
+10024050:	20063800 	.word	0x20063800
+10024054:	20063874 	.word	0x20063874
+10024058:	20063800 	.word	0x20063800
+1002405c:	20063800 	.word	0x20063800
+10024060:	100243ac 	.word	0x100243ac
+10024064:	20063874 	.word	0x20063874
+10024068:	20063874 	.word	0x20063874
+1002406c:	100243ac 	.word	0x100243ac
+10024070:	5971bbbb 	.word	0x5971bbbb
+10024074:	40000020 	.word	0x40000020
+
+10024078 <add_on_features_init>:
+#include "pmbus_mfr_autogen.h"
+
+void add_on_features_init (void)
+{
+	uint8_t test1 = 0;
+}
+10024078:	4770      	bx	lr
+
+1002407a <pmbus_mfr_autogen_init>:
+ */
+void pmbus_mfr_autogen_init(void)
+{
+
+
+}
+1002407a:	4770      	bx	lr
+
+1002407c <AT_TARGET_ENABLE>:
+}
+
+void AT_TARGET_ENABLE(PMBUS_PAGE_t loop)
+{
+
+}
+1002407c:	4770      	bx	lr
+	...
+
+10024080 <AT_SHUTDOWN>:
+
+void AT_SHUTDOWN(PMBUS_PAGE_t loop)
+{
+10024080:	b510      	push	{r4, lr}
+10024082:	0004      	movs	r4, r0
+ * @param idp index of peripheral
+ * @return base address of peripheral's instance
+ */
+__VCONTROL_INLINE uint32_t* __VCONTROL_BASE_PTR(vcontrol_idx_t idp)
+{
+    return (uint32_t*)(VCONTROL_BASE + (uint32_t)((uint32_t)idp * VCONTROL_STRIDE));
+10024084:	4b0a      	ldr	r3, [pc, #40]	; (100240b0 <AT_SHUTDOWN+0x30>)
+10024086:	18c2      	adds	r2, r0, r3
+10024088:	0292      	lsls	r2, r2, #10
+ * HW 'behind' this address, changing the address' content.
+ */
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr);
+
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr) {
+    return *addr;
+1002408a:	6953      	ldr	r3, [r2, #20]
+ * @param bf_value new value for VC_VRAMP3.VC_VCONTROL_DELTA
+ */
+__VCONTROL_INLINE void VCONTROL_VC_VRAMP3__VC_VCONTROL_DELTA__SET(vcontrol_idx_t idp, uint32_t bf_value)
+{
+    uint32_t reg = VCONTROL_VC_VRAMP3__GET(idp);
+    reg = (reg & ~VCONTROL_VC_VRAMP3__VC_VCONTROL_DELTA__Msk);
+1002408c:	0b5b      	lsrs	r3, r3, #13
+1002408e:	035b      	lsls	r3, r3, #13
+    *addr = val;
+10024090:	6153      	str	r3, [r2, #20]
+    return *addr;
+10024092:	4b08      	ldr	r3, [pc, #32]	; (100240b4 <AT_SHUTDOWN+0x34>)
+10024094:	681a      	ldr	r2, [r3, #0]
+ * @param bf_value new value for MAX_DUTY_SCALE.RAMP0_DC_MAX_NOM
+ */
+__PWM_INLINE void PWM_MAX_DUTY_SCALE__RAMP0_DC_MAX_NOM__SET(uint32_t bf_value)
+{
+    uint32_t reg = PWM_MAX_DUTY_SCALE__GET();
+    reg = (reg & ~PWM_MAX_DUTY_SCALE__RAMP0_DC_MAX_NOM__Msk);
+10024096:	21ff      	movs	r1, #255	; 0xff
+10024098:	438a      	bics	r2, r1
+    *addr = val;
+1002409a:	601a      	str	r2, [r3, #0]
+    return *addr;
+1002409c:	681a      	ldr	r2, [r3, #0]
+    reg = (reg & ~PWM_MAX_DUTY_SCALE__RAMP1_DC_MAX_NOM__Msk);
+1002409e:	4906      	ldr	r1, [pc, #24]	; (100240b8 <AT_SHUTDOWN+0x38>)
+100240a0:	400a      	ands	r2, r1
+    *addr = val;
+100240a2:	601a      	str	r2, [r3, #0]
+	VCONTROL_VC_VRAMP3__VC_VCONTROL_DELTA__SET((vcontrol_idx_t) loop, 0);
+
+	/* Kickstart Pulse Pre-Startup Example Modification Start */
+	PWM_MAX_DUTY_SCALE__RAMP0_DC_MAX_NOM__SET(0);
+	PWM_MAX_DUTY_SCALE__RAMP1_DC_MAX_NOM__SET(0);
+	release_PID_dutycycle(loop);
+100240a4:	f000 f89c 	bl	100241e0 <release_PID_dutycycle>
+	force_feedforward(loop);
+100240a8:	0020      	movs	r0, r4
+100240aa:	f000 f8cb 	bl	10024244 <force_feedforward>
+	/* Kickstart Pulse Pre-Startup Example Modification End */
+}
+100240ae:	bd10      	pop	{r4, pc}
+100240b0:	001c0005 	.word	0x001c0005
+100240b4:	70002c14 	.word	0x70002c14
+100240b8:	ffff00ff 	.word	0xffff00ff
+
+100240bc <AT_PRESTARTUP>:
+ * Kickstart Pulse Pre-Startup Example Function
+ * Function to enable kickstart duty cycle at TON_Delay
+ * @param loop select the operating loop
+ */
+void AT_PRESTARTUP(PMBUS_PAGE_t loop)
+{
+100240bc:	b510      	push	{r4, lr}
+100240be:	0004      	movs	r4, r0
+	// Pulse kickstart just enough to enable VRECT (VIN measurement)
+	pulse_kickstart(loop, 810, 100); //pulse width = 810ns, freq = 100kHz
+100240c0:	2264      	movs	r2, #100	; 0x64
+100240c2:	4906      	ldr	r1, [pc, #24]	; (100240dc <AT_PRESTARTUP+0x20>)
+100240c4:	f000 f864 	bl	10024190 <pulse_kickstart>
+
+	// Prolong TON_DELAY state by 50us to discharge output capacitor
+	sys_delay_by_us(50);
+100240c8:	2032      	movs	r0, #50	; 0x32
+100240ca:	f7e0 fed1 	bl	10004e70 <sys_delay_by_nops_system_shasta+0x7>
+
+	release_PID_dutycycle(loop);
+100240ce:	0020      	movs	r0, r4
+100240d0:	f000 f886 	bl	100241e0 <release_PID_dutycycle>
+	release_feedforward(loop);
+100240d4:	0020      	movs	r0, r4
+100240d6:	f000 f8cf 	bl	10024278 <release_feedforward>
+}
+100240da:	bd10      	pop	{r4, pc}
+100240dc:	0000032a 	.word	0x0000032a
+
+100240e0 <regulation_sm_callbacks_init>:
+{
+100240e0:	b510      	push	{r4, lr}
+	Regulation_set_regulation_event_cb(REGULATION_STATE_AT_TARGET_VID, REGULATION_CONTROLS_ENABLE,
+100240e2:	4a0b      	ldr	r2, [pc, #44]	; (10024110 <regulation_sm_callbacks_init+0x30>)
+100240e4:	2109      	movs	r1, #9
+100240e6:	2003      	movs	r0, #3
+100240e8:	f7e3 fd3a 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_TON_DELAY, REGULATION_CONTROLS_TON_TOFF_DELAY_TIMER,
+100240ec:	4a09      	ldr	r2, [pc, #36]	; (10024114 <regulation_sm_callbacks_init+0x34>)
+100240ee:	2106      	movs	r1, #6
+100240f0:	2001      	movs	r0, #1
+100240f2:	f7e3 fd35 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_OFF, REGULATION_CONTROLS_SHUTDOWN,
+100240f6:	4c08      	ldr	r4, [pc, #32]	; (10024118 <regulation_sm_callbacks_init+0x38>)
+100240f8:	0022      	movs	r2, r4
+100240fa:	2102      	movs	r1, #2
+100240fc:	2000      	movs	r0, #0
+100240fe:	f7e3 fd2f 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_OFF, REGULATION_CONTROLS_SHUTDOWN_IMMEDIATE,
+10024102:	0022      	movs	r2, r4
+10024104:	2101      	movs	r1, #1
+10024106:	2000      	movs	r0, #0
+10024108:	f7e3 fd2a 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+}
+1002410c:	bd10      	pop	{r4, pc}
+1002410e:	46c0      	nop			; (mov r8, r8)
+10024110:	1002407d 	.word	0x1002407d
+10024114:	100240bd 	.word	0x100240bd
+10024118:	10024081 	.word	0x10024081
+
+1002411c <patch_pmbus_mfr_autogen_init>:
+
+void patch_pmbus_mfr_autogen_init(void);
+
+
+void patch_pmbus_mfr_autogen_init(void)
+{
+1002411c:	b510      	push	{r4, lr}
+	pmbus_mfr_autogen_init();
+1002411e:	f7ff ffac 	bl	1002407a <pmbus_mfr_autogen_init>
+}
+10024122:	bd10      	pop	{r4, pc}
+
+10024124 <user_drv_init>:
+ * Main entry point of the user application.  Good place to set breakpoint when debugging a patch.
+ * This will only get executed a single time prior to configuration loading and before RTOS starts
+ */
+
+void user_drv_init(void)
+{
+10024124:	b510      	push	{r4, lr}
+	memset(&user_data, 0, sizeof(USER_DATA_t));  // ZI the user data
+10024126:	2274      	movs	r2, #116	; 0x74
+10024128:	2100      	movs	r1, #0
+1002412a:	4808      	ldr	r0, [pc, #32]	; (1002414c <user_drv_init+0x28>)
+1002412c:	f000 f8f4 	bl	10024318 <memset>
+
+	// this is the initialization of user pmbus commands autogenerated from pmbus spreadsheet
+	ptr_mfr_specific_init = (mfr_specific_init_ptr) patch_pmbus_mfr_autogen_init;
+10024130:	4a07      	ldr	r2, [pc, #28]	; (10024150 <user_drv_init+0x2c>)
+10024132:	4b08      	ldr	r3, [pc, #32]	; (10024154 <user_drv_init+0x30>)
+10024134:	601a      	str	r2, [r3, #0]
+
+	// set the pointer funtion in init of regulation state machine to user callback setup for each state
+	set_module_init_cb(MODULE_REGULATION, regulation_sm_callbacks_init);
+10024136:	4908      	ldr	r1, [pc, #32]	; (10024158 <user_drv_init+0x34>)
+10024138:	2002      	movs	r0, #2
+1002413a:	f7e0 fbd7 	bl	100048ec <scratchpad_semaphore_release+0x33>
+
+	add_on_features_init();
+1002413e:	f7ff ff9b 	bl	10024078 <add_on_features_init>
+	regulation_sm_callbacks_init();
+10024142:	f7ff ffcd 	bl	100240e0 <regulation_sm_callbacks_init>
+	pmbus_mfr_autogen_init();
+10024146:	f7ff ff98 	bl	1002407a <pmbus_mfr_autogen_init>
+	patch_pmbus_mfr_autogen_init();
+
+}
+1002414a:	bd10      	pop	{r4, pc}
+1002414c:	20063800 	.word	0x20063800
+10024150:	1002411d 	.word	0x1002411d
+10024154:	2005d468 	.word	0x2005d468
+10024158:	100240e1 	.word	0x100240e1
+
+1002415c <force_PID_dutycycle>:
+ * @param idp index of peripheral
+ * @return base address of peripheral's instance
+ */
+__PID_INLINE uint32_t* __PID_BASE_PTR(pid_idx_t idp)
+{
+    return (uint32_t*)(PID_BASE + (uint32_t)((uint32_t)idp * PID_STRIDE));
+1002415c:	4b0a      	ldr	r3, [pc, #40]	; (10024188 <force_PID_dutycycle+0x2c>)
+1002415e:	469c      	mov	ip, r3
+10024160:	4460      	add	r0, ip
+10024162:	0280      	lsls	r0, r0, #10
+    return *addr;
+10024164:	6883      	ldr	r3, [r0, #8]
+ * @param bf_value new value for PID_FORCE.PID_FORCE_DUTY
+ */
+__PID_INLINE void PID_PID_FORCE__PID_FORCE_DUTY__SET(pid_idx_t idp, uint32_t bf_value)
+{
+    uint32_t reg = PID_PID_FORCE__GET(idp);
+    reg = (reg & ~PID_PID_FORCE__PID_FORCE_DUTY__Msk);
+10024166:	22ff      	movs	r2, #255	; 0xff
+10024168:	4393      	bics	r3, r2
+    reg = (reg | (PID_PID_FORCE__PID_FORCE_DUTY__Shift((uint32_t)bf_value)));
+1002416a:	4011      	ands	r1, r2
+1002416c:	4319      	orrs	r1, r3
+    *addr = val;
+1002416e:	6081      	str	r1, [r0, #8]
+    return *addr;
+10024170:	6883      	ldr	r3, [r0, #8]
+    reg = (reg & ~PID_PID_FORCE__PID_FORCE_DUTY_EN__Msk);
+10024172:	4906      	ldr	r1, [pc, #24]	; (1002418c <force_PID_dutycycle+0x30>)
+10024174:	4019      	ands	r1, r3
+    reg = (reg | (PID_PID_FORCE__PID_FORCE_DUTY_EN__Shift((uint32_t)bf_value)));
+10024176:	2380      	movs	r3, #128	; 0x80
+10024178:	005b      	lsls	r3, r3, #1
+1002417a:	430b      	orrs	r3, r1
+    *addr = val;
+1002417c:	6083      	str	r3, [r0, #8]
+    return *addr;
+1002417e:	6883      	ldr	r3, [r0, #8]
+    reg = (reg & ~PID_PID_FORCE__PID_FORCE_DUTY__Msk);
+10024180:	4393      	bics	r3, r2
+    *addr = val;
+10024182:	6083      	str	r3, [r0, #8]
+
+	for(uint16_t i = 0; i < 2; i++); // For-loop delay before disabling forced duty cycle
+
+	// Forced Duty Cycle Value override. // Format = U0.8. Min = 0. Max = 0.9961. LSB = 3.906e-3
+	PID_PID_FORCE__PID_FORCE_DUTY__SET((pid_idx_t)loop, 0); // // dutycycle = 0
+}
+10024184:	4770      	bx	lr
+10024186:	46c0      	nop			; (mov r8, r8)
+10024188:	001c0007 	.word	0x001c0007
+1002418c:	fffffeff 	.word	0xfffffeff
+
+10024190 <pulse_kickstart>:
+ * @param loop select the operating loop
+ * @param pulse_width_ns set the duty cycle in pulse width
+ * @param freq_khz set the switching frequency in khz
+ */
+void pulse_kickstart(PMBUS_PAGE_t loop, uint16_t pulse_width_ns, uint16_t freq_khz)
+{
+10024190:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+10024192:	0005      	movs	r5, r0
+10024194:	000e      	movs	r6, r1
+10024196:	0017      	movs	r7, r2
+	// Set Switching Frequency for pulse kickstart. API can be found on regulation_api.h
+	Regulation_Switching_Frequency_Set(loop, freq_khz); //100 kHz, Period = 0.01ms = 10us = 10,000ns
+10024198:	0011      	movs	r1, r2
+1002419a:	f7e2 fab5 	bl	10006708 <Regulation_Shutdown_Sequence+0xf7>
+    return *addr;
+1002419e:	4b0e      	ldr	r3, [pc, #56]	; (100241d8 <pulse_kickstart+0x48>)
+100241a0:	681c      	ldr	r4, [r3, #0]
+	// calculate mininum pulse needed from vrs_track_start_thr
+	uint16_t vrs_track_start_thr = COMMON_VRS_CFG__VRS_TRACK_START_THR__GET();
+	uint32_t min_pulse_ns = vrs_track_start_thr*10;
+
+	// calculate period_in_ns
+	uint32_t period_ns = 1000000/freq_khz;
+100241a2:	0039      	movs	r1, r7
+100241a4:	480d      	ldr	r0, [pc, #52]	; (100241dc <pulse_kickstart+0x4c>)
+100241a6:	f7dc f926 	bl	100003f6 <__aeabi_idivmod>
+100241aa:	0002      	movs	r2, r0
+
+	// Initialize forced_duty to zero
+	uint32_t forced_duty = 0;
+100241ac:	2100      	movs	r1, #0
+
+	// if desired_pulse_ns < period_in_ns, update forced_duty
+	if(pulse_width_ns < period_ns && pulse_width_ns > min_pulse_ns)
+100241ae:	42b0      	cmp	r0, r6
+100241b0:	d90d      	bls.n	100241ce <pulse_kickstart+0x3e>
+ */
+__COMMON_INLINE uint32_t COMMON_VRS_CFG__VRS_TRACK_START_THR__GET(void)
+{
+    uint32_t reg = COMMON_VRS_CFG__GET();
+    reg = (reg & COMMON_VRS_CFG__VRS_TRACK_START_THR__Msk);
+    reg = (reg >> COMMON_VRS_CFG__VRS_TRACK_START_THR__Pos);
+100241b2:	0323      	lsls	r3, r4, #12
+100241b4:	0d9b      	lsrs	r3, r3, #22
+	uint32_t min_pulse_ns = vrs_track_start_thr*10;
+100241b6:	0099      	lsls	r1, r3, #2
+100241b8:	18cb      	adds	r3, r1, r3
+100241ba:	005b      	lsls	r3, r3, #1
+	uint32_t forced_duty = 0;
+100241bc:	2100      	movs	r1, #0
+	if(pulse_width_ns < period_ns && pulse_width_ns > min_pulse_ns)
+100241be:	42b3      	cmp	r3, r6
+100241c0:	d205      	bcs.n	100241ce <pulse_kickstart+0x3e>
+	{
+		// translate desired_pulse_ns/period_in_ns to duty_cycle_percentage and calculate forced_duty in hex
+		forced_duty = (pulse_width_ns*0xFF)/period_ns;
+100241c2:	0230      	lsls	r0, r6, #8
+100241c4:	1b80      	subs	r0, r0, r6
+100241c6:	0011      	movs	r1, r2
+100241c8:	f7dc f90b 	bl	100003e2 <__aeabi_uidivmod>
+100241cc:	0001      	movs	r1, r0
+	}
+
+	// Pulse kickstart by forcing PID duty
+	force_PID_dutycycle(loop, forced_duty);
+100241ce:	0028      	movs	r0, r5
+100241d0:	f7ff ffc4 	bl	1002415c <force_PID_dutycycle>
+}
+100241d4:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
+100241d6:	46c0      	nop			; (mov r8, r8)
+100241d8:	70003018 	.word	0x70003018
+100241dc:	000f4240 	.word	0x000f4240
+
+100241e0 <release_PID_dutycycle>:
+/**
+ * Function to release force PID duty cycle
+ * @param loop select the operating loop
+ */
+void release_PID_dutycycle(PMBUS_PAGE_t loop)
+{
+100241e0:	b510      	push	{r4, lr}
+100241e2:	0004      	movs	r4, r0
+	// Get user configuration from PMBus
+	uint16_t freq_khz = PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_FREQUENCY_SWITCH);
+100241e4:	2133      	movs	r1, #51	; 0x33
+100241e6:	f7dd fa37 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+100241ea:	0542      	lsls	r2, r0, #21
+100241ec:	0d52      	lsrs	r2, r2, #21
+ */
+__DRIVER_INLINE int32_t LINEAR11_TO_MANTISSA(uint16_t packed_linear_format_number)
+{
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+	int32_t mant_signbit=mant_bits & 0x0400;
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100241ee:	0543      	lsls	r3, r0, #21
+100241f0:	d41a      	bmi.n	10024228 <release_PID_dutycycle+0x48>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+100241f2:	0013      	movs	r3, r2
+100241f4:	041b      	lsls	r3, r3, #16
+100241f6:	0c1b      	lsrs	r3, r3, #16
+ * Takes a linear11 format (16bit, 5bit exponent 11bit mantissa) number
+ * and extracts the exponent
+ */
+__DRIVER_INLINE int32_t LINEAR11_TO_EXPONENT(uint16_t packed_linear_format_number)
+{
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+100241f8:	0ac0      	lsrs	r0, r0, #11
+100241fa:	b280      	uxth	r0, r0
+	int32_t exp_signbit=exp_bits & 0x0010;
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+100241fc:	06c2      	lsls	r2, r0, #27
+100241fe:	d502      	bpl.n	10024206 <release_PID_dutycycle+0x26>
+10024200:	2220      	movs	r2, #32
+10024202:	4252      	negs	r2, r2
+10024204:	4310      	orrs	r0, r2
+		exponent = -exponent;
+		value = value >> (exponent);
+	}
+	else
+	{
+		value = value << (exponent);
+10024206:	0019      	movs	r1, r3
+10024208:	4081      	lsls	r1, r0
+	if ( exponent <= 0)
+1002420a:	2800      	cmp	r0, #0
+1002420c:	dd0f      	ble.n	1002422e <release_PID_dutycycle+0x4e>
+	int32_t freq_khz_man = (uint16_t)LINEAR11_TO_MANTISSA(freq_khz);
+	int32_t freq_khz_exp = LINEAR11_TO_EXPONENT(freq_khz);
+	freq_khz = (uint16_t)SHIFT_EXPONENT(freq_khz_man, freq_khz_exp);
+
+	// Update Switching frequency with the user configuration from PMBus
+	Regulation_Switching_Frequency_Set(loop, freq_khz);
+1002420e:	b289      	uxth	r1, r1
+10024210:	0020      	movs	r0, r4
+10024212:	f7e2 fa79 	bl	10006708 <Regulation_Shutdown_Sequence+0xf7>
+    return (uint32_t*)(PID_BASE + (uint32_t)((uint32_t)idp * PID_STRIDE));
+10024216:	4b08      	ldr	r3, [pc, #32]	; (10024238 <release_PID_dutycycle+0x58>)
+10024218:	469c      	mov	ip, r3
+1002421a:	4464      	add	r4, ip
+1002421c:	02a4      	lsls	r4, r4, #10
+1002421e:	68a3      	ldr	r3, [r4, #8]
+    reg = (reg & ~PID_PID_FORCE__PID_FORCE_DUTY_EN__Msk);
+10024220:	4a06      	ldr	r2, [pc, #24]	; (1002423c <release_PID_dutycycle+0x5c>)
+10024222:	4013      	ands	r3, r2
+    *addr = val;
+10024224:	60a3      	str	r3, [r4, #8]
+
+	// DISABLE forced duty cycle
+	PID_PID_FORCE__PID_FORCE_DUTY_EN__SET((pid_idx_t)loop, 0);
+}
+10024226:	bd10      	pop	{r4, pc}
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024228:	4b05      	ldr	r3, [pc, #20]	; (10024240 <release_PID_dutycycle+0x60>)
+1002422a:	4313      	orrs	r3, r2
+1002422c:	e7e2      	b.n	100241f4 <release_PID_dutycycle+0x14>
+		exponent = -exponent;
+1002422e:	4240      	negs	r0, r0
+		value = value >> (exponent);
+10024230:	4103      	asrs	r3, r0
+10024232:	0019      	movs	r1, r3
+10024234:	e7eb      	b.n	1002420e <release_PID_dutycycle+0x2e>
+10024236:	46c0      	nop			; (mov r8, r8)
+10024238:	001c0007 	.word	0x001c0007
+1002423c:	fffffeff 	.word	0xfffffeff
+10024240:	fffff800 	.word	0xfffff800
+
+10024244 <force_feedforward>:
+    return (uint32_t*)(PID_BASE + (uint32_t)((uint32_t)idp * PID_STRIDE));
+10024244:	4b09      	ldr	r3, [pc, #36]	; (1002426c <force_feedforward+0x28>)
+10024246:	469c      	mov	ip, r3
+10024248:	4460      	add	r0, ip
+1002424a:	0280      	lsls	r0, r0, #10
+    return *addr;
+1002424c:	6803      	ldr	r3, [r0, #0]
+    reg = (reg & ~PID_PID_FF_CFG1__PID_FF_VRECT_SEL__Msk);
+1002424e:	4a08      	ldr	r2, [pc, #32]	; (10024270 <force_feedforward+0x2c>)
+10024250:	4013      	ands	r3, r2
+    *addr = val;
+10024252:	6003      	str	r3, [r0, #0]
+    return *addr;
+10024254:	6a03      	ldr	r3, [r0, #32]
+ * @param bf_value new value for PID_FF_CFG4.PID_FF_OVERRIDE_SEL
+ */
+__PID_INLINE void PID_PID_FF_CFG4__PID_FF_OVERRIDE_SEL__SET(pid_idx_t idp, uint32_t bf_value)
+{
+    uint32_t reg = PID_PID_FF_CFG4__GET(idp);
+    reg = (reg & ~PID_PID_FF_CFG4__PID_FF_OVERRIDE_SEL__Msk);
+10024256:	4a07      	ldr	r2, [pc, #28]	; (10024274 <force_feedforward+0x30>)
+10024258:	401a      	ands	r2, r3
+    reg = (reg | (PID_PID_FF_CFG4__PID_FF_OVERRIDE_SEL__Shift((uint32_t)bf_value)));
+1002425a:	2380      	movs	r3, #128	; 0x80
+1002425c:	00db      	lsls	r3, r3, #3
+1002425e:	4313      	orrs	r3, r2
+    *addr = val;
+10024260:	6203      	str	r3, [r0, #32]
+    return *addr;
+10024262:	6a03      	ldr	r3, [r0, #32]
+ * @param bf_value new value for PID_FF_CFG4.PID_FF_OVERRIDE
+ */
+__PID_INLINE void PID_PID_FF_CFG4__PID_FF_OVERRIDE__SET(pid_idx_t idp, uint32_t bf_value)
+{
+    uint32_t reg = PID_PID_FF_CFG4__GET(idp);
+    reg = (reg & ~PID_PID_FF_CFG4__PID_FF_OVERRIDE__Msk);
+10024264:	0a9b      	lsrs	r3, r3, #10
+10024266:	029b      	lsls	r3, r3, #10
+    *addr = val;
+10024268:	6203      	str	r3, [r0, #32]
+	// Enable FeedForward Override
+	PID_PID_FF_CFG4__PID_FF_OVERRIDE_SEL__SET((pid_idx_t)loop, 1);
+
+	// Set FeedForward value to 0
+	PID_PID_FF_CFG4__PID_FF_OVERRIDE__SET((pid_idx_t)loop, 0);
+}
+1002426a:	4770      	bx	lr
+1002426c:	001c0007 	.word	0x001c0007
+10024270:	fff3ffff 	.word	0xfff3ffff
+10024274:	fffffbff 	.word	0xfffffbff
+
+10024278 <release_feedforward>:
+    return (uint32_t*)(PID_BASE + (uint32_t)((uint32_t)idp * PID_STRIDE));
+10024278:	4b04      	ldr	r3, [pc, #16]	; (1002428c <release_feedforward+0x14>)
+1002427a:	469c      	mov	ip, r3
+1002427c:	4460      	add	r0, ip
+1002427e:	0280      	lsls	r0, r0, #10
+    return *addr;
+10024280:	6a03      	ldr	r3, [r0, #32]
+    reg = (reg & ~PID_PID_FF_CFG4__PID_FF_OVERRIDE_SEL__Msk);
+10024282:	4a03      	ldr	r2, [pc, #12]	; (10024290 <release_feedforward+0x18>)
+10024284:	4013      	ands	r3, r2
+    *addr = val;
+10024286:	6203      	str	r3, [r0, #32]
+ */
+void release_feedforward(PMBUS_PAGE_t loop)
+{
+	// Disable FeedForward Override
+	PID_PID_FF_CFG4__PID_FF_OVERRIDE_SEL__SET((pid_idx_t)loop, 0);
+}
+10024288:	4770      	bx	lr
+1002428a:	46c0      	nop			; (mov r8, r8)
+1002428c:	001c0007 	.word	0x001c0007
+10024290:	fffffbff 	.word	0xfffffbff
+
+10024294 <memcpy>:
+10024294:	b5f0      	push	{r4, r5, r6, r7, lr}
+10024296:	0005      	movs	r5, r0
+10024298:	2a0f      	cmp	r2, #15
+1002429a:	d92f      	bls.n	100242fc <memcpy+0x68>
+1002429c:	000b      	movs	r3, r1
+1002429e:	4303      	orrs	r3, r0
+100242a0:	079b      	lsls	r3, r3, #30
+100242a2:	d134      	bne.n	1002430e <memcpy+0x7a>
+100242a4:	0016      	movs	r6, r2
+100242a6:	000c      	movs	r4, r1
+100242a8:	0003      	movs	r3, r0
+100242aa:	3e10      	subs	r6, #16
+100242ac:	0935      	lsrs	r5, r6, #4
+100242ae:	3501      	adds	r5, #1
+100242b0:	012d      	lsls	r5, r5, #4
+100242b2:	1945      	adds	r5, r0, r5
+100242b4:	6827      	ldr	r7, [r4, #0]
+100242b6:	601f      	str	r7, [r3, #0]
+100242b8:	6867      	ldr	r7, [r4, #4]
+100242ba:	605f      	str	r7, [r3, #4]
+100242bc:	68a7      	ldr	r7, [r4, #8]
+100242be:	609f      	str	r7, [r3, #8]
+100242c0:	68e7      	ldr	r7, [r4, #12]
+100242c2:	3410      	adds	r4, #16
+100242c4:	60df      	str	r7, [r3, #12]
+100242c6:	3310      	adds	r3, #16
+100242c8:	429d      	cmp	r5, r3
+100242ca:	d1f3      	bne.n	100242b4 <memcpy+0x20>
+100242cc:	230f      	movs	r3, #15
+100242ce:	439e      	bics	r6, r3
+100242d0:	3610      	adds	r6, #16
+100242d2:	1985      	adds	r5, r0, r6
+100242d4:	1989      	adds	r1, r1, r6
+100242d6:	4013      	ands	r3, r2
+100242d8:	2b03      	cmp	r3, #3
+100242da:	d91a      	bls.n	10024312 <memcpy+0x7e>
+100242dc:	1f1e      	subs	r6, r3, #4
+100242de:	2300      	movs	r3, #0
+100242e0:	08b4      	lsrs	r4, r6, #2
+100242e2:	3401      	adds	r4, #1
+100242e4:	00a4      	lsls	r4, r4, #2
+100242e6:	58cf      	ldr	r7, [r1, r3]
+100242e8:	50ef      	str	r7, [r5, r3]
+100242ea:	3304      	adds	r3, #4
+100242ec:	42a3      	cmp	r3, r4
+100242ee:	d1fa      	bne.n	100242e6 <memcpy+0x52>
+100242f0:	2403      	movs	r4, #3
+100242f2:	43a6      	bics	r6, r4
+100242f4:	1d33      	adds	r3, r6, #4
+100242f6:	4022      	ands	r2, r4
+100242f8:	18c9      	adds	r1, r1, r3
+100242fa:	18ed      	adds	r5, r5, r3
+100242fc:	2a00      	cmp	r2, #0
+100242fe:	d005      	beq.n	1002430c <memcpy+0x78>
+10024300:	2300      	movs	r3, #0
+10024302:	5ccc      	ldrb	r4, [r1, r3]
+10024304:	54ec      	strb	r4, [r5, r3]
+10024306:	3301      	adds	r3, #1
+10024308:	4293      	cmp	r3, r2
+1002430a:	d1fa      	bne.n	10024302 <memcpy+0x6e>
+1002430c:	bdf0      	pop	{r4, r5, r6, r7, pc}
+1002430e:	0005      	movs	r5, r0
+10024310:	e7f6      	b.n	10024300 <memcpy+0x6c>
+10024312:	001a      	movs	r2, r3
+10024314:	e7f2      	b.n	100242fc <memcpy+0x68>
+10024316:	46c0      	nop			; (mov r8, r8)
+
+10024318 <memset>:
+10024318:	b5f0      	push	{r4, r5, r6, r7, lr}
+1002431a:	0783      	lsls	r3, r0, #30
+1002431c:	d043      	beq.n	100243a6 <memset+0x8e>
+1002431e:	1e54      	subs	r4, r2, #1
+10024320:	2a00      	cmp	r2, #0
+10024322:	d03f      	beq.n	100243a4 <memset+0x8c>
+10024324:	b2ce      	uxtb	r6, r1
+10024326:	0002      	movs	r2, r0
+10024328:	2503      	movs	r5, #3
+1002432a:	e002      	b.n	10024332 <memset+0x1a>
+1002432c:	001a      	movs	r2, r3
+1002432e:	3c01      	subs	r4, #1
+10024330:	d338      	bcc.n	100243a4 <memset+0x8c>
+10024332:	1c53      	adds	r3, r2, #1
+10024334:	7016      	strb	r6, [r2, #0]
+10024336:	422b      	tst	r3, r5
+10024338:	d1f8      	bne.n	1002432c <memset+0x14>
+1002433a:	2c03      	cmp	r4, #3
+1002433c:	d92a      	bls.n	10024394 <memset+0x7c>
+1002433e:	22ff      	movs	r2, #255	; 0xff
+10024340:	400a      	ands	r2, r1
+10024342:	0215      	lsls	r5, r2, #8
+10024344:	4315      	orrs	r5, r2
+10024346:	042a      	lsls	r2, r5, #16
+10024348:	4315      	orrs	r5, r2
+1002434a:	2c0f      	cmp	r4, #15
+1002434c:	d914      	bls.n	10024378 <memset+0x60>
+1002434e:	0027      	movs	r7, r4
+10024350:	001a      	movs	r2, r3
+10024352:	3f10      	subs	r7, #16
+10024354:	093e      	lsrs	r6, r7, #4
+10024356:	3601      	adds	r6, #1
+10024358:	0136      	lsls	r6, r6, #4
+1002435a:	199e      	adds	r6, r3, r6
+1002435c:	6015      	str	r5, [r2, #0]
+1002435e:	6055      	str	r5, [r2, #4]
+10024360:	6095      	str	r5, [r2, #8]
+10024362:	60d5      	str	r5, [r2, #12]
+10024364:	3210      	adds	r2, #16
+10024366:	4296      	cmp	r6, r2
+10024368:	d1f8      	bne.n	1002435c <memset+0x44>
+1002436a:	220f      	movs	r2, #15
+1002436c:	4397      	bics	r7, r2
+1002436e:	3710      	adds	r7, #16
+10024370:	19db      	adds	r3, r3, r7
+10024372:	4014      	ands	r4, r2
+10024374:	2c03      	cmp	r4, #3
+10024376:	d90d      	bls.n	10024394 <memset+0x7c>
+10024378:	001a      	movs	r2, r3
+1002437a:	1f27      	subs	r7, r4, #4
+1002437c:	08be      	lsrs	r6, r7, #2
+1002437e:	3601      	adds	r6, #1
+10024380:	00b6      	lsls	r6, r6, #2
+10024382:	199e      	adds	r6, r3, r6
+10024384:	c220      	stmia	r2!, {r5}
+10024386:	42b2      	cmp	r2, r6
+10024388:	d1fc      	bne.n	10024384 <memset+0x6c>
+1002438a:	2203      	movs	r2, #3
+1002438c:	4397      	bics	r7, r2
+1002438e:	3704      	adds	r7, #4
+10024390:	19db      	adds	r3, r3, r7
+10024392:	4014      	ands	r4, r2
+10024394:	2c00      	cmp	r4, #0
+10024396:	d005      	beq.n	100243a4 <memset+0x8c>
+10024398:	b2c9      	uxtb	r1, r1
+1002439a:	191c      	adds	r4, r3, r4
+1002439c:	7019      	strb	r1, [r3, #0]
+1002439e:	3301      	adds	r3, #1
+100243a0:	429c      	cmp	r4, r3
+100243a2:	d1fb      	bne.n	1002439c <memset+0x84>
+100243a4:	bdf0      	pop	{r4, r5, r6, r7, pc}
+100243a6:	0014      	movs	r4, r2
+100243a8:	0003      	movs	r3, r0
+100243aa:	e7c6      	b.n	1002433a <memset+0x22>

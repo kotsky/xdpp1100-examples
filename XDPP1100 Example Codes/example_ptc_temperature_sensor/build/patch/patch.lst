@@ -1,0 +1,996 @@
+
+.\build\patch/patch.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .bss          00000074  20063800  20063800  00023800  2**2
+                  ALLOC
+  1 .otp_data     00004000  10020000  10020000  00010000  2**0
+                  ALLOC
+  2 .otp_header   0000001c  10024000  10024000  00010000  2**0
+                  ALLOC
+  3 .txt          00000954  1002401c  1002401c  0001401c  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  4 .otp_patch2   00004000  10024970  10024970  00014970  2**0
+                  ALLOC
+  5 .otp_patch3   00004000  10028970  10028970  00014970  2**0
+                  ALLOC
+  6 .debug_info   00018eae  00000000  00000000  00014970  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 00000f68  00000000  00000000  0002d81e  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_loc    00000c33  00000000  00000000  0002e786  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_aranges 000000f8  00000000  00000000  0002f3b9  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000208  00000000  00000000  0002f4b1  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_macro  0000a3eb  00000000  00000000  0002f6b9  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_line   00003343  00000000  00000000  00039aa4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_str    000652a9  00000000  00000000  0003cde7  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 14 .comment      0000007f  00000000  00000000  000a2090  2**0
+                  CONTENTS, READONLY
+ 15 .ARM.attributes 00000031  00000000  00000000  000a210f  2**0
+                  CONTENTS, READONLY
+ 16 .debug_frame  000001d4  00000000  00000000  000a2140  2**2
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .txt:
+
+1002401c <patch_entry>:
+/**
+ * This is the patch entry point, which is called after the patch got
+ * successfully loaded into RAM.
+ */
+void patch_entry(void)
+{
+1002401c:	b510      	push	{r4, lr}
+    // Initialize the .bss and .data section
+    memset(SECTION_BASE_ZI, 0, SECTION_LENGTH_ZI);
+1002401e:	480c      	ldr	r0, [pc, #48]	; (10024050 <patch_entry+0x34>)
+10024020:	4a0c      	ldr	r2, [pc, #48]	; (10024054 <patch_entry+0x38>)
+10024022:	1a12      	subs	r2, r2, r0
+10024024:	2100      	movs	r1, #0
+10024026:	f000 fa43 	bl	100244b0 <memset>
+    memcpy(SECTION_BASE_RW_DESTINATION, SECTION_BASE_RW_SOURCE, SECTION_LENGTH_RW);
+1002402a:	480b      	ldr	r0, [pc, #44]	; (10024058 <patch_entry+0x3c>)
+1002402c:	4a0b      	ldr	r2, [pc, #44]	; (1002405c <patch_entry+0x40>)
+1002402e:	1a12      	subs	r2, r2, r0
+10024030:	490b      	ldr	r1, [pc, #44]	; (10024060 <patch_entry+0x44>)
+10024032:	f000 f9fb 	bl	1002442c <memcpy>
+    // Initialize ram execution section
+    memcpy(SECTION_BASE_RAM_EXEC_DESTINATION, SECTION_BASE_RAM_EXEC_SOURCE, SECTION_LENGTH_RAM_EXEC);
+10024036:	480b      	ldr	r0, [pc, #44]	; (10024064 <patch_entry+0x48>)
+10024038:	4a0b      	ldr	r2, [pc, #44]	; (10024068 <patch_entry+0x4c>)
+1002403a:	1a12      	subs	r2, r2, r0
+1002403c:	490b      	ldr	r1, [pc, #44]	; (1002406c <patch_entry+0x50>)
+1002403e:	f000 f9f5 	bl	1002442c <memcpy>
+/* lint requires us to have both a declaration and a definition ... we
+ * could probably bail out through some local lint, but her we simply
+ * play to the rules.
+ */
+HAL_INLINE void HAL_SET32(volatile uint32_t* addr, uint32_t val) {
+    *addr = val;
+10024042:	4a0b      	ldr	r2, [pc, #44]	; (10024070 <patch_entry+0x54>)
+10024044:	4b0b      	ldr	r3, [pc, #44]	; (10024074 <patch_entry+0x58>)
+10024046:	601a      	str	r2, [r3, #0]
+
+
+    SCU_SPARE_FF__SET(0x5971BBBBUL);  // write the patch id to SCU spare for simple test that patch loaded
+    user_drv_init();
+10024048:	f000 f9c0 	bl	100243cc <user_drv_init>
+}
+1002404c:	bd10      	pop	{r4, pc}
+1002404e:	46c0      	nop			; (mov r8, r8)
+10024050:	20063800 	.word	0x20063800
+10024054:	20063874 	.word	0x20063874
+10024058:	20063800 	.word	0x20063800
+1002405c:	20063800 	.word	0x20063800
+10024060:	10024970 	.word	0x10024970
+10024064:	20063874 	.word	0x20063874
+10024068:	20063874 	.word	0x20063874
+1002406c:	10024970 	.word	0x10024970
+10024070:	5971bbbb 	.word	0x5971bbbb
+10024074:	40000020 	.word	0x40000020
+
+10024078 <add_on_features_init>:
+#include "pmbus_mfr_autogen.h"
+
+void add_on_features_init (void)
+{
+	uint8_t test1 = 0;
+}
+10024078:	4770      	bx	lr
+
+1002407a <pmbus_mfr_autogen_init>:
+ */
+void pmbus_mfr_autogen_init(void)
+{
+
+
+}
+1002407a:	4770      	bx	lr
+
+1002407c <patch_Telemetry_get_adc_code>:
+ * adc codes distributed across the voltage range up to 511
+ * @param temp temperature in C
+ * @return adc codes 0-511
+ */
+uint16_t patch_Telemetry_get_adc_code(int16_t temp)
+{
+1002407c:	b530      	push	{r4, r5, lr}
+1002407e:	0001      	movs	r1, r0
+	for (uint16_t i = 0; i< 512; i++)
+	{
+		if (ntc_temp[i] >= temp)
+10024080:	4b0b      	ldr	r3, [pc, #44]	; (100240b0 <patch_Telemetry_get_adc_code+0x34>)
+10024082:	681b      	ldr	r3, [r3, #0]
+10024084:	2000      	movs	r0, #0
+10024086:	5e1a      	ldrsh	r2, [r3, r0]
+10024088:	428a      	cmp	r2, r1
+1002408a:	da0e      	bge.n	100240aa <patch_Telemetry_get_adc_code+0x2e>
+1002408c:	3302      	adds	r3, #2
+	for (uint16_t i = 0; i< 512; i++)
+1002408e:	2001      	movs	r0, #1
+10024090:	2480      	movs	r4, #128	; 0x80
+10024092:	00a4      	lsls	r4, r4, #2
+		if (ntc_temp[i] >= temp)
+10024094:	2500      	movs	r5, #0
+10024096:	5f5a      	ldrsh	r2, [r3, r5]
+10024098:	428a      	cmp	r2, r1
+1002409a:	da05      	bge.n	100240a8 <patch_Telemetry_get_adc_code+0x2c>
+	for (uint16_t i = 0; i< 512; i++)
+1002409c:	3001      	adds	r0, #1
+1002409e:	b280      	uxth	r0, r0
+100240a0:	3302      	adds	r3, #2
+100240a2:	42a0      	cmp	r0, r4
+100240a4:	d1f6      	bne.n	10024094 <patch_Telemetry_get_adc_code+0x18>
+		{
+			return (i);
+		}
+	}
+	return (511);
+100240a6:	4803      	ldr	r0, [pc, #12]	; (100240b4 <patch_Telemetry_get_adc_code+0x38>)
+}
+100240a8:	bd30      	pop	{r4, r5, pc}
+	for (uint16_t i = 0; i< 512; i++)
+100240aa:	2000      	movs	r0, #0
+100240ac:	e7fc      	b.n	100240a8 <patch_Telemetry_get_adc_code+0x2c>
+100240ae:	46c0      	nop			; (mov r8, r8)
+100240b0:	20061348 	.word	0x20061348
+100240b4:	000001ff 	.word	0x000001ff
+
+100240b8 <patch_Telemetry_get>:
+ * Generic function to get telemetry values, modification for ptc_temperature_sensor example
+ * @param loop Selects the loop to operate on.  Valid range of 0 or 1.
+ * @return vout in vout_exp format unsigned
+ */
+int32_t patch_Telemetry_get(PMBUS_PAGE_t loop, TELEMETRY_TYPE_t telem_type)
+{
+100240b8:	b5f0      	push	{r4, r5, r6, r7, lr}
+100240ba:	46d6      	mov	lr, sl
+100240bc:	464f      	mov	r7, r9
+100240be:	4646      	mov	r6, r8
+100240c0:	b5c0      	push	{r6, r7, lr}
+100240c2:	0007      	movs	r7, r0
+100240c4:	000e      	movs	r6, r1
+	int32_t offset;
+	uint32_t vout_scale;
+	int32_t Telemetry_exponent;
+	int32_t read_exp;
+
+	switch (telem_type)
+100240c6:	290a      	cmp	r1, #10
+100240c8:	d900      	bls.n	100240cc <patch_Telemetry_get+0x14>
+100240ca:	e124      	b.n	10024316 <patch_Telemetry_get+0x25e>
+100240cc:	008b      	lsls	r3, r1, #2
+100240ce:	4aae      	ldr	r2, [pc, #696]	; (10024388 <patch_Telemetry_get+0x2d0>)
+100240d0:	58d3      	ldr	r3, [r2, r3]
+100240d2:	469f      	mov	pc, r3
+ * @param idp index of peripheral
+ * @return base address of peripheral's instance
+ */
+__TELEM_INLINE uint32_t* __TELEM_BASE_PTR(telem_idx_t idp)
+{
+    return (uint32_t*)(TELEM_BASE + (uint32_t)((uint32_t)idp * TELEM_STRIDE));
+100240d4:	4bad      	ldr	r3, [pc, #692]	; (1002438c <patch_Telemetry_get+0x2d4>)
+100240d6:	18c3      	adds	r3, r0, r3
+100240d8:	029b      	lsls	r3, r3, #10
+ * HW 'behind' this address, changing the address' content.
+ */
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr);
+
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr) {
+    return *addr;
+100240da:	6b9b      	ldr	r3, [r3, #56]	; 0x38
+100240dc:	4698      	mov	r8, r3
+		exponent = -exponent;
+		value = value >> (exponent);
+	}
+	else
+	{
+		value = value << (exponent);
+100240de:	041d      	lsls	r5, r3, #16
+
+	if (telem_type == VOUT_TELEM)
+	{
+		telem_unsigned = SHIFT_EXPONENT_UNSIGNED((uint32_t)telem, Telemetry_exponent - read_exp); // convert vout fsw to Q=-16 (32 bit number)
+		// see vout_target_setpoint_computations.xlsx for equations
+		vout_scale = (PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_VOUT_SCALE_LOOP));  // get scale in Q=-16 (16bit number)
+100240e0:	2129      	movs	r1, #41	; 0x29
+100240e2:	f7dd fab9 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+100240e6:	1e04      	subs	r4, r0, #0
+		if (vout_scale == 0) vout_scale = 1;  // avoid divide by zero
+100240e8:	d156      	bne.n	10024198 <patch_Telemetry_get+0xe0>
+ * Takes 2 uint32_t format numbers and divides them then rounds the LSB
+ * Note that 0.5 would round up to 1 and 0.4 would round down to 0
+ */
+__DRIVER_COMMON_INLINE uint32_t DIVIDE_WITH_ROUNDING(uint32_t num, uint32_t div)
+{
+	return (num + (div / 2)) / div;
+100240ea:	23c8      	movs	r3, #200	; 0xc8
+100240ec:	011b      	lsls	r3, r3, #4
+100240ee:	18e8      	adds	r0, r5, r3
+100240f0:	21c8      	movs	r1, #200	; 0xc8
+100240f2:	0149      	lsls	r1, r1, #5
+100240f4:	f7dc f975 	bl	100003e2 <__aeabi_uidivmod>
+			read_exp = PMBUS_Q_EXP;
+100240f8:	2310      	movs	r3, #16
+100240fa:	425b      	negs	r3, r3
+100240fc:	469a      	mov	sl, r3
+		telem_unsigned = DIVIDE_WITH_ROUNDING((uint32_t)telem_unsigned , ((uint32_t)DAC_STEP_SIZE_VOLTS_TO_0_156MV));  // convert vout_fsw to volts Q=-16
+		telem_unsigned = SHIFT_EXPONENT_UNSIGNED(telem_unsigned, -read_exp-3);  // shift back up to Q=-13 to divide
+100240fe:	331d      	adds	r3, #29
+		if (vout_scale == 0) vout_scale = 1;  // avoid divide by zero
+10024100:	2401      	movs	r4, #1
+		value = value << (exponent);
+10024102:	4098      	lsls	r0, r3
+10024104:	0003      	movs	r3, r0
+	return (num + (div / 2)) / div;
+10024106:	0860      	lsrs	r0, r4, #1
+10024108:	18c0      	adds	r0, r0, r3
+1002410a:	0021      	movs	r1, r4
+1002410c:	f7dc f969 	bl	100003e2 <__aeabi_uidivmod>
+		value = value << (exponent);
+10024110:	00c5      	lsls	r5, r0, #3
+	if ((uint32_t)telem_type < (uint32_t)ITSEN_TELEM) //Itsen, Duty and Freq do not have offset and gain
+	{
+		// grab the s-5.9 or format gain from telem config convert to int32
+		// 1 + (gain_base[s4.4] << 5)[s4.9] + gain[s-5.9]
+		/*lint -e701 */
+		gain = 512 + (TWOS_UNCOMPLEMENT(8, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)((uint32_t)TELEMETRY_CONFIG_VOUT_GAIN_BASE + (8*(uint32_t)telem_type)))) << 5);
+10024112:	0031      	movs	r1, r6
+10024114:	310e      	adds	r1, #14
+10024116:	00c9      	lsls	r1, r1, #3
+10024118:	b2cb      	uxtb	r3, r1
+1002411a:	4699      	mov	r9, r3
+1002411c:	0019      	movs	r1, r3
+1002411e:	0038      	movs	r0, r7
+10024120:	f7e5 f804 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+10024124:	09c3      	lsrs	r3, r0, #7
+10024126:	d100      	bne.n	1002412a <patch_Telemetry_get+0x72>
+10024128:	e115      	b.n	10024356 <patch_Telemetry_get+0x29e>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+1002412a:	24ff      	movs	r4, #255	; 0xff
+1002412c:	4384      	bics	r4, r0
+1002412e:	43e4      	mvns	r4, r4
+10024130:	0164      	lsls	r4, r4, #5
+10024132:	2380      	movs	r3, #128	; 0x80
+10024134:	009b      	lsls	r3, r3, #2
+10024136:	469c      	mov	ip, r3
+10024138:	4464      	add	r4, ip
+		gain += TWOS_UNCOMPLEMENT(4, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)((uint32_t)TELEMETRY_CONFIG_VOUT_GAIN + (4*(uint32_t)telem_type))));
+1002413a:	1c71      	adds	r1, r6, #1
+1002413c:	0089      	lsls	r1, r1, #2
+1002413e:	b2c9      	uxtb	r1, r1
+10024140:	0038      	movs	r0, r7
+10024142:	f7e4 fff3 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+10024146:	0703      	lsls	r3, r0, #28
+10024148:	d400      	bmi.n	1002414c <patch_Telemetry_get+0x94>
+1002414a:	e107      	b.n	1002435c <patch_Telemetry_get+0x2a4>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+1002414c:	230f      	movs	r3, #15
+1002414e:	4383      	bics	r3, r0
+10024150:	43d8      	mvns	r0, r3
+10024152:	1824      	adds	r4, r4, r0
+
+		// offset in telem_type format already covert to int32
+		offset = TWOS_UNCOMPLEMENT(8, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)((uint32_t)TELEMETRY_CONFIG_VOUT_OFFSET + (8*(uint32_t)telem_type))));
+10024154:	4649      	mov	r1, r9
+10024156:	3950      	subs	r1, #80	; 0x50
+10024158:	b2c9      	uxtb	r1, r1
+1002415a:	0038      	movs	r0, r7
+1002415c:	f7e4 ffe6 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+10024160:	09c3      	lsrs	r3, r0, #7
+10024162:	d100      	bne.n	10024166 <patch_Telemetry_get+0xae>
+10024164:	e0fd      	b.n	10024362 <patch_Telemetry_get+0x2aa>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+10024166:	23ff      	movs	r3, #255	; 0xff
+10024168:	4383      	bics	r3, r0
+1002416a:	43db      	mvns	r3, r3
+1002416c:	4699      	mov	r9, r3
+
+		if (telem_type == VOUT_TELEM)
+1002416e:	2e00      	cmp	r6, #0
+10024170:	d149      	bne.n	10024206 <patch_Telemetry_get+0x14e>
+		{
+			offset = SHIFT_EXPONENT(offset, PMBUS_Get_Vout_Mode_Exponent((PMBUS_PAGE_t)loop) - read_exp); // convert to READ_Exponent
+10024172:	0038      	movs	r0, r7
+10024174:	f7dd facc 	bl	10001710 <PMBUS_Get_On_Off_State+0x7b>
+10024178:	4653      	mov	r3, sl
+1002417a:	1ac3      	subs	r3, r0, r3
+		value = value << (exponent);
+1002417c:	4648      	mov	r0, r9
+1002417e:	4098      	lsls	r0, r3
+	if ( exponent <= 0)
+10024180:	2b00      	cmp	r3, #0
+10024182:	dc00      	bgt.n	10024186 <patch_Telemetry_get+0xce>
+10024184:	e0f1      	b.n	1002436a <patch_Telemetry_get+0x2b2>
+	}
+	// multiply the gain by the telem value and shift down by Telemetry_GAIN_EXP to
+	// get read_exp Q format number post multiply
+	if (telem_type == VOUT_TELEM)
+	{
+		telem_unsigned = telem_unsigned*(uint32_t)gain;  // multiply by gain ~512 in Q0 format
+10024186:	436c      	muls	r4, r5
+		value = value >> (exponent);
+10024188:	0a64      	lsrs	r4, r4, #9
+		telem_unsigned = SHIFT_EXPONENT_UNSIGNED(telem_unsigned, Telemetry_GAIN_EXP);  // shift down by 9
+		telem = offset + (int32_t)telem_unsigned;  // add in the offset
+1002418a:	1824      	adds	r4, r4, r0
+			PMBUS_Log_Error(TELEMETRY, PROGRAM_COUNTER, PMBUS_STATUS_CML_PROCESSOR_FAULT);
+		}
+	}
+
+	return telem;
+}
+1002418c:	0020      	movs	r0, r4
+1002418e:	bc1c      	pop	{r2, r3, r4}
+10024190:	4690      	mov	r8, r2
+10024192:	4699      	mov	r9, r3
+10024194:	46a2      	mov	sl, r4
+10024196:	bdf0      	pop	{r4, r5, r6, r7, pc}
+			read_exp = PMBUS_Q_EXP;
+10024198:	2310      	movs	r3, #16
+1002419a:	425b      	negs	r3, r3
+1002419c:	469a      	mov	sl, r3
+	return (num + (div / 2)) / div;
+1002419e:	23c8      	movs	r3, #200	; 0xc8
+100241a0:	011b      	lsls	r3, r3, #4
+100241a2:	18e8      	adds	r0, r5, r3
+100241a4:	21c8      	movs	r1, #200	; 0xc8
+100241a6:	0149      	lsls	r1, r1, #5
+100241a8:	f7dc f91b 	bl	100003e2 <__aeabi_uidivmod>
+		telem_unsigned = SHIFT_EXPONENT_UNSIGNED(telem_unsigned, -read_exp-3);  // shift back up to Q=-13 to divide
+100241ac:	2303      	movs	r3, #3
+100241ae:	425b      	negs	r3, r3
+100241b0:	4652      	mov	r2, sl
+100241b2:	1a9b      	subs	r3, r3, r2
+	if ( exponent <= 0)
+100241b4:	2b00      	cmp	r3, #0
+100241b6:	dca4      	bgt.n	10024102 <patch_Telemetry_get+0x4a>
+		exponent = -exponent;
+100241b8:	425b      	negs	r3, r3
+		value = value >> (exponent);
+100241ba:	40d8      	lsrs	r0, r3
+100241bc:	0003      	movs	r3, r0
+100241be:	e7a2      	b.n	10024106 <patch_Telemetry_get+0x4e>
+100241c0:	4b72      	ldr	r3, [pc, #456]	; (1002438c <patch_Telemetry_get+0x2d4>)
+100241c2:	18c3      	adds	r3, r0, r3
+100241c4:	029b      	lsls	r3, r3, #10
+100241c6:	6a1c      	ldr	r4, [r3, #32]
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+100241c8:	04e3      	lsls	r3, r4, #19
+100241ca:	d532      	bpl.n	10024232 <patch_Telemetry_get+0x17a>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+100241cc:	43e4      	mvns	r4, r4
+100241ce:	04e4      	lsls	r4, r4, #19
+100241d0:	0ce4      	lsrs	r4, r4, #19
+100241d2:	43e4      	mvns	r4, r4
+			read_exp = TWOS_UNCOMPLEMENT(4, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_READ_IOUT_EXP));
+100241d4:	215c      	movs	r1, #92	; 0x5c
+100241d6:	0038      	movs	r0, r7
+100241d8:	f7e4 ffa8 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+100241dc:	0703      	lsls	r3, r0, #28
+100241de:	d52b      	bpl.n	10024238 <patch_Telemetry_get+0x180>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+100241e0:	230f      	movs	r3, #15
+100241e2:	4383      	bics	r3, r0
+100241e4:	43db      	mvns	r3, r3
+100241e6:	469a      	mov	sl, r3
+			Telemetry_exponent = Telemetry_IOUT_EXP;
+100241e8:	2304      	movs	r3, #4
+100241ea:	425b      	negs	r3, r3
+		telem = SHIFT_EXPONENT(telem, Telemetry_exponent - read_exp); // convert vout fsw to Q=-16 (32 bit number)
+100241ec:	4652      	mov	r2, sl
+100241ee:	1a9b      	subs	r3, r3, r2
+	if ( exponent <= 0)
+100241f0:	2b00      	cmp	r3, #0
+100241f2:	dd57      	ble.n	100242a4 <patch_Telemetry_get+0x1ec>
+		value = value << (exponent);
+100241f4:	409c      	lsls	r4, r3
+100241f6:	46a0      	mov	r8, r4
+	if ((uint32_t)telem_type < (uint32_t)ITSEN_TELEM) //Itsen, Duty and Freq do not have offset and gain
+100241f8:	2e05      	cmp	r6, #5
+100241fa:	d800      	bhi.n	100241fe <patch_Telemetry_get+0x146>
+100241fc:	e0a9      	b.n	10024352 <patch_Telemetry_get+0x29a>
+		offset = 0;
+100241fe:	2300      	movs	r3, #0
+10024200:	4699      	mov	r9, r3
+		gain = SHIFT_EXPONENT(1, -Telemetry_GAIN_EXP);
+10024202:	2480      	movs	r4, #128	; 0x80
+10024204:	00a4      	lsls	r4, r4, #2
+		telem = SHIFT_EXPONENT(telem*gain, Telemetry_GAIN_EXP);
+10024206:	4643      	mov	r3, r8
+10024208:	435c      	muls	r4, r3
+		value = value >> (exponent);
+1002420a:	1264      	asrs	r4, r4, #9
+		telem = offset + telem;  // add in the offset
+1002420c:	444c      	add	r4, r9
+	if ((telem_type ==  ATSEN_TELEM) || (telem_type == BTSEN_TELEM))
+1002420e:	3e04      	subs	r6, #4
+10024210:	2e01      	cmp	r6, #1
+10024212:	d8bb      	bhi.n	1002418c <patch_Telemetry_get+0xd4>
+		if (ntc_temp != NULL)
+10024214:	4b5e      	ldr	r3, [pc, #376]	; (10024390 <patch_Telemetry_get+0x2d8>)
+10024216:	681b      	ldr	r3, [r3, #0]
+10024218:	2b00      	cmp	r3, #0
+1002421a:	d100      	bne.n	1002421e <patch_Telemetry_get+0x166>
+1002421c:	e0a9      	b.n	10024372 <patch_Telemetry_get+0x2ba>
+1002421e:	43e0      	mvns	r0, r4
+10024220:	17c0      	asrs	r0, r0, #31
+			telem = ntc_temp[telem];
+10024222:	4004      	ands	r4, r0
+10024224:	4a5b      	ldr	r2, [pc, #364]	; (10024394 <patch_Telemetry_get+0x2dc>)
+10024226:	4294      	cmp	r4, r2
+10024228:	dd00      	ble.n	1002422c <patch_Telemetry_get+0x174>
+1002422a:	0014      	movs	r4, r2
+1002422c:	0064      	lsls	r4, r4, #1
+1002422e:	5ee4      	ldrsh	r4, [r4, r3]
+10024230:	e7ac      	b.n	1002418c <patch_Telemetry_get+0xd4>
+		return ((int32_t) (exp & ((1 << (numbits-1)) - 1)));
+10024232:	0524      	lsls	r4, r4, #20
+10024234:	0d24      	lsrs	r4, r4, #20
+10024236:	e7cd      	b.n	100241d4 <patch_Telemetry_get+0x11c>
+10024238:	2307      	movs	r3, #7
+1002423a:	4003      	ands	r3, r0
+1002423c:	469a      	mov	sl, r3
+			Telemetry_exponent = Telemetry_IOUT_EXP;
+1002423e:	2304      	movs	r3, #4
+10024240:	425b      	negs	r3, r3
+10024242:	e7d3      	b.n	100241ec <patch_Telemetry_get+0x134>
+10024244:	4b51      	ldr	r3, [pc, #324]	; (1002438c <patch_Telemetry_get+0x2d4>)
+10024246:	18c3      	adds	r3, r0, r3
+10024248:	029b      	lsls	r3, r3, #10
+1002424a:	6adc      	ldr	r4, [r3, #44]	; 0x2c
+			read_exp = TWOS_UNCOMPLEMENT(4, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_READ_VIN_EXP));
+1002424c:	2158      	movs	r1, #88	; 0x58
+1002424e:	f7e4 ff6d 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+10024252:	0703      	lsls	r3, r0, #28
+10024254:	d506      	bpl.n	10024264 <patch_Telemetry_get+0x1ac>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+10024256:	230f      	movs	r3, #15
+10024258:	4383      	bics	r3, r0
+1002425a:	43db      	mvns	r3, r3
+1002425c:	469a      	mov	sl, r3
+			Telemetry_exponent = Telemetry_VIN_EXP;
+1002425e:	2304      	movs	r3, #4
+10024260:	425b      	negs	r3, r3
+10024262:	e7c3      	b.n	100241ec <patch_Telemetry_get+0x134>
+		return ((int32_t) (exp & ((1 << (numbits-1)) - 1)));
+10024264:	2307      	movs	r3, #7
+10024266:	4003      	ands	r3, r0
+10024268:	469a      	mov	sl, r3
+1002426a:	2304      	movs	r3, #4
+1002426c:	425b      	negs	r3, r3
+1002426e:	e7bd      	b.n	100241ec <patch_Telemetry_get+0x134>
+10024270:	4b46      	ldr	r3, [pc, #280]	; (1002438c <patch_Telemetry_get+0x2d4>)
+10024272:	18c3      	adds	r3, r0, r3
+10024274:	029b      	lsls	r3, r3, #10
+10024276:	691c      	ldr	r4, [r3, #16]
+			read_exp = TWOS_UNCOMPLEMENT(4, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_READ_IIN_EXP));
+10024278:	2160      	movs	r1, #96	; 0x60
+1002427a:	f7e4 ff57 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+1002427e:	0703      	lsls	r3, r0, #28
+10024280:	d506      	bpl.n	10024290 <patch_Telemetry_get+0x1d8>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+10024282:	230f      	movs	r3, #15
+10024284:	4383      	bics	r3, r0
+10024286:	43db      	mvns	r3, r3
+10024288:	469a      	mov	sl, r3
+			Telemetry_exponent = Telemetry_IIN_EXP;
+1002428a:	2307      	movs	r3, #7
+1002428c:	425b      	negs	r3, r3
+1002428e:	e7ad      	b.n	100241ec <patch_Telemetry_get+0x134>
+		return ((int32_t) (exp & ((1 << (numbits-1)) - 1)));
+10024290:	2307      	movs	r3, #7
+10024292:	4003      	ands	r3, r0
+10024294:	469a      	mov	sl, r3
+10024296:	2307      	movs	r3, #7
+10024298:	425b      	negs	r3, r3
+1002429a:	e7a7      	b.n	100241ec <patch_Telemetry_get+0x134>
+1002429c:	4b3e      	ldr	r3, [pc, #248]	; (10024398 <patch_Telemetry_get+0x2e0>)
+1002429e:	681c      	ldr	r4, [r3, #0]
+		telem = SHIFT_EXPONENT(telem, Telemetry_exponent - read_exp); // convert vout fsw to Q=-16 (32 bit number)
+100242a0:	2300      	movs	r3, #0
+100242a2:	469a      	mov	sl, r3
+		exponent = -exponent;
+100242a4:	425b      	negs	r3, r3
+		value = value >> (exponent);
+100242a6:	411c      	asrs	r4, r3
+100242a8:	46a0      	mov	r8, r4
+100242aa:	e7a5      	b.n	100241f8 <patch_Telemetry_get+0x140>
+100242ac:	4b3b      	ldr	r3, [pc, #236]	; (1002439c <patch_Telemetry_get+0x2e4>)
+100242ae:	681c      	ldr	r4, [r3, #0]
+			break;
+100242b0:	e7f6      	b.n	100242a0 <patch_Telemetry_get+0x1e8>
+100242b2:	4b3b      	ldr	r3, [pc, #236]	; (100243a0 <patch_Telemetry_get+0x2e8>)
+100242b4:	681c      	ldr	r4, [r3, #0]
+			break;
+100242b6:	e7f3      	b.n	100242a0 <patch_Telemetry_get+0x1e8>
+100242b8:	4b3a      	ldr	r3, [pc, #232]	; (100243a4 <patch_Telemetry_get+0x2ec>)
+100242ba:	681c      	ldr	r4, [r3, #0]
+			break;
+100242bc:	e7f0      	b.n	100242a0 <patch_Telemetry_get+0x1e8>
+100242be:	4b3a      	ldr	r3, [pc, #232]	; (100243a8 <patch_Telemetry_get+0x2f0>)
+100242c0:	681c      	ldr	r4, [r3, #0]
+			break;
+100242c2:	e7ed      	b.n	100242a0 <patch_Telemetry_get+0x1e8>
+100242c4:	4b31      	ldr	r3, [pc, #196]	; (1002438c <patch_Telemetry_get+0x2d4>)
+100242c6:	18c3      	adds	r3, r0, r3
+100242c8:	029b      	lsls	r3, r3, #10
+100242ca:	689b      	ldr	r3, [r3, #8]
+			telem = telem*100;  // convert to percent in u0.16 format
+100242cc:	2464      	movs	r4, #100	; 0x64
+100242ce:	435c      	muls	r4, r3
+			read_exp = TWOS_UNCOMPLEMENT(4, Telemetry_Get_PMBUS_Configuration((PMBUS_PAGE_t)loop, (TELEMETRY_CONFIG)TELEMETRY_CONFIG_READ_DUTY_EXP));
+100242d0:	2164      	movs	r1, #100	; 0x64
+100242d2:	f7e4 ff2b 	bl	1000912c <Telemetry_GetVersion+0x17>
+	if ((exp & ((1 << numbits) - 1)) >> (numbits-1))
+100242d6:	0703      	lsls	r3, r0, #28
+100242d8:	d506      	bpl.n	100242e8 <patch_Telemetry_get+0x230>
+		return -((int32_t) ((~exp &((1 << numbits) - 1)) + 1));  // not the value, add 1, negate
+100242da:	230f      	movs	r3, #15
+100242dc:	4383      	bics	r3, r0
+100242de:	43db      	mvns	r3, r3
+100242e0:	469a      	mov	sl, r3
+			Telemetry_exponent = Telemetry_DUTY_EXP;
+100242e2:	2310      	movs	r3, #16
+100242e4:	425b      	negs	r3, r3
+100242e6:	e781      	b.n	100241ec <patch_Telemetry_get+0x134>
+		return ((int32_t) (exp & ((1 << (numbits-1)) - 1)));
+100242e8:	2307      	movs	r3, #7
+100242ea:	4003      	ands	r3, r0
+100242ec:	469a      	mov	sl, r3
+100242ee:	2310      	movs	r3, #16
+100242f0:	425b      	negs	r3, r3
+100242f2:	e77b      	b.n	100241ec <patch_Telemetry_get+0x134>
+100242f4:	4b25      	ldr	r3, [pc, #148]	; (1002438c <patch_Telemetry_get+0x2d4>)
+100242f6:	18c3      	adds	r3, r0, r3
+100242f8:	029b      	lsls	r3, r3, #10
+100242fa:	68dc      	ldr	r4, [r3, #12]
+			read_exp = LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word((PMBUS_PAGE_t)loop, PMBUS_CMDCODE_FREQUENCY_SWITCH));
+100242fc:	2133      	movs	r1, #51	; 0x33
+100242fe:	f7dd f9ab 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10024302:	0ac0      	lsrs	r0, r0, #11
+10024304:	b280      	uxth	r0, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10024306:	06c3      	lsls	r3, r0, #27
+10024308:	d53a      	bpl.n	10024380 <patch_Telemetry_get+0x2c8>
+1002430a:	2320      	movs	r3, #32
+1002430c:	425b      	negs	r3, r3
+1002430e:	4303      	orrs	r3, r0
+10024310:	469a      	mov	sl, r3
+			Telemetry_exponent = Telemetry_FSW_EXP;
+10024312:	2300      	movs	r3, #0
+10024314:	e76a      	b.n	100241ec <patch_Telemetry_get+0x134>
+			PMBUS_Log_Error(TELEMETRY, PROGRAM_COUNTER, PMBUS_STATUS_CML_PROCESSOR_FAULT);
+10024316:	2203      	movs	r2, #3
+10024318:	2101      	movs	r1, #1
+1002431a:	4249      	negs	r1, r1
+1002431c:	2009      	movs	r0, #9
+1002431e:	f7dd fa51 	bl	100017c4 <PMBUS_Inter_Thread_Set_Command+0x77>
+	if (telem_type == VOUT_TELEM)
+10024322:	2e00      	cmp	r6, #0
+10024324:	d10a      	bne.n	1002433c <patch_Telemetry_get+0x284>
+		vout_scale = (PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_VOUT_SCALE_LOOP));  // get scale in Q=-16 (16bit number)
+10024326:	2129      	movs	r1, #41	; 0x29
+10024328:	0038      	movs	r0, r7
+1002432a:	f7dd f995 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+1002432e:	1e04      	subs	r4, r0, #0
+		if (vout_scale == 0) vout_scale = 1;  // avoid divide by zero
+10024330:	d008      	beq.n	10024344 <patch_Telemetry_get+0x28c>
+10024332:	2300      	movs	r3, #0
+10024334:	469a      	mov	sl, r3
+10024336:	4698      	mov	r8, r3
+		value = value >> (exponent);
+10024338:	2500      	movs	r5, #0
+1002433a:	e730      	b.n	1002419e <patch_Telemetry_get+0xe6>
+			read_exp = 0;
+1002433c:	2300      	movs	r3, #0
+1002433e:	469a      	mov	sl, r3
+			telem = 0;  // u11.0 format 1khz lsb
+10024340:	001c      	movs	r4, r3
+10024342:	e7af      	b.n	100242a4 <patch_Telemetry_get+0x1ec>
+		if (vout_scale == 0) vout_scale = 1;  // avoid divide by zero
+10024344:	2300      	movs	r3, #0
+10024346:	469a      	mov	sl, r3
+10024348:	4698      	mov	r8, r3
+	return (num + (div / 2)) / div;
+1002434a:	0018      	movs	r0, r3
+		telem_unsigned = SHIFT_EXPONENT_UNSIGNED(telem_unsigned, -read_exp-3);  // shift back up to Q=-13 to divide
+1002434c:	3b03      	subs	r3, #3
+		if (vout_scale == 0) vout_scale = 1;  // avoid divide by zero
+1002434e:	2401      	movs	r4, #1
+10024350:	e732      	b.n	100241b8 <patch_Telemetry_get+0x100>
+	if ((uint32_t)telem_type < (uint32_t)ITSEN_TELEM) //Itsen, Duty and Freq do not have offset and gain
+10024352:	2500      	movs	r5, #0
+10024354:	e6dd      	b.n	10024112 <patch_Telemetry_get+0x5a>
+		return ((int32_t) (exp & ((1 << (numbits-1)) - 1)));
+10024356:	247f      	movs	r4, #127	; 0x7f
+10024358:	4004      	ands	r4, r0
+1002435a:	e6e9      	b.n	10024130 <patch_Telemetry_get+0x78>
+1002435c:	2307      	movs	r3, #7
+1002435e:	4018      	ands	r0, r3
+10024360:	e6f7      	b.n	10024152 <patch_Telemetry_get+0x9a>
+10024362:	237f      	movs	r3, #127	; 0x7f
+10024364:	4003      	ands	r3, r0
+10024366:	4699      	mov	r9, r3
+10024368:	e701      	b.n	1002416e <patch_Telemetry_get+0xb6>
+		exponent = -exponent;
+1002436a:	425b      	negs	r3, r3
+		value = value >> (exponent);
+1002436c:	4648      	mov	r0, r9
+1002436e:	4118      	asrs	r0, r3
+10024370:	e709      	b.n	10024186 <patch_Telemetry_get+0xce>
+			PMBUS_Log_Error(TELEMETRY, PROGRAM_COUNTER, PMBUS_STATUS_CML_PROCESSOR_FAULT);
+10024372:	2203      	movs	r2, #3
+10024374:	2101      	movs	r1, #1
+10024376:	4249      	negs	r1, r1
+10024378:	2009      	movs	r0, #9
+1002437a:	f7dd fa23 	bl	100017c4 <PMBUS_Inter_Thread_Set_Command+0x77>
+	return telem;
+1002437e:	e705      	b.n	1002418c <patch_Telemetry_get+0xd4>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10024380:	4682      	mov	sl, r0
+			Telemetry_exponent = Telemetry_FSW_EXP;
+10024382:	2300      	movs	r3, #0
+10024384:	e732      	b.n	100241ec <patch_Telemetry_get+0x134>
+10024386:	46c0      	nop			; (mov r8, r8)
+10024388:	10024544 	.word	0x10024544
+1002438c:	001c000d 	.word	0x001c000d
+10024390:	20061348 	.word	0x20061348
+10024394:	000001ff 	.word	0x000001ff
+10024398:	70005044 	.word	0x70005044
+1002439c:	7000504c 	.word	0x7000504c
+100243a0:	70005054 	.word	0x70005054
+100243a4:	70005074 	.word	0x70005074
+100243a8:	70005078 	.word	0x70005078
+
+100243ac <AT_TARGET_ENABLE>:
+}
+
+void AT_TARGET_ENABLE(PMBUS_PAGE_t loop)
+{
+
+}
+100243ac:	4770      	bx	lr
+	...
+
+100243b0 <regulation_sm_callbacks_init>:
+{
+100243b0:	b510      	push	{r4, lr}
+	Regulation_set_regulation_event_cb(REGULATION_STATE_AT_TARGET_VID, REGULATION_CONTROLS_ENABLE,
+100243b2:	4a03      	ldr	r2, [pc, #12]	; (100243c0 <regulation_sm_callbacks_init+0x10>)
+100243b4:	2109      	movs	r1, #9
+100243b6:	2003      	movs	r0, #3
+100243b8:	f7e3 fbd2 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+}
+100243bc:	bd10      	pop	{r4, pc}
+100243be:	46c0      	nop			; (mov r8, r8)
+100243c0:	100243ad 	.word	0x100243ad
+
+100243c4 <patch_pmbus_mfr_autogen_init>:
+
+void patch_pmbus_mfr_autogen_init(void);
+
+
+void patch_pmbus_mfr_autogen_init(void)
+{
+100243c4:	b510      	push	{r4, lr}
+	pmbus_mfr_autogen_init();
+100243c6:	f7ff fe58 	bl	1002407a <pmbus_mfr_autogen_init>
+}
+100243ca:	bd10      	pop	{r4, pc}
+
+100243cc <user_drv_init>:
+/**
+ * Main entry point of the user application.  Good place to set breakpoint when debugging a patch.
+ * This will only get executed a single time prior to configuration loading and before RTOS starts
+ */
+void user_drv_init(void)
+{
+100243cc:	b510      	push	{r4, lr}
+	memset(&user_data, 0, sizeof(USER_DATA_t));  // ZI the user data
+100243ce:	2274      	movs	r2, #116	; 0x74
+100243d0:	2100      	movs	r1, #0
+100243d2:	480d      	ldr	r0, [pc, #52]	; (10024408 <user_drv_init+0x3c>)
+100243d4:	f000 f86c 	bl	100244b0 <memset>
+
+	/*  PTC Temperature Sensor Example modification Start*/
+	ntc_temp = &user_ptc_temp_lut[0]; // to point to PTC table
+100243d8:	4a0c      	ldr	r2, [pc, #48]	; (1002440c <user_drv_init+0x40>)
+100243da:	4b0d      	ldr	r3, [pc, #52]	; (10024410 <user_drv_init+0x44>)
+100243dc:	601a      	str	r2, [r3, #0]
+	patch_rom_table.patch_Telemetry_get_adc_code = patch_Telemetry_get_adc_code;
+100243de:	4b0d      	ldr	r3, [pc, #52]	; (10024414 <user_drv_init+0x48>)
+100243e0:	490d      	ldr	r1, [pc, #52]	; (10024418 <user_drv_init+0x4c>)
+100243e2:	22f2      	movs	r2, #242	; 0xf2
+100243e4:	0052      	lsls	r2, r2, #1
+100243e6:	5099      	str	r1, [r3, r2]
+	patch_rom_table.patch_Telemetry_get = patch_Telemetry_get;
+100243e8:	490c      	ldr	r1, [pc, #48]	; (1002441c <user_drv_init+0x50>)
+100243ea:	3a04      	subs	r2, #4
+100243ec:	5099      	str	r1, [r3, r2]
+	/*  PTC Temperature Sensor Example modification End*/
+
+	// this is the initialization of user pmbus commands autogenerated from pmbus spreadsheet
+	ptr_mfr_specific_init = (mfr_specific_init_ptr) patch_pmbus_mfr_autogen_init;
+100243ee:	4a0c      	ldr	r2, [pc, #48]	; (10024420 <user_drv_init+0x54>)
+100243f0:	4b0c      	ldr	r3, [pc, #48]	; (10024424 <user_drv_init+0x58>)
+100243f2:	601a      	str	r2, [r3, #0]
+
+	// set the pointer funtion in init of regulation state machine to user callback setup for each state
+	set_module_init_cb(MODULE_REGULATION, regulation_sm_callbacks_init);
+100243f4:	490c      	ldr	r1, [pc, #48]	; (10024428 <user_drv_init+0x5c>)
+100243f6:	2002      	movs	r0, #2
+100243f8:	f7e0 fa78 	bl	100048ec <scratchpad_semaphore_release+0x33>
+
+	add_on_features_init();
+100243fc:	f7ff fe3c 	bl	10024078 <add_on_features_init>
+	regulation_sm_callbacks_init();
+10024400:	f7ff ffd6 	bl	100243b0 <regulation_sm_callbacks_init>
+
+}
+10024404:	bd10      	pop	{r4, pc}
+10024406:	46c0      	nop			; (mov r8, r8)
+10024408:	20063800 	.word	0x20063800
+1002440c:	10024570 	.word	0x10024570
+10024410:	20061348 	.word	0x20061348
+10024414:	2005d074 	.word	0x2005d074
+10024418:	1002407d 	.word	0x1002407d
+1002441c:	100240b9 	.word	0x100240b9
+10024420:	100243c5 	.word	0x100243c5
+10024424:	2005d468 	.word	0x2005d468
+10024428:	100243b1 	.word	0x100243b1
+
+1002442c <memcpy>:
+1002442c:	b5f0      	push	{r4, r5, r6, r7, lr}
+1002442e:	0005      	movs	r5, r0
+10024430:	2a0f      	cmp	r2, #15
+10024432:	d92f      	bls.n	10024494 <memcpy+0x68>
+10024434:	000b      	movs	r3, r1
+10024436:	4303      	orrs	r3, r0
+10024438:	079b      	lsls	r3, r3, #30
+1002443a:	d134      	bne.n	100244a6 <memcpy+0x7a>
+1002443c:	0016      	movs	r6, r2
+1002443e:	000c      	movs	r4, r1
+10024440:	0003      	movs	r3, r0
+10024442:	3e10      	subs	r6, #16
+10024444:	0935      	lsrs	r5, r6, #4
+10024446:	3501      	adds	r5, #1
+10024448:	012d      	lsls	r5, r5, #4
+1002444a:	1945      	adds	r5, r0, r5
+1002444c:	6827      	ldr	r7, [r4, #0]
+1002444e:	601f      	str	r7, [r3, #0]
+10024450:	6867      	ldr	r7, [r4, #4]
+10024452:	605f      	str	r7, [r3, #4]
+10024454:	68a7      	ldr	r7, [r4, #8]
+10024456:	609f      	str	r7, [r3, #8]
+10024458:	68e7      	ldr	r7, [r4, #12]
+1002445a:	3410      	adds	r4, #16
+1002445c:	60df      	str	r7, [r3, #12]
+1002445e:	3310      	adds	r3, #16
+10024460:	429d      	cmp	r5, r3
+10024462:	d1f3      	bne.n	1002444c <memcpy+0x20>
+10024464:	230f      	movs	r3, #15
+10024466:	439e      	bics	r6, r3
+10024468:	3610      	adds	r6, #16
+1002446a:	1985      	adds	r5, r0, r6
+1002446c:	1989      	adds	r1, r1, r6
+1002446e:	4013      	ands	r3, r2
+10024470:	2b03      	cmp	r3, #3
+10024472:	d91a      	bls.n	100244aa <memcpy+0x7e>
+10024474:	1f1e      	subs	r6, r3, #4
+10024476:	2300      	movs	r3, #0
+10024478:	08b4      	lsrs	r4, r6, #2
+1002447a:	3401      	adds	r4, #1
+1002447c:	00a4      	lsls	r4, r4, #2
+1002447e:	58cf      	ldr	r7, [r1, r3]
+10024480:	50ef      	str	r7, [r5, r3]
+10024482:	3304      	adds	r3, #4
+10024484:	42a3      	cmp	r3, r4
+10024486:	d1fa      	bne.n	1002447e <memcpy+0x52>
+10024488:	2403      	movs	r4, #3
+1002448a:	43a6      	bics	r6, r4
+1002448c:	1d33      	adds	r3, r6, #4
+1002448e:	4022      	ands	r2, r4
+10024490:	18c9      	adds	r1, r1, r3
+10024492:	18ed      	adds	r5, r5, r3
+10024494:	2a00      	cmp	r2, #0
+10024496:	d005      	beq.n	100244a4 <memcpy+0x78>
+10024498:	2300      	movs	r3, #0
+1002449a:	5ccc      	ldrb	r4, [r1, r3]
+1002449c:	54ec      	strb	r4, [r5, r3]
+1002449e:	3301      	adds	r3, #1
+100244a0:	4293      	cmp	r3, r2
+100244a2:	d1fa      	bne.n	1002449a <memcpy+0x6e>
+100244a4:	bdf0      	pop	{r4, r5, r6, r7, pc}
+100244a6:	0005      	movs	r5, r0
+100244a8:	e7f6      	b.n	10024498 <memcpy+0x6c>
+100244aa:	001a      	movs	r2, r3
+100244ac:	e7f2      	b.n	10024494 <memcpy+0x68>
+100244ae:	46c0      	nop			; (mov r8, r8)
+
+100244b0 <memset>:
+100244b0:	b5f0      	push	{r4, r5, r6, r7, lr}
+100244b2:	0783      	lsls	r3, r0, #30
+100244b4:	d043      	beq.n	1002453e <memset+0x8e>
+100244b6:	1e54      	subs	r4, r2, #1
+100244b8:	2a00      	cmp	r2, #0
+100244ba:	d03f      	beq.n	1002453c <memset+0x8c>
+100244bc:	b2ce      	uxtb	r6, r1
+100244be:	0002      	movs	r2, r0
+100244c0:	2503      	movs	r5, #3
+100244c2:	e002      	b.n	100244ca <memset+0x1a>
+100244c4:	001a      	movs	r2, r3
+100244c6:	3c01      	subs	r4, #1
+100244c8:	d338      	bcc.n	1002453c <memset+0x8c>
+100244ca:	1c53      	adds	r3, r2, #1
+100244cc:	7016      	strb	r6, [r2, #0]
+100244ce:	422b      	tst	r3, r5
+100244d0:	d1f8      	bne.n	100244c4 <memset+0x14>
+100244d2:	2c03      	cmp	r4, #3
+100244d4:	d92a      	bls.n	1002452c <memset+0x7c>
+100244d6:	22ff      	movs	r2, #255	; 0xff
+100244d8:	400a      	ands	r2, r1
+100244da:	0215      	lsls	r5, r2, #8
+100244dc:	4315      	orrs	r5, r2
+100244de:	042a      	lsls	r2, r5, #16
+100244e0:	4315      	orrs	r5, r2
+100244e2:	2c0f      	cmp	r4, #15
+100244e4:	d914      	bls.n	10024510 <memset+0x60>
+100244e6:	0027      	movs	r7, r4
+100244e8:	001a      	movs	r2, r3
+100244ea:	3f10      	subs	r7, #16
+100244ec:	093e      	lsrs	r6, r7, #4
+100244ee:	3601      	adds	r6, #1
+100244f0:	0136      	lsls	r6, r6, #4
+100244f2:	199e      	adds	r6, r3, r6
+100244f4:	6015      	str	r5, [r2, #0]
+100244f6:	6055      	str	r5, [r2, #4]
+100244f8:	6095      	str	r5, [r2, #8]
+100244fa:	60d5      	str	r5, [r2, #12]
+100244fc:	3210      	adds	r2, #16
+100244fe:	4296      	cmp	r6, r2
+10024500:	d1f8      	bne.n	100244f4 <memset+0x44>
+10024502:	220f      	movs	r2, #15
+10024504:	4397      	bics	r7, r2
+10024506:	3710      	adds	r7, #16
+10024508:	19db      	adds	r3, r3, r7
+1002450a:	4014      	ands	r4, r2
+1002450c:	2c03      	cmp	r4, #3
+1002450e:	d90d      	bls.n	1002452c <memset+0x7c>
+10024510:	001a      	movs	r2, r3
+10024512:	1f27      	subs	r7, r4, #4
+10024514:	08be      	lsrs	r6, r7, #2
+10024516:	3601      	adds	r6, #1
+10024518:	00b6      	lsls	r6, r6, #2
+1002451a:	199e      	adds	r6, r3, r6
+1002451c:	c220      	stmia	r2!, {r5}
+1002451e:	42b2      	cmp	r2, r6
+10024520:	d1fc      	bne.n	1002451c <memset+0x6c>
+10024522:	2203      	movs	r2, #3
+10024524:	4397      	bics	r7, r2
+10024526:	3704      	adds	r7, #4
+10024528:	19db      	adds	r3, r3, r7
+1002452a:	4014      	ands	r4, r2
+1002452c:	2c00      	cmp	r4, #0
+1002452e:	d005      	beq.n	1002453c <memset+0x8c>
+10024530:	b2c9      	uxtb	r1, r1
+10024532:	191c      	adds	r4, r3, r4
+10024534:	7019      	strb	r1, [r3, #0]
+10024536:	3301      	adds	r3, #1
+10024538:	429c      	cmp	r4, r3
+1002453a:	d1fb      	bne.n	10024534 <memset+0x84>
+1002453c:	bdf0      	pop	{r4, r5, r6, r7, pc}
+1002453e:	0014      	movs	r4, r2
+10024540:	0003      	movs	r3, r0
+10024542:	e7c6      	b.n	100244d2 <memset+0x22>
+10024544:	100240d4 	.word	0x100240d4
+10024548:	100241c0 	.word	0x100241c0
+1002454c:	10024244 	.word	0x10024244
+10024550:	10024270 	.word	0x10024270
+10024554:	1002429c 	.word	0x1002429c
+10024558:	100242ac 	.word	0x100242ac
+1002455c:	100242b2 	.word	0x100242b2
+10024560:	100242c4 	.word	0x100242c4
+10024564:	100242f4 	.word	0x100242f4
+10024568:	100242b8 	.word	0x100242b8
+1002456c:	100242be 	.word	0x100242be
+
+10024570 <user_ptc_temp_lut>:
+10024570:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+10024580:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+10024590:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+100245a0:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+100245b0:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+100245c0:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+100245d0:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+100245e0:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+100245f0:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+10024600:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+10024610:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+10024620:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+10024630:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+10024640:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+10024650:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+10024660:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+10024670:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+10024680:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+10024690:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+100246a0:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+100246b0:	ffd8ffd8 ffd8ffd8 ffd8ffd8 ffd8ffd8     ................
+100246c0:	ffd8ffd8 ffd9ffd8 ffd9ffd9 ffd9ffd9     ................
+100246d0:	ffd9ffd9 ffd9ffd9 ffd9ffd9 ffd9ffd9     ................
+100246e0:	ffd9ffd9 ffd9ffd9 ffdaffda ffdaffda     ................
+100246f0:	ffdaffda ffdaffda ffdaffda ffdaffda     ................
+10024700:	ffdbffdb ffdbffdb ffdbffdb ffdbffdb     ................
+10024710:	ffdcffdb ffdcffdc ffdcffdc ffdcffdc     ................
+10024720:	ffddffdd ffddffdd ffdeffdd ffdeffde     ................
+10024730:	ffe0ffdf ffe1ffe1 ffe3ffe2 ffe5ffe4     ................
+10024740:	ffe6ffe5 ffe8ffe7 ffe9ffe9 ffebffea     ................
+10024750:	ffedffec ffeeffed fff0ffef fff1fff1     ................
+10024760:	fff3fff2 fff5fff4 fff6fff5 fff8fff7     ................
+10024770:	fff9fff8 fffbfffa fffcfffb fffefffd     ................
+10024780:	fffffffe 00010000 00020001 00040003     ................
+10024790:	00050004 00070006 00080007 000a0009     ................
+100247a0:	000b000a 000c000c 000e000d 000f000e     ................
+100247b0:	00110010 00120011 00140013 00150014     ................
+100247c0:	00160015 00180017 00190019 001b001a     ................
+100247d0:	001c001b 001d001d 001f001e 0020001f     .............. .
+100247e0:	00220021 00230022 00240024 00260025     !.".".#.$.$.%.&.
+100247f0:	00270026 00280028 002a0029 002b002a     &.'.(.(.).*.*.+.
+10024800:	002c002c 002e002d 002f002e 0030002f     ,.,.-....././.0.
+10024810:	00310030 00330032 00340034 00360035     0.1.2.3.4.4.5.6.
+10024820:	00370036 00380038 003a0039 003b003a     6.7.8.8.9.:.:.;.
+10024830:	003c003b 003d003d 003f003e 00400040     ;.<.=.=.>.?.@.@.
+10024840:	00410041 00430042 00440043 00450045     A.A.B.C.C.D.E.E.
+10024850:	00460046 00480047 00490048 004a0049     F.F.G.H.H.I.I.J.
+10024860:	004b004a 004c004b 004e004d 004f004f     J.K.K.L.M.N.O.O.
+10024870:	00510050 00520051 00530052 00540054     P.Q.Q.R.R.S.T.T.
+10024880:	00560055 00570056 00570057 00590058     U.V.V.W.W.W.X.Y.
+10024890:	005a0059 005c005b 005d005c 005e005e     Y.Z.[.\.\.].^.^.
+100248a0:	005f005f 00610060 00630062 00640064     _._.`.a.b.c.d.d.
+100248b0:	00640064 00660065 00670066 00680067     d.d.e.f.f.g.g.h.
+100248c0:	00690069 006a006a 006c006b 006d006c     i.i.j.j.k.l.l.m.
+100248d0:	006e006d 0070006f 00710070 00720071     m.n.o.p.p.q.q.r.
+100248e0:	00730072 00740073 00750074 00760076     r.s.s.t.t.u.v.v.
+100248f0:	00780077 00790078 007a007a 007b007b     w.x.x.y.z.z.{.{.
+10024900:	007d007c 007e007d 007f007e 0080007f     |.}.}.~.~.......
+10024910:	00810081 00820082 00840083 00850084     ................
+10024920:	00860086 00870087 00880088 00890089     ................
+10024930:	008a008a 008c008b 008d008c 008f008e     ................
+10024940:	008f008f 00910090 00920091 00940093     ................
+10024950:	00940094 00950095 00950095 00960095     ................
+10024960:	00960096 00960096 00960096 00960096     ................

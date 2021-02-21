@@ -1,0 +1,1257 @@
+
+.\build\patch/patch.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .bss          000001a8  20063800  20063800  00023800  2**2
+                  ALLOC
+  1 .otp_data     00004000  10020000  10020000  00010000  2**0
+                  ALLOC
+  2 .otp_header   0000001c  10024000  10024000  00010000  2**0
+                  ALLOC
+  3 .txt          00000718  1002401c  1002401c  0001401c  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  4 .otp_patch2   00004000  10024734  10024734  00014734  2**0
+                  ALLOC
+  5 .otp_patch3   00004000  10028734  10028734  00014734  2**0
+                  ALLOC
+  6 .debug_info   0001948c  00000000  00000000  00014734  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 00000fb0  00000000  00000000  0002dbc0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_loc    00000d7c  00000000  00000000  0002eb70  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_aranges 000000f8  00000000  00000000  0002f8ec  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000220  00000000  00000000  0002f9e4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_macro  0000a4d6  00000000  00000000  0002fc04  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_line   000032ff  00000000  00000000  0003a0da  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_str    00065740  00000000  00000000  0003d3d9  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 14 .comment      0000007f  00000000  00000000  000a2b19  2**0
+                  CONTENTS, READONLY
+ 15 .ARM.attributes 00000031  00000000  00000000  000a2b98  2**0
+                  CONTENTS, READONLY
+ 16 .debug_frame  000001e4  00000000  00000000  000a2bcc  2**2
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .txt:
+
+1002401c <patch_entry>:
+/**
+ * This is the patch entry point, which is called after the patch got
+ * successfully loaded into RAM.
+ */
+void patch_entry(void)
+{
+1002401c:	b510      	push	{r4, lr}
+    // Initialize the .bss and .data section
+    memset(SECTION_BASE_ZI, 0, SECTION_LENGTH_ZI);
+1002401e:	480c      	ldr	r0, [pc, #48]	; (10024050 <patch_entry+0x34>)
+10024020:	4a0c      	ldr	r2, [pc, #48]	; (10024054 <patch_entry+0x38>)
+10024022:	1a12      	subs	r2, r2, r0
+10024024:	2100      	movs	r1, #0
+10024026:	f000 fb3b 	bl	100246a0 <memset>
+    memcpy(SECTION_BASE_RW_DESTINATION, SECTION_BASE_RW_SOURCE, SECTION_LENGTH_RW);
+1002402a:	480b      	ldr	r0, [pc, #44]	; (10024058 <patch_entry+0x3c>)
+1002402c:	4a0b      	ldr	r2, [pc, #44]	; (1002405c <patch_entry+0x40>)
+1002402e:	1a12      	subs	r2, r2, r0
+10024030:	490b      	ldr	r1, [pc, #44]	; (10024060 <patch_entry+0x44>)
+10024032:	f000 faf3 	bl	1002461c <memcpy>
+    // Initialize ram execution section
+    memcpy(SECTION_BASE_RAM_EXEC_DESTINATION, SECTION_BASE_RAM_EXEC_SOURCE, SECTION_LENGTH_RAM_EXEC);
+10024036:	480b      	ldr	r0, [pc, #44]	; (10024064 <patch_entry+0x48>)
+10024038:	4a0b      	ldr	r2, [pc, #44]	; (10024068 <patch_entry+0x4c>)
+1002403a:	1a12      	subs	r2, r2, r0
+1002403c:	490b      	ldr	r1, [pc, #44]	; (1002406c <patch_entry+0x50>)
+1002403e:	f000 faed 	bl	1002461c <memcpy>
+/* lint requires us to have both a declaration and a definition ... we
+ * could probably bail out through some local lint, but her we simply
+ * play to the rules.
+ */
+HAL_INLINE void HAL_SET32(volatile uint32_t* addr, uint32_t val) {
+    *addr = val;
+10024042:	4a0b      	ldr	r2, [pc, #44]	; (10024070 <patch_entry+0x54>)
+10024044:	4b0b      	ldr	r3, [pc, #44]	; (10024074 <patch_entry+0x58>)
+10024046:	601a      	str	r2, [r3, #0]
+
+
+    SCU_SPARE_FF__SET(0x5971BBBBUL);  // write the patch id to SCU spare for simple test that patch loaded
+    user_drv_init();
+10024048:	f000 facc 	bl	100245e4 <user_drv_init>
+}
+1002404c:	bd10      	pop	{r4, pc}
+1002404e:	46c0      	nop			; (mov r8, r8)
+10024050:	20063800 	.word	0x20063800
+10024054:	200639a8 	.word	0x200639a8
+10024058:	20063800 	.word	0x20063800
+1002405c:	20063800 	.word	0x20063800
+10024060:	10024734 	.word	0x10024734
+10024064:	200639a8 	.word	0x200639a8
+10024068:	200639a8 	.word	0x200639a8
+1002406c:	10024734 	.word	0x10024734
+10024070:	5971bbbb 	.word	0x5971bbbb
+10024074:	40000020 	.word	0x40000020
+
+10024078 <adaptive_deadtime_adjustment>:
+ * Function to adjust the deadtime settings according to the threshold level
+ * Regulation_set_regulation_event_cb(REGULATION_STATE_AT_TARGET_VID, REGULATION_CONTROLS_TELEMETRY_UPDATED, adaptive_deadtime_adjustment);
+ * @param loop select the pmbus page to operate on
+ */
+void adaptive_deadtime_adjustment(PMBUS_PAGE_t loop)
+{
+10024078:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+1002407a:	46de      	mov	lr, fp
+1002407c:	4657      	mov	r7, sl
+1002407e:	464e      	mov	r6, r9
+10024080:	4645      	mov	r5, r8
+10024082:	b5e0      	push	{r5, r6, r7, lr}
+10024084:	0004      	movs	r4, r0
+	int16_t exponent, mantissa;
+
+	// 1. GET ALL NECESSARY THRESHOLD AND HYSTERESIS VALUE FROM PMBUS MFR COMMANDS
+	exponent = (int16_t)LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST));
+10024086:	21b1      	movs	r1, #177	; 0xb1
+10024088:	f7dd fae6 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+ * Takes a linear11 format (16bit, 5bit exponent 11bit mantissa) number
+ * and extracts the exponent
+ */
+__DRIVER_INLINE int32_t LINEAR11_TO_EXPONENT(uint16_t packed_linear_format_number)
+{
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+1002408c:	0ac0      	lsrs	r0, r0, #11
+1002408e:	b280      	uxth	r0, r0
+	int32_t exp_signbit=exp_bits & 0x0010;
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10024090:	06c3      	lsls	r3, r0, #27
+10024092:	d502      	bpl.n	1002409a <adaptive_deadtime_adjustment+0x22>
+10024094:	2520      	movs	r5, #32
+10024096:	426d      	negs	r5, r5
+10024098:	4328      	orrs	r0, r5
+1002409a:	b205      	sxth	r5, r0
+	mantissa = (int16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST));
+1002409c:	21b1      	movs	r1, #177	; 0xb1
+1002409e:	0020      	movs	r0, r4
+100240a0:	f7dd fada 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+100240a4:	0542      	lsls	r2, r0, #21
+100240a6:	0d52      	lsrs	r2, r2, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100240a8:	0543      	lsls	r3, r0, #21
+100240aa:	d500      	bpl.n	100240ae <adaptive_deadtime_adjustment+0x36>
+100240ac:	e07d      	b.n	100241aa <adaptive_deadtime_adjustment+0x132>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+100240ae:	0013      	movs	r3, r2
+	uint32_t hyst = (uint32_t)SHIFT_EXPONENT(mantissa, exponent);
+100240b0:	b21b      	sxth	r3, r3
+		exponent = -exponent;
+		value = value >> (exponent);
+	}
+	else
+	{
+		value = value << (exponent);
+100240b2:	001a      	movs	r2, r3
+100240b4:	40aa      	lsls	r2, r5
+100240b6:	4693      	mov	fp, r2
+	if ( exponent <= 0)
+100240b8:	2d00      	cmp	r5, #0
+100240ba:	dc00      	bgt.n	100240be <adaptive_deadtime_adjustment+0x46>
+100240bc:	e078      	b.n	100241b0 <adaptive_deadtime_adjustment+0x138>
+
+	exponent = (int16_t)LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1));
+100240be:	21b2      	movs	r1, #178	; 0xb2
+100240c0:	0020      	movs	r0, r4
+100240c2:	f7dd fac9 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+100240c6:	0ac0      	lsrs	r0, r0, #11
+100240c8:	b280      	uxth	r0, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+100240ca:	06c3      	lsls	r3, r0, #27
+100240cc:	d502      	bpl.n	100240d4 <adaptive_deadtime_adjustment+0x5c>
+100240ce:	2520      	movs	r5, #32
+100240d0:	426d      	negs	r5, r5
+100240d2:	4328      	orrs	r0, r5
+100240d4:	b205      	sxth	r5, r0
+	mantissa = (int16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1));
+100240d6:	21b2      	movs	r1, #178	; 0xb2
+100240d8:	0020      	movs	r0, r4
+100240da:	f7dd fabd 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+100240de:	0542      	lsls	r2, r0, #21
+100240e0:	0d52      	lsrs	r2, r2, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100240e2:	0543      	lsls	r3, r0, #21
+100240e4:	d468      	bmi.n	100241b8 <adaptive_deadtime_adjustment+0x140>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+100240e6:	0013      	movs	r3, r2
+	uint32_t thres_1 = (uint32_t)SHIFT_EXPONENT(mantissa, exponent);
+100240e8:	b21b      	sxth	r3, r3
+		value = value << (exponent);
+100240ea:	001e      	movs	r6, r3
+100240ec:	40ae      	lsls	r6, r5
+	if ( exponent <= 0)
+100240ee:	2d00      	cmp	r5, #0
+100240f0:	dd65      	ble.n	100241be <adaptive_deadtime_adjustment+0x146>
+
+	exponent = (int16_t)LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2));
+100240f2:	21b3      	movs	r1, #179	; 0xb3
+100240f4:	0020      	movs	r0, r4
+100240f6:	f7dd faaf 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+100240fa:	0ac0      	lsrs	r0, r0, #11
+100240fc:	b280      	uxth	r0, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+100240fe:	06c3      	lsls	r3, r0, #27
+10024100:	d502      	bpl.n	10024108 <adaptive_deadtime_adjustment+0x90>
+10024102:	2320      	movs	r3, #32
+10024104:	425b      	negs	r3, r3
+10024106:	4318      	orrs	r0, r3
+10024108:	b207      	sxth	r7, r0
+	mantissa = (int16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2));
+1002410a:	21b3      	movs	r1, #179	; 0xb3
+1002410c:	0020      	movs	r0, r4
+1002410e:	f7dd faa3 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024112:	0542      	lsls	r2, r0, #21
+10024114:	0d52      	lsrs	r2, r2, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024116:	0543      	lsls	r3, r0, #21
+10024118:	d455      	bmi.n	100241c6 <adaptive_deadtime_adjustment+0x14e>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+1002411a:	0013      	movs	r3, r2
+	uint32_t thres_2 = (uint32_t)SHIFT_EXPONENT(mantissa, exponent);
+1002411c:	b21b      	sxth	r3, r3
+		value = value << (exponent);
+1002411e:	001d      	movs	r5, r3
+10024120:	40bd      	lsls	r5, r7
+	if ( exponent <= 0)
+10024122:	2f00      	cmp	r7, #0
+10024124:	dd52      	ble.n	100241cc <adaptive_deadtime_adjustment+0x154>
+
+	exponent = (int16_t)LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3));
+10024126:	21b4      	movs	r1, #180	; 0xb4
+10024128:	0020      	movs	r0, r4
+1002412a:	f7dd fa95 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+1002412e:	0ac0      	lsrs	r0, r0, #11
+10024130:	b280      	uxth	r0, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10024132:	06c3      	lsls	r3, r0, #27
+10024134:	d502      	bpl.n	1002413c <adaptive_deadtime_adjustment+0xc4>
+10024136:	2320      	movs	r3, #32
+10024138:	425b      	negs	r3, r3
+1002413a:	4318      	orrs	r0, r3
+1002413c:	b207      	sxth	r7, r0
+	mantissa = (int16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3));
+1002413e:	21b4      	movs	r1, #180	; 0xb4
+10024140:	0020      	movs	r0, r4
+10024142:	f7dd fa89 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024146:	0542      	lsls	r2, r0, #21
+10024148:	0d52      	lsrs	r2, r2, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+1002414a:	0543      	lsls	r3, r0, #21
+1002414c:	d442      	bmi.n	100241d4 <adaptive_deadtime_adjustment+0x15c>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+1002414e:	0013      	movs	r3, r2
+	uint32_t thres_3 = (uint32_t)SHIFT_EXPONENT(mantissa, exponent);
+10024150:	b21b      	sxth	r3, r3
+		value = value << (exponent);
+10024152:	001a      	movs	r2, r3
+10024154:	40ba      	lsls	r2, r7
+	if ( exponent <= 0)
+10024156:	2f00      	cmp	r7, #0
+10024158:	dd3f      	ble.n	100241da <adaptive_deadtime_adjustment+0x162>
+1002415a:	4690      	mov	r8, r2
+
+	exponent = (int16_t)LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_IOUT_OC_FAULT_LIMIT));
+1002415c:	2146      	movs	r1, #70	; 0x46
+1002415e:	0020      	movs	r0, r4
+10024160:	f7dd fa7a 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+10024164:	0ac0      	lsrs	r0, r0, #11
+10024166:	b280      	uxth	r0, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+10024168:	06c3      	lsls	r3, r0, #27
+1002416a:	d502      	bpl.n	10024172 <adaptive_deadtime_adjustment+0xfa>
+1002416c:	2320      	movs	r3, #32
+1002416e:	425b      	negs	r3, r3
+10024170:	4318      	orrs	r0, r3
+10024172:	b207      	sxth	r7, r0
+	mantissa = (int16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_IOUT_OC_FAULT_LIMIT));
+10024174:	2146      	movs	r1, #70	; 0x46
+10024176:	0020      	movs	r0, r4
+10024178:	f7dd fa6e 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+1002417c:	0542      	lsls	r2, r0, #21
+1002417e:	0d52      	lsrs	r2, r2, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024180:	0543      	lsls	r3, r0, #21
+10024182:	d42e      	bmi.n	100241e2 <adaptive_deadtime_adjustment+0x16a>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+10024184:	0013      	movs	r3, r2
+	uint32_t iout_max = (uint32_t)SHIFT_EXPONENT(mantissa, exponent);
+10024186:	b21b      	sxth	r3, r3
+		value = value << (exponent);
+10024188:	001a      	movs	r2, r3
+1002418a:	40ba      	lsls	r2, r7
+	if ( exponent <= 0)
+1002418c:	2f00      	cmp	r7, #0
+1002418e:	dd2b      	ble.n	100241e8 <adaptive_deadtime_adjustment+0x170>
+10024190:	4691      	mov	r9, r2
+
+	// 2. CHECK WHETHER THRESHOLD AND HYSTERESIS MAKE SENSE
+	if ((iout_max > thres_3) && (thres_3 > thres_2) && (thres_2 > thres_1))
+10024192:	4590      	cmp	r8, r2
+10024194:	d203      	bcs.n	1002419e <adaptive_deadtime_adjustment+0x126>
+10024196:	4545      	cmp	r5, r8
+10024198:	d201      	bcs.n	1002419e <adaptive_deadtime_adjustment+0x126>
+1002419a:	42ae      	cmp	r6, r5
+1002419c:	d328      	bcc.n	100241f0 <adaptive_deadtime_adjustment+0x178>
+				}
+				pwm++;
+			}
+		}
+	}
+}
+1002419e:	bc3c      	pop	{r2, r3, r4, r5}
+100241a0:	4690      	mov	r8, r2
+100241a2:	4699      	mov	r9, r3
+100241a4:	46a2      	mov	sl, r4
+100241a6:	46ab      	mov	fp, r5
+100241a8:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100241aa:	4b99      	ldr	r3, [pc, #612]	; (10024410 <adaptive_deadtime_adjustment+0x398>)
+100241ac:	4313      	orrs	r3, r2
+100241ae:	e77f      	b.n	100240b0 <adaptive_deadtime_adjustment+0x38>
+		exponent = -exponent;
+100241b0:	426d      	negs	r5, r5
+		value = value >> (exponent);
+100241b2:	412b      	asrs	r3, r5
+100241b4:	469b      	mov	fp, r3
+100241b6:	e782      	b.n	100240be <adaptive_deadtime_adjustment+0x46>
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100241b8:	4b95      	ldr	r3, [pc, #596]	; (10024410 <adaptive_deadtime_adjustment+0x398>)
+100241ba:	4313      	orrs	r3, r2
+100241bc:	e794      	b.n	100240e8 <adaptive_deadtime_adjustment+0x70>
+		exponent = -exponent;
+100241be:	426d      	negs	r5, r5
+		value = value >> (exponent);
+100241c0:	412b      	asrs	r3, r5
+100241c2:	001e      	movs	r6, r3
+100241c4:	e795      	b.n	100240f2 <adaptive_deadtime_adjustment+0x7a>
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100241c6:	4b92      	ldr	r3, [pc, #584]	; (10024410 <adaptive_deadtime_adjustment+0x398>)
+100241c8:	4313      	orrs	r3, r2
+100241ca:	e7a7      	b.n	1002411c <adaptive_deadtime_adjustment+0xa4>
+		exponent = -exponent;
+100241cc:	4278      	negs	r0, r7
+		value = value >> (exponent);
+100241ce:	4103      	asrs	r3, r0
+100241d0:	001d      	movs	r5, r3
+100241d2:	e7a8      	b.n	10024126 <adaptive_deadtime_adjustment+0xae>
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100241d4:	4b8e      	ldr	r3, [pc, #568]	; (10024410 <adaptive_deadtime_adjustment+0x398>)
+100241d6:	4313      	orrs	r3, r2
+100241d8:	e7ba      	b.n	10024150 <adaptive_deadtime_adjustment+0xd8>
+		exponent = -exponent;
+100241da:	4278      	negs	r0, r7
+		value = value >> (exponent);
+100241dc:	4103      	asrs	r3, r0
+100241de:	001a      	movs	r2, r3
+100241e0:	e7bb      	b.n	1002415a <adaptive_deadtime_adjustment+0xe2>
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+100241e2:	4b8b      	ldr	r3, [pc, #556]	; (10024410 <adaptive_deadtime_adjustment+0x398>)
+100241e4:	4313      	orrs	r3, r2
+100241e6:	e7ce      	b.n	10024186 <adaptive_deadtime_adjustment+0x10e>
+		exponent = -exponent;
+100241e8:	4278      	negs	r0, r7
+		value = value >> (exponent);
+100241ea:	4103      	asrs	r3, r0
+100241ec:	001a      	movs	r2, r3
+100241ee:	e7cf      	b.n	10024190 <adaptive_deadtime_adjustment+0x118>
+		exponent = (int16_t)LINEAR11_TO_EXPONENT(PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_READ_IOUT));
+100241f0:	218c      	movs	r1, #140	; 0x8c
+100241f2:	0020      	movs	r0, r4
+100241f4:	f7dd fa30 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+	int32_t exp_bits=(packed_linear_format_number >> 11) & 0x1f;
+100241f8:	0ac0      	lsrs	r0, r0, #11
+100241fa:	b280      	uxth	r0, r0
+	return ((int32_t) (exp_signbit ? (exp_bits | 0xffffffe0) : exp_bits));
+100241fc:	06c3      	lsls	r3, r0, #27
+100241fe:	d502      	bpl.n	10024206 <adaptive_deadtime_adjustment+0x18e>
+10024200:	2320      	movs	r3, #32
+10024202:	425b      	negs	r3, r3
+10024204:	4318      	orrs	r0, r3
+10024206:	b203      	sxth	r3, r0
+10024208:	469a      	mov	sl, r3
+		mantissa = (int16_t)LINEAR11_TO_MANTISSA(PMBUS_Get_Command_Word(loop, PMBUS_CMDCODE_READ_IOUT));
+1002420a:	218c      	movs	r1, #140	; 0x8c
+1002420c:	0020      	movs	r0, r4
+1002420e:	f7dd fa23 	bl	10001658 <PMBUS_Get_Command_Dword+0x3f>
+10024212:	0543      	lsls	r3, r0, #21
+10024214:	0d5b      	lsrs	r3, r3, #21
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024216:	0542      	lsls	r2, r0, #21
+10024218:	d41a      	bmi.n	10024250 <adaptive_deadtime_adjustment+0x1d8>
+	int32_t mant_bits=packed_linear_format_number & 0x07ff;
+1002421a:	001a      	movs	r2, r3
+		uint32_t iout = (uint32_t)SHIFT_EXPONENT(mantissa, exponent);
+1002421c:	b212      	sxth	r2, r2
+		value = value << (exponent);
+1002421e:	0013      	movs	r3, r2
+10024220:	4651      	mov	r1, sl
+10024222:	408b      	lsls	r3, r1
+	if ( exponent <= 0)
+10024224:	2900      	cmp	r1, #0
+10024226:	dd16      	ble.n	10024256 <adaptive_deadtime_adjustment+0x1de>
+	uint32_t hyst = (uint32_t)SHIFT_EXPONENT(mantissa, exponent);
+10024228:	465f      	mov	r7, fp
+		if (iout < iout_max && iout >= thres_3)	// 	Region D
+1002422a:	4599      	cmp	r9, r3
+1002422c:	d941      	bls.n	100242b2 <adaptive_deadtime_adjustment+0x23a>
+1002422e:	4598      	cmp	r8, r3
+10024230:	d84b      	bhi.n	100242ca <adaptive_deadtime_adjustment+0x252>
+			user_data.deadtime_curr_region = 3;	// Region D
+10024232:	2003      	movs	r0, #3
+10024234:	2272      	movs	r2, #114	; 0x72
+10024236:	4977      	ldr	r1, [pc, #476]	; (10024414 <adaptive_deadtime_adjustment+0x39c>)
+10024238:	5288      	strh	r0, [r1, r2]
+			if (iout >= (thres_3 + hyst))
+1002423a:	4447      	add	r7, r8
+1002423c:	42bb      	cmp	r3, r7
+1002423e:	d314      	bcc.n	1002426a <adaptive_deadtime_adjustment+0x1f2>
+ * @param cmd Selects the pmbus command to operate on.
+ * @return Returns the pointer to the uint8_t data array.
+ */
+__DRIVER_COMMON_INLINE uint8_t * PMBUS_GET_DATA_ARRAY_POINTER(PMBUS_PAGE_t loop, uint8_t cmd)  // worth 5k code size to inline
+{
+	if (loop==PMBUS_PAGE_0)
+10024240:	2c00      	cmp	r4, #0
+10024242:	d10c      	bne.n	1002425e <adaptive_deadtime_adjustment+0x1e6>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA0;
+10024244:	23b7      	movs	r3, #183	; 0xb7
+10024246:	009b      	lsls	r3, r3, #2
+10024248:	4a73      	ldr	r2, [pc, #460]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+1002424a:	58d3      	ldr	r3, [r2, r3]
+1002424c:	689d      	ldr	r5, [r3, #8]
+1002424e:	e0bb      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+	return ((int32_t) (mant_signbit ? (mant_bits | 0xfffff800) : mant_bits));
+10024250:	4a6f      	ldr	r2, [pc, #444]	; (10024410 <adaptive_deadtime_adjustment+0x398>)
+10024252:	431a      	orrs	r2, r3
+10024254:	e7e2      	b.n	1002421c <adaptive_deadtime_adjustment+0x1a4>
+		exponent = -exponent;
+10024256:	4248      	negs	r0, r1
+		value = value >> (exponent);
+10024258:	0013      	movs	r3, r2
+1002425a:	4103      	asrs	r3, r0
+1002425c:	e7e4      	b.n	10024228 <adaptive_deadtime_adjustment+0x1b0>
+	else //if (loop==PMBUS_PAGE_1)
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA1;
+1002425e:	23b7      	movs	r3, #183	; 0xb7
+10024260:	009b      	lsls	r3, r3, #2
+10024262:	4a6d      	ldr	r2, [pc, #436]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+10024264:	58d3      	ldr	r3, [r2, r3]
+10024266:	68dd      	ldr	r5, [r3, #12]
+10024268:	e0ae      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+				switch(user_data.deadtime_prev_region)
+1002426a:	2374      	movs	r3, #116	; 0x74
+1002426c:	4a69      	ldr	r2, [pc, #420]	; (10024414 <adaptive_deadtime_adjustment+0x39c>)
+1002426e:	5ad3      	ldrh	r3, [r2, r3]
+10024270:	2b00      	cmp	r3, #0
+10024272:	d010      	beq.n	10024296 <adaptive_deadtime_adjustment+0x21e>
+10024274:	2b01      	cmp	r3, #1
+10024276:	d000      	beq.n	1002427a <adaptive_deadtime_adjustment+0x202>
+10024278:	e0c3      	b.n	10024402 <adaptive_deadtime_adjustment+0x38a>
+	if (loop==PMBUS_PAGE_0)
+1002427a:	2c00      	cmp	r4, #0
+1002427c:	d105      	bne.n	1002428a <adaptive_deadtime_adjustment+0x212>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA0;
+1002427e:	23b7      	movs	r3, #183	; 0xb7
+10024280:	009b      	lsls	r3, r3, #2
+10024282:	4a65      	ldr	r2, [pc, #404]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+10024284:	58d3      	ldr	r3, [r2, r3]
+10024286:	689d      	ldr	r5, [r3, #8]
+10024288:	e09e      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA1;
+1002428a:	23b7      	movs	r3, #183	; 0xb7
+1002428c:	009b      	lsls	r3, r3, #2
+1002428e:	4a62      	ldr	r2, [pc, #392]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+10024290:	58d3      	ldr	r3, [r2, r3]
+10024292:	68dd      	ldr	r5, [r3, #12]
+10024294:	e098      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+	if (loop==PMBUS_PAGE_0)
+10024296:	2c00      	cmp	r4, #0
+10024298:	d105      	bne.n	100242a6 <adaptive_deadtime_adjustment+0x22e>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA0;
+1002429a:	23b7      	movs	r3, #183	; 0xb7
+1002429c:	009b      	lsls	r3, r3, #2
+1002429e:	4a5e      	ldr	r2, [pc, #376]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+100242a0:	58d3      	ldr	r3, [r2, r3]
+100242a2:	689d      	ldr	r5, [r3, #8]
+100242a4:	e090      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA1;
+100242a6:	23b7      	movs	r3, #183	; 0xb7
+100242a8:	009b      	lsls	r3, r3, #2
+100242aa:	4a5b      	ldr	r2, [pc, #364]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+100242ac:	58d3      	ldr	r3, [r2, r3]
+100242ae:	68dd      	ldr	r5, [r3, #12]
+100242b0:	e08a      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+		else if (iout < thres_3 && iout >= thres_2)	// Region C
+100242b2:	4598      	cmp	r8, r3
+100242b4:	d809      	bhi.n	100242ca <adaptive_deadtime_adjustment+0x252>
+		else if (iout < thres_2 && iout >= thres_1)	// Region B
+100242b6:	429d      	cmp	r5, r3
+100242b8:	d841      	bhi.n	1002433e <adaptive_deadtime_adjustment+0x2c6>
+		else if (iout < thres_1)	// Region A
+100242ba:	429e      	cmp	r6, r3
+100242bc:	d879      	bhi.n	100243b2 <adaptive_deadtime_adjustment+0x33a>
+		user_data.deadtime_prev_region = user_data.deadtime_curr_region;
+100242be:	4b55      	ldr	r3, [pc, #340]	; (10024414 <adaptive_deadtime_adjustment+0x39c>)
+100242c0:	2272      	movs	r2, #114	; 0x72
+100242c2:	5a99      	ldrh	r1, [r3, r2]
+100242c4:	3202      	adds	r2, #2
+100242c6:	5299      	strh	r1, [r3, r2]
+100242c8:	e769      	b.n	1002419e <adaptive_deadtime_adjustment+0x126>
+		else if (iout < thres_3 && iout >= thres_2)	// Region C
+100242ca:	429d      	cmp	r5, r3
+100242cc:	d837      	bhi.n	1002433e <adaptive_deadtime_adjustment+0x2c6>
+			user_data.deadtime_curr_region = 2;	// Region C
+100242ce:	2002      	movs	r0, #2
+100242d0:	2272      	movs	r2, #114	; 0x72
+100242d2:	4950      	ldr	r1, [pc, #320]	; (10024414 <adaptive_deadtime_adjustment+0x39c>)
+100242d4:	5288      	strh	r0, [r1, r2]
+			if (iout >= (thres_2 + hyst))
+100242d6:	197d      	adds	r5, r7, r5
+100242d8:	42ab      	cmp	r3, r5
+100242da:	d30d      	bcc.n	100242f8 <adaptive_deadtime_adjustment+0x280>
+	if (loop==PMBUS_PAGE_0)
+100242dc:	2c00      	cmp	r4, #0
+100242de:	d105      	bne.n	100242ec <adaptive_deadtime_adjustment+0x274>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA0;
+100242e0:	23b6      	movs	r3, #182	; 0xb6
+100242e2:	009b      	lsls	r3, r3, #2
+100242e4:	4a4c      	ldr	r2, [pc, #304]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+100242e6:	58d3      	ldr	r3, [r2, r3]
+100242e8:	689d      	ldr	r5, [r3, #8]
+100242ea:	e06d      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA1;
+100242ec:	23b6      	movs	r3, #182	; 0xb6
+100242ee:	009b      	lsls	r3, r3, #2
+100242f0:	4a49      	ldr	r2, [pc, #292]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+100242f2:	58d3      	ldr	r3, [r2, r3]
+100242f4:	68dd      	ldr	r5, [r3, #12]
+100242f6:	e067      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+				switch(user_data.deadtime_prev_region)
+100242f8:	2374      	movs	r3, #116	; 0x74
+100242fa:	4a46      	ldr	r2, [pc, #280]	; (10024414 <adaptive_deadtime_adjustment+0x39c>)
+100242fc:	5ad3      	ldrh	r3, [r2, r3]
+100242fe:	2b00      	cmp	r3, #0
+10024300:	d00f      	beq.n	10024322 <adaptive_deadtime_adjustment+0x2aa>
+10024302:	2b03      	cmp	r3, #3
+10024304:	d17d      	bne.n	10024402 <adaptive_deadtime_adjustment+0x38a>
+	if (loop==PMBUS_PAGE_0)
+10024306:	2c00      	cmp	r4, #0
+10024308:	d105      	bne.n	10024316 <adaptive_deadtime_adjustment+0x29e>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA0;
+1002430a:	23b6      	movs	r3, #182	; 0xb6
+1002430c:	009b      	lsls	r3, r3, #2
+1002430e:	4a42      	ldr	r2, [pc, #264]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+10024310:	58d3      	ldr	r3, [r2, r3]
+10024312:	689d      	ldr	r5, [r3, #8]
+10024314:	e058      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA1;
+10024316:	23b6      	movs	r3, #182	; 0xb6
+10024318:	009b      	lsls	r3, r3, #2
+1002431a:	4a3f      	ldr	r2, [pc, #252]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+1002431c:	58d3      	ldr	r3, [r2, r3]
+1002431e:	68dd      	ldr	r5, [r3, #12]
+10024320:	e052      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+	if (loop==PMBUS_PAGE_0)
+10024322:	2c00      	cmp	r4, #0
+10024324:	d105      	bne.n	10024332 <adaptive_deadtime_adjustment+0x2ba>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA0;
+10024326:	23b6      	movs	r3, #182	; 0xb6
+10024328:	009b      	lsls	r3, r3, #2
+1002432a:	4a3b      	ldr	r2, [pc, #236]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+1002432c:	58d3      	ldr	r3, [r2, r3]
+1002432e:	689d      	ldr	r5, [r3, #8]
+10024330:	e04a      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA1;
+10024332:	23b6      	movs	r3, #182	; 0xb6
+10024334:	009b      	lsls	r3, r3, #2
+10024336:	4a38      	ldr	r2, [pc, #224]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+10024338:	58d3      	ldr	r3, [r2, r3]
+1002433a:	68dd      	ldr	r5, [r3, #12]
+1002433c:	e044      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+		else if (iout < thres_2 && iout >= thres_1)	// Region B
+1002433e:	429e      	cmp	r6, r3
+10024340:	d837      	bhi.n	100243b2 <adaptive_deadtime_adjustment+0x33a>
+			user_data.deadtime_curr_region = 1;	// Region B
+10024342:	2001      	movs	r0, #1
+10024344:	2272      	movs	r2, #114	; 0x72
+10024346:	4933      	ldr	r1, [pc, #204]	; (10024414 <adaptive_deadtime_adjustment+0x39c>)
+10024348:	5288      	strh	r0, [r1, r2]
+			if (iout >= (thres_1 + hyst))
+1002434a:	19be      	adds	r6, r7, r6
+1002434c:	42b3      	cmp	r3, r6
+1002434e:	d30d      	bcc.n	1002436c <adaptive_deadtime_adjustment+0x2f4>
+	if (loop==PMBUS_PAGE_0)
+10024350:	2c00      	cmp	r4, #0
+10024352:	d105      	bne.n	10024360 <adaptive_deadtime_adjustment+0x2e8>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA0;
+10024354:	23b5      	movs	r3, #181	; 0xb5
+10024356:	009b      	lsls	r3, r3, #2
+10024358:	4a2f      	ldr	r2, [pc, #188]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+1002435a:	58d3      	ldr	r3, [r2, r3]
+1002435c:	689d      	ldr	r5, [r3, #8]
+1002435e:	e033      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA1;
+10024360:	23b5      	movs	r3, #181	; 0xb5
+10024362:	009b      	lsls	r3, r3, #2
+10024364:	4a2c      	ldr	r2, [pc, #176]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+10024366:	58d3      	ldr	r3, [r2, r3]
+10024368:	68dd      	ldr	r5, [r3, #12]
+1002436a:	e02d      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+				switch(user_data.deadtime_prev_region)
+1002436c:	2374      	movs	r3, #116	; 0x74
+1002436e:	4a29      	ldr	r2, [pc, #164]	; (10024414 <adaptive_deadtime_adjustment+0x39c>)
+10024370:	5ad3      	ldrh	r3, [r2, r3]
+10024372:	2b02      	cmp	r3, #2
+10024374:	d00f      	beq.n	10024396 <adaptive_deadtime_adjustment+0x31e>
+10024376:	2b03      	cmp	r3, #3
+10024378:	d143      	bne.n	10024402 <adaptive_deadtime_adjustment+0x38a>
+	if (loop==PMBUS_PAGE_0)
+1002437a:	2c00      	cmp	r4, #0
+1002437c:	d105      	bne.n	1002438a <adaptive_deadtime_adjustment+0x312>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA0;
+1002437e:	23b5      	movs	r3, #181	; 0xb5
+10024380:	009b      	lsls	r3, r3, #2
+10024382:	4a25      	ldr	r2, [pc, #148]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+10024384:	58d3      	ldr	r3, [r2, r3]
+10024386:	689d      	ldr	r5, [r3, #8]
+10024388:	e01e      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA1;
+1002438a:	23b5      	movs	r3, #181	; 0xb5
+1002438c:	009b      	lsls	r3, r3, #2
+1002438e:	4a22      	ldr	r2, [pc, #136]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+10024390:	58d3      	ldr	r3, [r2, r3]
+10024392:	68dd      	ldr	r5, [r3, #12]
+10024394:	e018      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+	if (loop==PMBUS_PAGE_0)
+10024396:	2c00      	cmp	r4, #0
+10024398:	d105      	bne.n	100243a6 <adaptive_deadtime_adjustment+0x32e>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA0;
+1002439a:	23b5      	movs	r3, #181	; 0xb5
+1002439c:	009b      	lsls	r3, r3, #2
+1002439e:	4a1e      	ldr	r2, [pc, #120]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+100243a0:	58d3      	ldr	r3, [r2, r3]
+100243a2:	689d      	ldr	r5, [r3, #8]
+100243a4:	e010      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA1;
+100243a6:	23b5      	movs	r3, #181	; 0xb5
+100243a8:	009b      	lsls	r3, r3, #2
+100243aa:	4a1b      	ldr	r2, [pc, #108]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+100243ac:	58d3      	ldr	r3, [r2, r3]
+100243ae:	68dd      	ldr	r5, [r3, #12]
+100243b0:	e00a      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+			user_data.deadtime_curr_region = 0;	// Region A
+100243b2:	2100      	movs	r1, #0
+100243b4:	2372      	movs	r3, #114	; 0x72
+100243b6:	4a17      	ldr	r2, [pc, #92]	; (10024414 <adaptive_deadtime_adjustment+0x39c>)
+100243b8:	52d1      	strh	r1, [r2, r3]
+	if (loop==PMBUS_PAGE_0)
+100243ba:	2c00      	cmp	r4, #0
+100243bc:	d11b      	bne.n	100243f6 <adaptive_deadtime_adjustment+0x37e>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA0;
+100243be:	23cf      	movs	r3, #207	; 0xcf
+100243c0:	009b      	lsls	r3, r3, #2
+100243c2:	4a15      	ldr	r2, [pc, #84]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+100243c4:	58d3      	ldr	r3, [r2, r3]
+100243c6:	689d      	ldr	r5, [r3, #8]
+		user_data.deadtime_prev_region = user_data.deadtime_curr_region;
+100243c8:	4b12      	ldr	r3, [pc, #72]	; (10024414 <adaptive_deadtime_adjustment+0x39c>)
+100243ca:	2272      	movs	r2, #114	; 0x72
+100243cc:	5a99      	ldrh	r1, [r3, r2]
+100243ce:	3202      	adds	r2, #2
+100243d0:	5299      	strh	r1, [r3, r2]
+100243d2:	2400      	movs	r4, #0
+					Regulation_PWM_Deadtime_Set(pwm, pDeadtime[i+1], pDeadtime[i]);
+100243d4:	782a      	ldrb	r2, [r5, #0]
+100243d6:	7869      	ldrb	r1, [r5, #1]
+100243d8:	0020      	movs	r0, r4
+100243da:	f7e1 ff73 	bl	100062c4 <Regulation_OSP_Fault_Detection_sequence+0x30b>
+				pwm++;
+100243de:	3401      	adds	r4, #1
+100243e0:	b2e4      	uxtb	r4, r4
+100243e2:	3502      	adds	r5, #2
+			for (uint8_t i = 0; i < 24; i+=2)
+100243e4:	2c0c      	cmp	r4, #12
+100243e6:	d100      	bne.n	100243ea <adaptive_deadtime_adjustment+0x372>
+100243e8:	e6d9      	b.n	1002419e <adaptive_deadtime_adjustment+0x126>
+				if (pwm != 11U)
+100243ea:	2c0b      	cmp	r4, #11
+100243ec:	d1f2      	bne.n	100243d4 <adaptive_deadtime_adjustment+0x35c>
+ * HW 'behind' this address, changing the address' content.
+ */
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr);
+
+HAL_INLINE uint32_t HAL_GET32(volatile uint32_t* addr) {
+    return *addr;
+100243ee:	4b0b      	ldr	r3, [pc, #44]	; (1002441c <adaptive_deadtime_adjustment+0x3a4>)
+100243f0:	681a      	ldr	r2, [r3, #0]
+    *addr = val;
+100243f2:	601a      	str	r2, [r3, #0]
+}
+100243f4:	e6d3      	b.n	1002419e <adaptive_deadtime_adjustment+0x126>
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA1;
+100243f6:	23cf      	movs	r3, #207	; 0xcf
+100243f8:	009b      	lsls	r3, r3, #2
+100243fa:	4a07      	ldr	r2, [pc, #28]	; (10024418 <adaptive_deadtime_adjustment+0x3a0>)
+100243fc:	58d3      	ldr	r3, [r2, r3]
+100243fe:	68dd      	ldr	r5, [r3, #12]
+10024400:	e7e2      	b.n	100243c8 <adaptive_deadtime_adjustment+0x350>
+		user_data.deadtime_prev_region = user_data.deadtime_curr_region;
+10024402:	4b04      	ldr	r3, [pc, #16]	; (10024414 <adaptive_deadtime_adjustment+0x39c>)
+10024404:	2272      	movs	r2, #114	; 0x72
+10024406:	5a99      	ldrh	r1, [r3, r2]
+10024408:	3202      	adds	r2, #2
+1002440a:	5299      	strh	r1, [r3, r2]
+1002440c:	e6c7      	b.n	1002419e <adaptive_deadtime_adjustment+0x126>
+1002440e:	46c0      	nop			; (mov r8, r8)
+10024410:	fffff800 	.word	0xfffff800
+10024414:	20063930 	.word	0x20063930
+10024418:	2005d534 	.word	0x2005d534
+1002441c:	70002c80 	.word	0x70002c80
+
+10024420 <adaptive_deadtime_init>:
+ * Function to reinitialize the deadtime settings before Shasta gets back to regulation control (e.g. off, fault)
+ * Regulation_set_regulation_event_cb(REGULATION_STATE_TON_DELAY, REGULATION_CONTROLS_ENABLE, initialize_deadtime_beginning);
+ * @param loop select the pmbus page to operate on
+ */
+void adaptive_deadtime_init(PMBUS_PAGE_t loop)
+{
+10024420:	b570      	push	{r4, r5, r6, lr}
+		return PMBUS_CMD_ARRAY_LOOP[cmd]->DATA0;
+10024422:	23cf      	movs	r3, #207	; 0xcf
+10024424:	009b      	lsls	r3, r3, #2
+10024426:	4a0a      	ldr	r2, [pc, #40]	; (10024450 <adaptive_deadtime_init+0x30>)
+10024428:	58d3      	ldr	r3, [r2, r3]
+1002442a:	689d      	ldr	r5, [r3, #8]
+	loop = PMBUS_PAGE_0;
+
+	uint8_t *pDeadtime = PMBUS_GET_DATA_ARRAY_POINTER(loop, PMBUS_CMDCODE_PWM_DEADTIME);
+
+	// set default pwm deadtimes
+	uint8_t pwm = 0;
+1002442c:	2400      	movs	r4, #0
+
+	for (uint8_t i = 0; i < 24; i+=2)
+	{
+		// update pwm deadtime register ( HAL )
+		Regulation_PWM_Deadtime_Set(pwm, pDeadtime[i+1], pDeadtime[i]);
+1002442e:	782a      	ldrb	r2, [r5, #0]
+10024430:	7869      	ldrb	r1, [r5, #1]
+10024432:	0020      	movs	r0, r4
+10024434:	f7e1 ff46 	bl	100062c4 <Regulation_OSP_Fault_Detection_sequence+0x30b>
+		pwm++;
+10024438:	3401      	adds	r4, #1
+1002443a:	b2e4      	uxtb	r4, r4
+1002443c:	3502      	adds	r5, #2
+	for (uint8_t i = 0; i < 24; i+=2)
+1002443e:	2c0c      	cmp	r4, #12
+10024440:	d1f5      	bne.n	1002442e <adaptive_deadtime_init+0xe>
+	}
+
+	// initialize deadtime regions
+	user_data.deadtime_prev_region = 0;
+10024442:	4b04      	ldr	r3, [pc, #16]	; (10024454 <adaptive_deadtime_init+0x34>)
+10024444:	2200      	movs	r2, #0
+10024446:	2174      	movs	r1, #116	; 0x74
+10024448:	525a      	strh	r2, [r3, r1]
+	user_data.deadtime_curr_region = 0;
+1002444a:	3902      	subs	r1, #2
+1002444c:	525a      	strh	r2, [r3, r1]
+}
+1002444e:	bd70      	pop	{r4, r5, r6, pc}
+10024450:	2005d534 	.word	0x2005d534
+10024454:	20063930 	.word	0x20063930
+
+10024458 <add_on_features_init>:
+#include "pmbus_mfr_autogen.h"
+
+void add_on_features_init (void)
+{
+	uint8_t test1 = 0;
+}
+10024458:	4770      	bx	lr
+	...
+
+1002445c <pmbus_mfr_autogen_init>:
+/*
+ * Initializes all of our pmbus structs that were generated by the script
+ * Function gets called to setup command support array, initialize pointers to command data, and describe commands 
+ */
+void pmbus_mfr_autogen_init(void)
+{
+1002445c:	b530      	push	{r4, r5, lr}
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST.RANGE_TYPE = (uint8_t) PMBUS_RANGE_LINEAR11_UNSIGNED;
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST.RANGE = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST_RANGE[0];
+1002445e:	4a30      	ldr	r2, [pc, #192]	; (10024520 <pmbus_mfr_autogen_init+0xc4>)
+10024460:	4b30      	ldr	r3, [pc, #192]	; (10024524 <pmbus_mfr_autogen_init+0xc8>)
+10024462:	6053      	str	r3, [r2, #4]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST_RANGE[0] = 8;
+10024464:	2008      	movs	r0, #8
+10024466:	7018      	strb	r0, [r3, #0]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST_RANGE[1] = 0;
+10024468:	2100      	movs	r1, #0
+1002446a:	7059      	strb	r1, [r3, #1]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST.CMD_CONFIG = 0xc38223b1;
+1002446c:	4b2e      	ldr	r3, [pc, #184]	; (10024528 <pmbus_mfr_autogen_init+0xcc>)
+1002446e:	6013      	str	r3, [r2, #0]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST.DATA0 = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST_DATA_LOOP0[0];  // set the pointer to the data array
+10024470:	4b2e      	ldr	r3, [pc, #184]	; (1002452c <pmbus_mfr_autogen_init+0xd0>)
+10024472:	6093      	str	r3, [r2, #8]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST.DATA1 = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST_DATA_LOOP1[0];  // set the pointer to the data array
+10024474:	4b2e      	ldr	r3, [pc, #184]	; (10024530 <pmbus_mfr_autogen_init+0xd4>)
+10024476:	60d3      	str	r3, [r2, #12]
+	// RANGE SUPPORT for MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST] = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST;
+10024478:	4b2e      	ldr	r3, [pc, #184]	; (10024534 <pmbus_mfr_autogen_init+0xd8>)
+1002447a:	24b1      	movs	r4, #177	; 0xb1
+1002447c:	00a4      	lsls	r4, r4, #2
+1002447e:	511a      	str	r2, [r3, r4]
+	//PMBUS_CMD_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST] = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST;
+	//lint -e{778} suppress "Constant expression evaluates to 0 in operation '&'" 
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIME_THRESHOLD_HYST&31u));
+10024480:	4d2d      	ldr	r5, [pc, #180]	; (10024538 <pmbus_mfr_autogen_init+0xdc>)
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1.RANGE_TYPE = (uint8_t) PMBUS_RANGE_LINEAR11_UNSIGNED;
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1.RANGE = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1_RANGE[0];
+10024482:	4a2e      	ldr	r2, [pc, #184]	; (1002453c <pmbus_mfr_autogen_init+0xe0>)
+10024484:	4c2e      	ldr	r4, [pc, #184]	; (10024540 <pmbus_mfr_autogen_init+0xe4>)
+10024486:	6054      	str	r4, [r2, #4]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1_RANGE[0] = 8;
+10024488:	7020      	strb	r0, [r4, #0]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1_RANGE[1] = 0;
+1002448a:	7061      	strb	r1, [r4, #1]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1.CMD_CONFIG = 0xc38223b2;
+1002448c:	4c2d      	ldr	r4, [pc, #180]	; (10024544 <pmbus_mfr_autogen_init+0xe8>)
+1002448e:	6014      	str	r4, [r2, #0]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1.DATA0 = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1_DATA_LOOP0[0];  // set the pointer to the data array
+10024490:	4c2d      	ldr	r4, [pc, #180]	; (10024548 <pmbus_mfr_autogen_init+0xec>)
+10024492:	6094      	str	r4, [r2, #8]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1.DATA1 = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1_DATA_LOOP1[0];  // set the pointer to the data array
+10024494:	4c2d      	ldr	r4, [pc, #180]	; (1002454c <pmbus_mfr_autogen_init+0xf0>)
+10024496:	60d4      	str	r4, [r2, #12]
+	// RANGE SUPPORT for MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1 COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1] = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_1;
+10024498:	24b2      	movs	r4, #178	; 0xb2
+1002449a:	00a4      	lsls	r4, r4, #2
+1002449c:	511a      	str	r2, [r3, r4]
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2.RANGE_TYPE = (uint8_t) PMBUS_RANGE_LINEAR11_UNSIGNED;
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2.RANGE = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2_RANGE[0];
+1002449e:	4a2c      	ldr	r2, [pc, #176]	; (10024550 <pmbus_mfr_autogen_init+0xf4>)
+100244a0:	4c2c      	ldr	r4, [pc, #176]	; (10024554 <pmbus_mfr_autogen_init+0xf8>)
+100244a2:	6054      	str	r4, [r2, #4]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2_RANGE[0] = 8;
+100244a4:	7020      	strb	r0, [r4, #0]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2_RANGE[1] = 0;
+100244a6:	7061      	strb	r1, [r4, #1]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2.CMD_CONFIG = 0xc38223b3;
+100244a8:	4c2b      	ldr	r4, [pc, #172]	; (10024558 <pmbus_mfr_autogen_init+0xfc>)
+100244aa:	6014      	str	r4, [r2, #0]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2.DATA0 = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2_DATA_LOOP0[0];  // set the pointer to the data array
+100244ac:	4c2b      	ldr	r4, [pc, #172]	; (1002455c <pmbus_mfr_autogen_init+0x100>)
+100244ae:	6094      	str	r4, [r2, #8]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2.DATA1 = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2_DATA_LOOP1[0];  // set the pointer to the data array
+100244b0:	4c2b      	ldr	r4, [pc, #172]	; (10024560 <pmbus_mfr_autogen_init+0x104>)
+100244b2:	60d4      	str	r4, [r2, #12]
+	// RANGE SUPPORT for MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2 COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2] = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_2;
+100244b4:	24b3      	movs	r4, #179	; 0xb3
+100244b6:	00a4      	lsls	r4, r4, #2
+100244b8:	511a      	str	r2, [r3, r4]
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3.NUM_PROTOCOL_BYTES = 2;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3.RANGE_TYPE = (uint8_t) PMBUS_RANGE_LINEAR11_UNSIGNED;
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3.RANGE = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3_RANGE[0];
+100244ba:	4a2a      	ldr	r2, [pc, #168]	; (10024564 <pmbus_mfr_autogen_init+0x108>)
+100244bc:	4c2a      	ldr	r4, [pc, #168]	; (10024568 <pmbus_mfr_autogen_init+0x10c>)
+100244be:	6054      	str	r4, [r2, #4]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3_RANGE[0] = 8;
+100244c0:	7020      	strb	r0, [r4, #0]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3_RANGE[1] = 0;
+100244c2:	7061      	strb	r1, [r4, #1]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3.CMD_CONFIG = 0xc38223b4;
+100244c4:	4929      	ldr	r1, [pc, #164]	; (1002456c <pmbus_mfr_autogen_init+0x110>)
+100244c6:	6011      	str	r1, [r2, #0]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3.DATA0 = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3_DATA_LOOP0[0];  // set the pointer to the data array
+100244c8:	4929      	ldr	r1, [pc, #164]	; (10024570 <pmbus_mfr_autogen_init+0x114>)
+100244ca:	6091      	str	r1, [r2, #8]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3.DATA1 = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3_DATA_LOOP1[0];  // set the pointer to the data array
+100244cc:	4929      	ldr	r1, [pc, #164]	; (10024574 <pmbus_mfr_autogen_init+0x118>)
+100244ce:	60d1      	str	r1, [r2, #12]
+	// RANGE SUPPORT for MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3 COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3] = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIME_THRESHOLD_LEVEL_3;
+100244d0:	21b4      	movs	r1, #180	; 0xb4
+100244d2:	0089      	lsls	r1, r1, #2
+100244d4:	505a      	str	r2, [r3, r1]
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_1.NUM_PROTOCOL_BYTES = 3;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_1.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_1.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_1.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_1.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_1.CMD_CONFIG = 0xc1d856b5;
+100244d6:	4a28      	ldr	r2, [pc, #160]	; (10024578 <pmbus_mfr_autogen_init+0x11c>)
+100244d8:	4928      	ldr	r1, [pc, #160]	; (1002457c <pmbus_mfr_autogen_init+0x120>)
+100244da:	6011      	str	r1, [r2, #0]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_1.DATA0 = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_1_DATA_LOOP0[0];  // set the pointer to the data array
+100244dc:	4928      	ldr	r1, [pc, #160]	; (10024580 <pmbus_mfr_autogen_init+0x124>)
+100244de:	6091      	str	r1, [r2, #8]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_1.DATA1 = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_1_DATA_LOOP1[0];  // set the pointer to the data array
+100244e0:	4928      	ldr	r1, [pc, #160]	; (10024584 <pmbus_mfr_autogen_init+0x128>)
+100244e2:	60d1      	str	r1, [r2, #12]
+	// RANGE SUPPORT for MFR_ADAPTIVE_DEADTIMES_REGION_1 COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIMES_REGION_1] = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_1;
+100244e4:	21b5      	movs	r1, #181	; 0xb5
+100244e6:	0089      	lsls	r1, r1, #2
+100244e8:	505a      	str	r2, [r3, r1]
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_2.NUM_PROTOCOL_BYTES = 3;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_2.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_2.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_2.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_2.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_2.CMD_CONFIG = 0xc1d856b6;
+100244ea:	4a27      	ldr	r2, [pc, #156]	; (10024588 <pmbus_mfr_autogen_init+0x12c>)
+100244ec:	4927      	ldr	r1, [pc, #156]	; (1002458c <pmbus_mfr_autogen_init+0x130>)
+100244ee:	6011      	str	r1, [r2, #0]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_2.DATA0 = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_2_DATA_LOOP0[0];  // set the pointer to the data array
+100244f0:	4927      	ldr	r1, [pc, #156]	; (10024590 <pmbus_mfr_autogen_init+0x134>)
+100244f2:	6091      	str	r1, [r2, #8]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_2.DATA1 = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_2_DATA_LOOP1[0];  // set the pointer to the data array
+100244f4:	4927      	ldr	r1, [pc, #156]	; (10024594 <pmbus_mfr_autogen_init+0x138>)
+100244f6:	60d1      	str	r1, [r2, #12]
+	// RANGE SUPPORT for MFR_ADAPTIVE_DEADTIMES_REGION_2 COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIMES_REGION_2] = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_2;
+100244f8:	21b6      	movs	r1, #182	; 0xb6
+100244fa:	0089      	lsls	r1, r1, #2
+100244fc:	505a      	str	r2, [r3, r1]
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_3.NUM_PROTOCOL_BYTES = 3;  // slave address command and any other non-data bytes
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_3.SUPPORTED = 1;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_3.PROTECTED0 = 0;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_3.PROTECTED1 = 0;
+	//PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_3.RANGE_TYPE = (uint8_t) PMBUS_RANGE_ALL;
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_3.CMD_CONFIG = 0xc1d856b7;
+100244fe:	4a26      	ldr	r2, [pc, #152]	; (10024598 <pmbus_mfr_autogen_init+0x13c>)
+10024500:	4926      	ldr	r1, [pc, #152]	; (1002459c <pmbus_mfr_autogen_init+0x140>)
+10024502:	6011      	str	r1, [r2, #0]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_3.DATA0 = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_3_DATA_LOOP0[0];  // set the pointer to the data array
+10024504:	4926      	ldr	r1, [pc, #152]	; (100245a0 <pmbus_mfr_autogen_init+0x144>)
+10024506:	6091      	str	r1, [r2, #8]
+	PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_3.DATA1 = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_3_DATA_LOOP1[0];  // set the pointer to the data array
+10024508:	4926      	ldr	r1, [pc, #152]	; (100245a4 <pmbus_mfr_autogen_init+0x148>)
+1002450a:	60d1      	str	r1, [r2, #12]
+	// RANGE SUPPORT for MFR_ADAPTIVE_DEADTIMES_REGION_3 COMMAND:
+	// now populate pointers to the supported commands for each page
+	PMBUS_CMD_ARRAY_LOOP[PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIMES_REGION_3] = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_3;
+1002450c:	21b7      	movs	r1, #183	; 0xb7
+1002450e:	0089      	lsls	r1, r1, #2
+10024510:	505a      	str	r2, [r3, r1]
+	//PMBUS_CMD_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIMES_REGION_3] = &PMBUS_CMD_MFR_ADAPTIVE_DEADTIMES_REGION_3;
+	//lint -e{778} suppress "Constant expression evaluates to 0 in operation '&'" 
+	PMBUS_CMD_SUPPORT_ARRAY_LOOP[PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIMES_REGION_3/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIMES_REGION_3&31u));
+10024512:	23fe      	movs	r3, #254	; 0xfe
+10024514:	041b      	lsls	r3, r3, #16
+10024516:	696a      	ldr	r2, [r5, #20]
+10024518:	4313      	orrs	r3, r2
+1002451a:	616b      	str	r3, [r5, #20]
+	//PMBUS_CMD_SUPPORT_ARRAY_LOOP1[PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIMES_REGION_3/32] |= (uint32_t) ((uint32_t)1u << ((uint32_t)PMBUS_CMDCODE_MFR_ADAPTIVE_DEADTIMES_REGION_3&31u));
+
+}
+1002451c:	bd30      	pop	{r4, r5, pc}
+1002451e:	46c0      	nop			; (mov r8, r8)
+10024520:	20063920 	.word	0x20063920
+10024524:	2006383c 	.word	0x2006383c
+10024528:	c38223b1 	.word	0xc38223b1
+1002452c:	200638b0 	.word	0x200638b0
+10024530:	20063904 	.word	0x20063904
+10024534:	2005d534 	.word	0x2005d534
+10024538:	2005d934 	.word	0x2005d934
+1002453c:	20063850 	.word	0x20063850
+10024540:	20063860 	.word	0x20063860
+10024544:	c38223b2 	.word	0xc38223b2
+10024548:	2006387c 	.word	0x2006387c
+1002454c:	20063838 	.word	0x20063838
+10024550:	200638b4 	.word	0x200638b4
+10024554:	20063864 	.word	0x20063864
+10024558:	c38223b3 	.word	0xc38223b3
+1002455c:	20063908 	.word	0x20063908
+10024560:	20063818 	.word	0x20063818
+10024564:	20063910 	.word	0x20063910
+10024568:	20063878 	.word	0x20063878
+1002456c:	c38223b4 	.word	0xc38223b4
+10024570:	2006390c 	.word	0x2006390c
+10024574:	2006381c 	.word	0x2006381c
+10024578:	200638c4 	.word	0x200638c4
+1002457c:	c1d856b5 	.word	0xc1d856b5
+10024580:	20063880 	.word	0x20063880
+10024584:	20063898 	.word	0x20063898
+10024588:	20063868 	.word	0x20063868
+1002458c:	c1d856b6 	.word	0xc1d856b6
+10024590:	200638d4 	.word	0x200638d4
+10024594:	20063820 	.word	0x20063820
+10024598:	20063840 	.word	0x20063840
+1002459c:	c1d856b7 	.word	0xc1d856b7
+100245a0:	20063800 	.word	0x20063800
+100245a4:	200638ec 	.word	0x200638ec
+
+100245a8 <AT_TARGET_ENABLE>:
+}
+
+void AT_TARGET_ENABLE(PMBUS_PAGE_t loop)
+{
+
+}
+100245a8:	4770      	bx	lr
+	...
+
+100245ac <regulation_sm_callbacks_init>:
+{
+100245ac:	b510      	push	{r4, lr}
+	Regulation_set_regulation_event_cb(REGULATION_STATE_AT_TARGET_VID, REGULATION_CONTROLS_ENABLE,
+100245ae:	4a08      	ldr	r2, [pc, #32]	; (100245d0 <regulation_sm_callbacks_init+0x24>)
+100245b0:	2109      	movs	r1, #9
+100245b2:	2003      	movs	r0, #3
+100245b4:	f7e3 fad4 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_TON_DELAY, REGULATION_CONTROLS_ENABLE,
+100245b8:	4a06      	ldr	r2, [pc, #24]	; (100245d4 <regulation_sm_callbacks_init+0x28>)
+100245ba:	2109      	movs	r1, #9
+100245bc:	2001      	movs	r0, #1
+100245be:	f7e3 facf 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+	Regulation_set_regulation_event_cb(REGULATION_STATE_AT_TARGET_VID, REGULATION_CONTROLS_TELEMETRY_UPDATED,
+100245c2:	4a05      	ldr	r2, [pc, #20]	; (100245d8 <regulation_sm_callbacks_init+0x2c>)
+100245c4:	210c      	movs	r1, #12
+100245c6:	2003      	movs	r0, #3
+100245c8:	f7e3 faca 	bl	10007b60 <Regulation_set_fsw_irq_event_cb+0x2b>
+}
+100245cc:	bd10      	pop	{r4, pc}
+100245ce:	46c0      	nop			; (mov r8, r8)
+100245d0:	100245a9 	.word	0x100245a9
+100245d4:	10024421 	.word	0x10024421
+100245d8:	10024079 	.word	0x10024079
+
+100245dc <patch_pmbus_mfr_autogen_init>:
+
+void patch_pmbus_mfr_autogen_init(void);
+
+
+void patch_pmbus_mfr_autogen_init(void)
+{
+100245dc:	b510      	push	{r4, lr}
+	pmbus_mfr_autogen_init();
+100245de:	f7ff ff3d 	bl	1002445c <pmbus_mfr_autogen_init>
+}
+100245e2:	bd10      	pop	{r4, pc}
+
+100245e4 <user_drv_init>:
+ * Main entry point of the user application.  Good place to set breakpoint when debugging a patch.
+ * This will only get executed a single time prior to configuration loading and before RTOS starts
+ */
+
+void user_drv_init(void)
+{
+100245e4:	b510      	push	{r4, lr}
+	memset(&user_data, 0, sizeof(USER_DATA_t));  // ZI the user data
+100245e6:	2278      	movs	r2, #120	; 0x78
+100245e8:	2100      	movs	r1, #0
+100245ea:	4808      	ldr	r0, [pc, #32]	; (1002460c <user_drv_init+0x28>)
+100245ec:	f000 f858 	bl	100246a0 <memset>
+
+	// this is the initialization of user pmbus commands autogenerated from pmbus spreadsheet
+	ptr_mfr_specific_init = (mfr_specific_init_ptr) patch_pmbus_mfr_autogen_init;
+100245f0:	4a07      	ldr	r2, [pc, #28]	; (10024610 <user_drv_init+0x2c>)
+100245f2:	4b08      	ldr	r3, [pc, #32]	; (10024614 <user_drv_init+0x30>)
+100245f4:	601a      	str	r2, [r3, #0]
+
+	// set the pointer funtion in init of regulation state machine to user callback setup for each state
+	set_module_init_cb(MODULE_REGULATION, regulation_sm_callbacks_init);
+100245f6:	4908      	ldr	r1, [pc, #32]	; (10024618 <user_drv_init+0x34>)
+100245f8:	2002      	movs	r0, #2
+100245fa:	f7e0 f977 	bl	100048ec <scratchpad_semaphore_release+0x33>
+
+	add_on_features_init();
+100245fe:	f7ff ff2b 	bl	10024458 <add_on_features_init>
+	regulation_sm_callbacks_init();
+10024602:	f7ff ffd3 	bl	100245ac <regulation_sm_callbacks_init>
+	pmbus_mfr_autogen_init();
+10024606:	f7ff ff29 	bl	1002445c <pmbus_mfr_autogen_init>
+	patch_pmbus_mfr_autogen_init();
+
+}
+1002460a:	bd10      	pop	{r4, pc}
+1002460c:	20063930 	.word	0x20063930
+10024610:	100245dd 	.word	0x100245dd
+10024614:	2005d468 	.word	0x2005d468
+10024618:	100245ad 	.word	0x100245ad
+
+1002461c <memcpy>:
+1002461c:	b5f0      	push	{r4, r5, r6, r7, lr}
+1002461e:	0005      	movs	r5, r0
+10024620:	2a0f      	cmp	r2, #15
+10024622:	d92f      	bls.n	10024684 <memcpy+0x68>
+10024624:	000b      	movs	r3, r1
+10024626:	4303      	orrs	r3, r0
+10024628:	079b      	lsls	r3, r3, #30
+1002462a:	d134      	bne.n	10024696 <memcpy+0x7a>
+1002462c:	0016      	movs	r6, r2
+1002462e:	000c      	movs	r4, r1
+10024630:	0003      	movs	r3, r0
+10024632:	3e10      	subs	r6, #16
+10024634:	0935      	lsrs	r5, r6, #4
+10024636:	3501      	adds	r5, #1
+10024638:	012d      	lsls	r5, r5, #4
+1002463a:	1945      	adds	r5, r0, r5
+1002463c:	6827      	ldr	r7, [r4, #0]
+1002463e:	601f      	str	r7, [r3, #0]
+10024640:	6867      	ldr	r7, [r4, #4]
+10024642:	605f      	str	r7, [r3, #4]
+10024644:	68a7      	ldr	r7, [r4, #8]
+10024646:	609f      	str	r7, [r3, #8]
+10024648:	68e7      	ldr	r7, [r4, #12]
+1002464a:	3410      	adds	r4, #16
+1002464c:	60df      	str	r7, [r3, #12]
+1002464e:	3310      	adds	r3, #16
+10024650:	429d      	cmp	r5, r3
+10024652:	d1f3      	bne.n	1002463c <memcpy+0x20>
+10024654:	230f      	movs	r3, #15
+10024656:	439e      	bics	r6, r3
+10024658:	3610      	adds	r6, #16
+1002465a:	1985      	adds	r5, r0, r6
+1002465c:	1989      	adds	r1, r1, r6
+1002465e:	4013      	ands	r3, r2
+10024660:	2b03      	cmp	r3, #3
+10024662:	d91a      	bls.n	1002469a <memcpy+0x7e>
+10024664:	1f1e      	subs	r6, r3, #4
+10024666:	2300      	movs	r3, #0
+10024668:	08b4      	lsrs	r4, r6, #2
+1002466a:	3401      	adds	r4, #1
+1002466c:	00a4      	lsls	r4, r4, #2
+1002466e:	58cf      	ldr	r7, [r1, r3]
+10024670:	50ef      	str	r7, [r5, r3]
+10024672:	3304      	adds	r3, #4
+10024674:	42a3      	cmp	r3, r4
+10024676:	d1fa      	bne.n	1002466e <memcpy+0x52>
+10024678:	2403      	movs	r4, #3
+1002467a:	43a6      	bics	r6, r4
+1002467c:	1d33      	adds	r3, r6, #4
+1002467e:	4022      	ands	r2, r4
+10024680:	18c9      	adds	r1, r1, r3
+10024682:	18ed      	adds	r5, r5, r3
+10024684:	2a00      	cmp	r2, #0
+10024686:	d005      	beq.n	10024694 <memcpy+0x78>
+10024688:	2300      	movs	r3, #0
+1002468a:	5ccc      	ldrb	r4, [r1, r3]
+1002468c:	54ec      	strb	r4, [r5, r3]
+1002468e:	3301      	adds	r3, #1
+10024690:	4293      	cmp	r3, r2
+10024692:	d1fa      	bne.n	1002468a <memcpy+0x6e>
+10024694:	bdf0      	pop	{r4, r5, r6, r7, pc}
+10024696:	0005      	movs	r5, r0
+10024698:	e7f6      	b.n	10024688 <memcpy+0x6c>
+1002469a:	001a      	movs	r2, r3
+1002469c:	e7f2      	b.n	10024684 <memcpy+0x68>
+1002469e:	46c0      	nop			; (mov r8, r8)
+
+100246a0 <memset>:
+100246a0:	b5f0      	push	{r4, r5, r6, r7, lr}
+100246a2:	0783      	lsls	r3, r0, #30
+100246a4:	d043      	beq.n	1002472e <memset+0x8e>
+100246a6:	1e54      	subs	r4, r2, #1
+100246a8:	2a00      	cmp	r2, #0
+100246aa:	d03f      	beq.n	1002472c <memset+0x8c>
+100246ac:	b2ce      	uxtb	r6, r1
+100246ae:	0002      	movs	r2, r0
+100246b0:	2503      	movs	r5, #3
+100246b2:	e002      	b.n	100246ba <memset+0x1a>
+100246b4:	001a      	movs	r2, r3
+100246b6:	3c01      	subs	r4, #1
+100246b8:	d338      	bcc.n	1002472c <memset+0x8c>
+100246ba:	1c53      	adds	r3, r2, #1
+100246bc:	7016      	strb	r6, [r2, #0]
+100246be:	422b      	tst	r3, r5
+100246c0:	d1f8      	bne.n	100246b4 <memset+0x14>
+100246c2:	2c03      	cmp	r4, #3
+100246c4:	d92a      	bls.n	1002471c <memset+0x7c>
+100246c6:	22ff      	movs	r2, #255	; 0xff
+100246c8:	400a      	ands	r2, r1
+100246ca:	0215      	lsls	r5, r2, #8
+100246cc:	4315      	orrs	r5, r2
+100246ce:	042a      	lsls	r2, r5, #16
+100246d0:	4315      	orrs	r5, r2
+100246d2:	2c0f      	cmp	r4, #15
+100246d4:	d914      	bls.n	10024700 <memset+0x60>
+100246d6:	0027      	movs	r7, r4
+100246d8:	001a      	movs	r2, r3
+100246da:	3f10      	subs	r7, #16
+100246dc:	093e      	lsrs	r6, r7, #4
+100246de:	3601      	adds	r6, #1
+100246e0:	0136      	lsls	r6, r6, #4
+100246e2:	199e      	adds	r6, r3, r6
+100246e4:	6015      	str	r5, [r2, #0]
+100246e6:	6055      	str	r5, [r2, #4]
+100246e8:	6095      	str	r5, [r2, #8]
+100246ea:	60d5      	str	r5, [r2, #12]
+100246ec:	3210      	adds	r2, #16
+100246ee:	4296      	cmp	r6, r2
+100246f0:	d1f8      	bne.n	100246e4 <memset+0x44>
+100246f2:	220f      	movs	r2, #15
+100246f4:	4397      	bics	r7, r2
+100246f6:	3710      	adds	r7, #16
+100246f8:	19db      	adds	r3, r3, r7
+100246fa:	4014      	ands	r4, r2
+100246fc:	2c03      	cmp	r4, #3
+100246fe:	d90d      	bls.n	1002471c <memset+0x7c>
+10024700:	001a      	movs	r2, r3
+10024702:	1f27      	subs	r7, r4, #4
+10024704:	08be      	lsrs	r6, r7, #2
+10024706:	3601      	adds	r6, #1
+10024708:	00b6      	lsls	r6, r6, #2
+1002470a:	199e      	adds	r6, r3, r6
+1002470c:	c220      	stmia	r2!, {r5}
+1002470e:	42b2      	cmp	r2, r6
+10024710:	d1fc      	bne.n	1002470c <memset+0x6c>
+10024712:	2203      	movs	r2, #3
+10024714:	4397      	bics	r7, r2
+10024716:	3704      	adds	r7, #4
+10024718:	19db      	adds	r3, r3, r7
+1002471a:	4014      	ands	r4, r2
+1002471c:	2c00      	cmp	r4, #0
+1002471e:	d005      	beq.n	1002472c <memset+0x8c>
+10024720:	b2c9      	uxtb	r1, r1
+10024722:	191c      	adds	r4, r3, r4
+10024724:	7019      	strb	r1, [r3, #0]
+10024726:	3301      	adds	r3, #1
+10024728:	429c      	cmp	r4, r3
+1002472a:	d1fb      	bne.n	10024724 <memset+0x84>
+1002472c:	bdf0      	pop	{r4, r5, r6, r7, pc}
+1002472e:	0014      	movs	r4, r2
+10024730:	0003      	movs	r3, r0
+10024732:	e7c6      	b.n	100246c2 <memset+0x22>

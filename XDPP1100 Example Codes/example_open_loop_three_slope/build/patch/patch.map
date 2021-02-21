@@ -1,0 +1,2530 @@
+Archive member included to satisfy reference by file (symbol)
+
+c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v6-m\libgcc.a(_divsi3.o)
+                              .\build\patch/open_loop_llc.o (__aeabi_idiv)
+c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v6-m\libgcc.a(_dvmd_tls.o)
+                              c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v6-m\libgcc.a(_divsi3.o) (__aeabi_idiv0)
+c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libg.a(lib_a-memcpy-stub.o)
+                              .\build\patch/patch_init.o (memcpy)
+c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libg.a(lib_a-memset.o)
+                              .\build\patch/patch_init.o (memset)
+
+Allocating common symbols
+Common symbol       size              file
+
+PMBUS_CMD_MFR_SOFTSTART_CYCLE_COUNT_DATA_LOOP0
+                    0x4               .\build\patch/pmbus_mfr_autogen.o
+PMBUS_CMD_MFR_SOFTSTART_MAX_FREQUENCY
+                    0x10              .\build\patch/pmbus_mfr_autogen.o
+PMBUS_CMD_MFR_SOFTSTART_IRQ_RATE_SEL_DATA_LOOP1
+                    0x4               .\build\patch/pmbus_mfr_autogen.o
+PMBUS_CMD_MFR_SOFTSTART_MAX_FREQUENCY_DATA_LOOP0
+                    0x2               .\build\patch/pmbus_mfr_autogen.o
+PMBUS_CMD_MFR_SOFTSTART_IRQ_RATE_SEL
+                    0x10              .\build\patch/pmbus_mfr_autogen.o
+UARTdrv             0x4               .\build\patch/patch_init.o
+src_buf             0x80              .\build\patch/patch_init.o
+PMBUS_CMD_MFR_SOFTSTART_MAX_FREQUENCY_DATA_LOOP1
+                    0x4               .\build\patch/pmbus_mfr_autogen.o
+PMBUS_CMD_MFR_SOFTSTART_PWM_STEPSIZE_DATA_LOOP0
+                    0x4               .\build\patch/pmbus_mfr_autogen.o
+dest_buf            0x80              .\build\patch/patch_init.o
+user_data           0x88              .\build\patch/regulation_state_machine_callbacks.o
+PMBUS_CMD_MFR_SOFTSTART_CYCLE_COUNT_DATA_LOOP1
+                    0x4               .\build\patch/pmbus_mfr_autogen.o
+PMBUS_CMD_MFR_SOFTSTART_PWM_STEPSIZE_DATA_LOOP1
+                    0x4               .\build\patch/pmbus_mfr_autogen.o
+PMBUS_CMD_MFR_SOFTSTART_PWM_STEPSIZE
+                    0x10              .\build\patch/pmbus_mfr_autogen.o
+PMBUS_CMD_MFR_SOFTSTART_CYCLE_COUNT
+                    0x10              .\build\patch/pmbus_mfr_autogen.o
+PMBUS_CMD_MFR_SOFTSTART_IRQ_RATE_SEL_DATA_LOOP0
+                    0x1               .\build\patch/pmbus_mfr_autogen.o
+PMBUS_CMD_MFR_SOFTSTART_IRQ_RATE_SEL_RANGE
+                    0x9               .\build\patch/pmbus_mfr_autogen.o
+
+Discarded input sections
+
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/patch_init.o
+ .text          0x00000000        0x0 .\build\patch/patch_init.o
+ .data          0x00000000        0x0 .\build\patch/patch_init.o
+ .bss           0x00000000        0x0 .\build\patch/patch_init.o
+ COMMON         0x00000000      0x104 .\build\patch/patch_init.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/add_on_features.o
+ .text          0x00000000        0x0 .\build\patch/add_on_features.o
+ .data          0x00000000        0x0 .\build\patch/add_on_features.o
+ .bss           0x00000000        0x0 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000      0x892 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x16 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x96 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x22 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x87 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x51 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0xef .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x6a .\build\patch/add_on_features.o
+ .debug_macro   0x00000000      0x1df .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x3a .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x1f .\build\patch/add_on_features.o
+ .debug_macro   0x00000000      0x242 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000      0x16d .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x10 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x3a .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x5f .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x7b .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x93 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x22 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x58 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x35 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x9c .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x4a .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x10 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000      0x413 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000     0x1174 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x52 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x16 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000      0x60e .\build\patch/add_on_features.o
+ .debug_macro   0x00000000      0x898 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000      0x492 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x10 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x58 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x1f .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x43 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x20 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000      0x187 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000      0x330 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x10 .\build\patch/add_on_features.o
+ .debug_macro   0x00000000       0x35 .\build\patch/add_on_features.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/open_loop_llc.o
+ .text          0x00000000        0x0 .\build\patch/open_loop_llc.o
+ .data          0x00000000        0x0 .\build\patch/open_loop_llc.o
+ .bss           0x00000000        0x0 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x892 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x22 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x87 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x51 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0xef .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x6a .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x1df .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x16 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x96 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x33 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x3a .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x1f .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x242 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x10 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x16d .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x3a .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x5f .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x7b .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x93 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x10 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000     0x1174 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x22 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x58 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x35 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x9c .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x4a .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x112 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x10 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x413 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x30a .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x10 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x43f .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0xd3 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x34 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x40 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x52 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x16 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x60e .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x898 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x492 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0xe8 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x10 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x46f .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000     0x15a6 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x97f .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x64 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x16 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x28c .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x388 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x277 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x22 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x280 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x1bc .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x34 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x22 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x16 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x58 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x1f .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x43 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x20 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x187 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000      0x330 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x10 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00000000       0x35 .\build\patch/open_loop_llc.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/periodic_functions.o
+ .text          0x00000000        0x0 .\build\patch/periodic_functions.o
+ .data          0x00000000        0x0 .\build\patch/periodic_functions.o
+ .bss           0x00000000        0x0 .\build\patch/periodic_functions.o
+ .debug_info    0x00000000     0x314a .\build\patch/periodic_functions.o
+ .debug_abbrev  0x00000000      0x126 .\build\patch/periodic_functions.o
+ .debug_aranges
+                0x00000000       0x18 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000      0x3cd .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000      0x892 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x22 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x87 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x51 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0xef .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x6a .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000      0x1df .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x22 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000      0x16d .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x16 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x96 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x33 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x3a .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x1f .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000      0x242 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x10 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x3a .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x5f .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x7b .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x93 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000      0x413 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x22 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x10 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000     0x1174 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x58 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x35 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x9c .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x4a .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000      0x112 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x10 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000      0x30a .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x10 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000      0x43f .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0xd3 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x34 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x40 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x52 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x16 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000      0x60e .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000      0x898 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000      0x492 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0xe8 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x10 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000      0x46f .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000     0x15a6 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000      0x97f .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x64 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x16 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0xe8 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000      0x28c .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000      0x388 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000      0x277 .\build\patch/periodic_functions.o
+ .debug_macro   0x00000000       0x10 .\build\patch/periodic_functions.o
+ .debug_line    0x00000000      0x768 .\build\patch/periodic_functions.o
+ .debug_str     0x00000000    0x5642b .\build\patch/periodic_functions.o
+ .comment       0x00000000       0x80 .\build\patch/periodic_functions.o
+ .ARM.attributes
+                0x00000000       0x31 .\build\patch/periodic_functions.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_autogen.o
+ .text          0x00000000        0x0 .\build\patch/pmbus_mfr_autogen.o
+ .data          0x00000000        0x0 .\build\patch/pmbus_mfr_autogen.o
+ .bss           0x00000000        0x0 .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000      0x892 .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000       0x22 .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000       0x87 .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000       0x51 .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000       0xef .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000       0x6a .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000      0x1df .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000       0x22 .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000      0x16d .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000       0x16 .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000       0x96 .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000       0x33 .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000       0x3a .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000       0x1f .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000      0x242 .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000       0x10 .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000       0x3a .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000       0x5f .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000       0x7b .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000       0x93 .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000      0x413 .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00000000       0x22 .\build\patch/pmbus_mfr_autogen.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .text          0x00000000        0x0 .\build\patch/pmbus_mfr_specific_handlers.o
+ .data          0x00000000        0x0 .\build\patch/pmbus_mfr_specific_handlers.o
+ .bss           0x00000000        0x0 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000      0x892 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x16 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x96 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x3a .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x22 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x87 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x51 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0xef .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x6a .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000      0x1df .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x58 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x35 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x9c .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000      0x16d .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x58 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x1f .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x43 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x20 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000      0x187 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000      0x330 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x10 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x35 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x22 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x33 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x3a .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x1f .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000      0x242 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x10 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x5f .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x7b .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x93 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000      0x413 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x10 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000     0x1174 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x4a .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x52 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x16 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000      0x60e .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000      0x898 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000      0x492 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0xe8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x10 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000      0x112 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x10 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000      0x30a .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000      0x97f .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x22 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0xd3 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0xe8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000      0x46f .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000     0x15a6 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x64 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x16 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x10 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000      0x43f .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x34 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x40 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x10 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000      0x280 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x00000000       0x1c .\build\patch/pmbus_mfr_specific_handlers.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/regulation_state_machine_callbacks.o
+ .text          0x00000000        0x0 .\build\patch/regulation_state_machine_callbacks.o
+ .data          0x00000000        0x0 .\build\patch/regulation_state_machine_callbacks.o
+ .bss           0x00000000        0x0 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x892 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x22 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x87 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x51 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0xef .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x6a .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x1df .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x22 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x16d .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x16 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x96 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x33 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x3a .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x1f .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x242 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x10 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x3a .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x5f .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x7b .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x93 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x413 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x22 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x10 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000     0x1174 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x58 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x35 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x9c .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x4a .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x112 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x10 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x10 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x43f .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x30a .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x40 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0xd3 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x34 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x52 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x16 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x60e .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x898 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x492 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0xe8 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x10 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x46f .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000     0x15a6 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x97f .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x64 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x16 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0xe8 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x28c .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x388 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x277 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x10 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x280 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x1bc .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x34 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x22 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x16 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000      0x10c .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x00000000       0x1c .\build\patch/regulation_state_machine_callbacks.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .group         0x00000000        0x8 .\build\patch/user_app.o
+ .text          0x00000000        0x0 .\build\patch/user_app.o
+ .data          0x00000000        0x0 .\build\patch/user_app.o
+ .bss           0x00000000        0x0 .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x892 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x22 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x87 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x51 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0xef .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x6a .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x1df .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x16 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x96 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x33 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x3a .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x1f .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x242 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x10 .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x16d .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x3a .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x5f .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x7b .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x93 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x10 .\build\patch/user_app.o
+ .debug_macro   0x00000000     0x1174 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x22 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x58 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x35 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x9c .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x4a .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x112 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x10 .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x413 .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x30a .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x10 .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x43f .\build\patch/user_app.o
+ .debug_macro   0x00000000       0xd3 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x34 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x40 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x52 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x16 .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x60e .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x898 .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x492 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0xe8 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x10 .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x46f .\build\patch/user_app.o
+ .debug_macro   0x00000000     0x15a6 .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x97f .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x64 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x16 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0xe8 .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x28c .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x388 .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x277 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x10 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x22 .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x280 .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x1bc .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x34 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x22 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x16 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x58 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x1f .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x43 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x20 .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x187 .\build\patch/user_app.o
+ .debug_macro   0x00000000      0x330 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x10 .\build\patch/user_app.o
+ .debug_macro   0x00000000       0x35 .\build\patch/user_app.o
+ .text          0x00000000      0x1d4 c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v6-m\libgcc.a(_divsi3.o)
+ .data          0x00000000        0x0 c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v6-m\libgcc.a(_divsi3.o)
+ .bss           0x00000000        0x0 c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v6-m\libgcc.a(_divsi3.o)
+ .debug_frame   0x00000000       0x20 c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v6-m\libgcc.a(_divsi3.o)
+ .ARM.attributes
+                0x00000000       0x1e c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v6-m\libgcc.a(_divsi3.o)
+ .text          0x00000000        0x4 c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v6-m\libgcc.a(_dvmd_tls.o)
+ .data          0x00000000        0x0 c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v6-m\libgcc.a(_dvmd_tls.o)
+ .bss           0x00000000        0x0 c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v6-m\libgcc.a(_dvmd_tls.o)
+ .ARM.attributes
+                0x00000000       0x1e c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v6-m\libgcc.a(_dvmd_tls.o)
+ .text          0x00000000        0x0 c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libg.a(lib_a-memcpy-stub.o)
+ .data          0x00000000        0x0 c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libg.a(lib_a-memcpy-stub.o)
+ .bss           0x00000000        0x0 c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libg.a(lib_a-memcpy-stub.o)
+ .text          0x00000000        0x0 c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libg.a(lib_a-memset.o)
+ .data          0x00000000        0x0 c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libg.a(lib_a-memset.o)
+ .bss           0x00000000        0x0 c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libg.a(lib_a-memset.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+rom              0x10000000         0x00014000
+otp              0x10020000         0x00010000
+ram              0x20063800         0x00000400
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD .\build\patch/patch_filtered.syml
+                0x2005d2a7                PMBUS_CMD_ON_OFF_CONFIG_RANGE = 0x2005d2a7
+                0x2005d45e                PMBUS_CMD_FREQUENCY_SWITCH_RANGE = 0x2005d45e
+                0x100008e1                ClkControl_SetEssentialWKUP = 0x100008e1
+                0x10005494                DriverVersion_dtimer_drv = 0x10005494
+                0x20061300                os_tick_irqn = 0x20061300
+                0x2005d3f9                PMBUS_CMD_READ_FREQUENCY_DATA_LOOP1 = 0x2005d3f9
+                0x10002df9                isr_evt_set = 0x10002df9
+                0x1000b251                configurator_pmbus_default_set = 0x1000b251
+                0x10001b8d                UVM_ERROR_COUNT = 0x10001b8d
+                0x1000b381                configurator_pmbus_partial_ptr_get = 0x1000b381
+                0x2005d2ca                PMBUS_CMD_STATUS_VOUT_DATA_LOOP1 = 0x2005d2ca
+                0x2005e575                PMBUS_CMD_FW_CONFIG_FAULTS_DATA_LOOP1 = 0x2005e575
+                0x1000bbf9                is_partial_xv_en_configurator = 0x1000bbf9
+                0x10000b95                DTIMER_Uninitialize = 0x10000b95
+                0x10008e65                Set_Firmware_Fault = 0x10008e65
+                0x2005d35d                PMBUS_CMD_IOUT_OC_LV_FAULT_LIMIT_RANGE = 0x2005d35d
+                0x1000487d                scratchpad_semaphore_get = 0x1000487d
+                0x2005e0ec                PMBUS_CMD_IIN_OC_FAULT_LIMIT = 0x2005e0ec
+                0x10001905                StubHandler_gpio_intr = 0x10001905
+                0x10005584                os_clockrate = 0x10005584
+                0x100057ed                Regulation_DTIMER0_TON_TOFF_DELAY_IRQHandler_regulation_drv = 0x100057ed
+                0x100003bd                _memset = 0x100003bd
+                0x100027f1                _mutex_acquire = 0x100027f1
+                0x10003d8d                rt_mbx_check = 0x10003d8d
+                0x10001695                PMBUS_Get_On_Off_State = 0x10001695
+                0x10007f89                FAULTS_GetCapabilities = 0x10007f89
+                0x100000f1                _alloc_box = 0x100000f1
+                0x10003977                rt_alloc_mem = 0x10003977
+                0x2005d449                PMBUS_CMD_MFR_IOUT_OC_FAST_FAULT_LIMIT_DATA_LOOP0 = 0x2005d449
+                0x2005d38b                PMBUS_CMD_VIN_UV_WARN_LIMIT_DATA_LOOP0 = 0x2005d38b
+                0x2005e444                PMBUS_CMD_MFR_VOUT_MAX = 0x2005e444
+                0x2005d3cd                PMBUS_CMD_POUT_OP_WARN_LIMIT_DATA_LOOP1 = 0x2005d3cd
+                0x20061098                os_fifo = 0x20061098
+                0x2005e05c                PMBUS_CMD_UT_WARN_LIMIT = 0x2005e05c
+                0x2005d2a2                PMBUS_CMD_PAGE_DATA_LOOP0 = 0x2005d2a2
+                0x2005d32f                PMBUS_CMD_INTERLEAVE_DATA_LOOP0 = 0x2005d32f
+                0x2005d309                PMBUS_CMD_VOUT_TRANSITION_RATE_RANGE = 0x2005d309
+                0x100064b1                Regulation_Set_VID = 0x100064b1
+                0x10002c85                hash_code_create = 0x10002c85
+                0x10002059                Uart_GetVersion = 0x10002059
+                0x10001909                SystemCoreClockUpdate = 0x10001909
+                0x100029d1                dtimer_config = 0x100029d1
+                0x2005d2d2                PMBUS_CMD_STATUS_CML_DATA_LOOP1 = 0x2005d2d2
+                0x1000564d                LINEAR11_TO_MANTISSA_regulation_drv = 0x1000564d
+                0x2005d2bc                PMBUS_CMD_OT_FAULT_RESPONSE_DATA_LOOP1 = 0x2005d2bc
+                0x2005d38d                PMBUS_CMD_VIN_UV_WARN_LIMIT_DATA_LOOP1 = 0x2005d38d
+                0x1000b3b5                configurator_pmbus_partial_set = 0x1000b3b5
+                0x1000c328                DriverVersion_otp_drv = 0x1000c328
+                0x100000c1                rt_set_PSP = 0x100000c1
+                0x10000265                __asm___10_uart_drv_c_29720402____REV16 = 0x10000265
+                0x1000fee5                PMBUS_GetVersion = 0x1000fee5
+                0x100079a9                Regulation_Voltage_Ramp_Rate_Set = 0x100079a9
+                0x1000d3f5                PMBUS_HANDLE_SMBALERT_MASK = 0x1000d3f5
+                0x10003a3d                rt_clr_box_rt_CMSIS = 0x10003a3d
+                0x10000ee9                MMU_ClearMemProtection = 0x10000ee9
+                0x2005c85c                osExceptions_cmsis_os_exceptions = 0x2005c85c
+                0x1000adf5                configurator_boot_default = 0x1000adf5
+                0x2005d2dc                PMBUS_CMD_MFR_SELECT_TEMPERATURE_SENSOR_DATA_LOOP0 = 0x2005d2dc
+                0x10003bc1                rt_evt_wait = 0x10003bc1
+                0x1000bec9                otp_fs_ram_compare_crc = 0x1000bec9
+                0x10001f75                Uart_EnableRxFIFOEvent = 0x10001f75
+                0x2005df6c                PMBUS_CMD_VOUT_OV_FAULT_LIMIT = 0x2005df6c
+                0x2005d4f1                PMBUS_CMD_TOFF_FALL_RANGE = 0x2005d4f1
+                0x1000cec5                PMBUS_HANDLE_MFR_IOUT_APC = 0x1000cec5
+                0x2005e535                PMBUS_CMD_FW_CONFIG_TELEMETRY_DATA_LOOP1 = 0x2005e535
+                0x2005c534                Log_App_log_app = 0x2005c534
+                0x10000d55                GpioBit_IntrType = 0x10000d55
+                0x10003499                osThreadContextExtend = 0x10003499
+                0x2005d323                PMBUS_CMD_VIN_ON_DATA_LOOP0 = 0x2005d323
+                0x2005c550                func_wdt_drv = 0x2005c550
+                0x2005dfec                PMBUS_CMD_IOUT_OC_LV_FAULT_LIMIT = 0x2005dfec
+                0x10007d98                os_pool_def_regulation_inter_thread_mpool = 0x10007d98
+                0x100025e9                __ARM_common_switch8 = 0x100025e9
+                0x10004bc5                svcSemaphoreRelease = 0x10004bc5
+                0x2005e08c                PMBUS_CMD_VIN_OV_FAULT_LIMIT = 0x2005e08c
+                0x2005e1cc                PMBUS_CMD_STATUS_BYTE = 0x2005e1cc
+                0x2005d399                PMBUS_CMD_IIN_OC_FAULT_LIMIT_DATA_LOOP1 = 0x2005d399
+                0x2005d34d                PMBUS_CMD_VOUT_UV_FAULT_LIMIT_DATA_LOOP0 = 0x2005d34d
+                0x200612fc                os_lock_rt_System = 0x200612fc
+                0x10001f2d                Uart_DisableRxFIFOEvent = 0x10001f2d
+                0x100028ed                circ_buffer_pop = 0x100028ed
+                0x2005decc                PMBUS_CMD_VOUT_DROOP = 0x2005decc
+                0x1000d6d5                PMBUS_HANDLE_UT_FAULT_LIMIT = 0x1000d6d5
+                0x10011204                Driver_PMBUS0_pmbus_drv = 0x10011204
+                0x1000c7f9                PMBUS_HANDLE_IIN_OC_FAULT_LIMIT = 0x1000c7f9
+                0x2005e678                PMBUS_CMD_MFR_IOUT_APC = 0x2005e678
+                0x2005e398                PMBUS_CMD_MFR_LOCATION = 0x2005e398
+                0x10003d99                rt_mbx_init = 0x10003d99
+                0x1000556c                os_stackinfo = 0x1000556c
+                0x2005e4e4                PMBUS_CMD_FW_CONFIG_REGULATION = 0x2005e4e4
+                0x100003db                __rt_memclr = 0x100003db
+                0x1000cb19                PMBUS_HANDLE_MAX_DUTY = 0x1000cb19
+                0x100003df                __rt_memclr_w = 0x100003df
+                0x1000e2ed                pmbus_autogen_init = 0x1000e2ed
+                0x1000d4bf                PMBUS_HANDLE_STATUS_OTHER = 0x1000d4bf
+                0x2005d37b                PMBUS_CMD_UT_FAULT_LIMIT_DATA_LOOP0 = 0x2005d37b
+                0x10002d35                hw_crc32 = 0x10002d35
+                0x2005d2e9                PMBUS_CMD_VOUT_TRIM_DATA_LOOP1 = 0x2005d2e9
+                0x2005d4fd                PMBUS_CMD_POUT_OP_WARN_LIMIT_RANGE = 0x2005d4fd
+                0x2005cff0                MMU_Status_mmu_drv = 0x2005cff0
+                0x2005e730                os_messageQ_q_pmbus_inter_thread_queue = 0x2005e730
+                0x10003055                osDelay = 0x10003055
+                0x10001f65                Uart_DisableTxFIFOEvent = 0x10001f65
+                0x2005d369                PMBUS_CMD_IOUT_UC_FAULT_LIMIT_RANGE = 0x2005d369
+                0x1000059c                SVC_Count = 0x1000059c
+                0x1000bd71                otp_fs_data_store = 0x1000bd71
+                0x2005d355                PMBUS_CMD_IOUT_OC_FAULT_LIMIT_DATA_LOOP1 = 0x2005d355
+                0x100008a1                ClkControl_SetAlphaClk = 0x100008a1
+                0x1000289d                circ_buffer_elements_remove = 0x1000289d
+                0x2005d427                PMBUS_CMD_MFR_IOUT_MAX_DATA_LOOP1 = 0x2005d427
+                0x2005d50f                PMBUS_CMD_MFR_POUT_MAX_RANGE = 0x2005d50f
+                0x2005d41b                PMBUS_CMD_MFR_VOUT_MIN_DATA_LOOP1 = 0x2005d41b
+                0x10005761                Regulation_Current_Limited_Startup_Fsw_IRQHandler = 0x10005761
+                0x2005d363                PMBUS_CMD_IOUT_OC_WARN_LIMIT_RANGE = 0x2005d363
+                0x10000321                __rt_memcpy = 0x10000321
+                0x1000456d                rt_sys_start = 0x1000456d
+                0x1000026d                __asm___9_mmu_drv_c_8443c26c____REVSH = 0x1000026d
+                0x2005ed44                dtimer0_cfg = 0x2005ed44
+                0x10005578                os_flags = 0x10005578
+                0x2005dedc                PMBUS_CMD_VOUT_SCALE_LOOP = 0x2005dedc
+                0x1000056b                longjmp = 0x1000056b
+                0x2005d2ef                PMBUS_CMD_VOUT_CAL_OFFSET_DATA_LOOP1 = 0x2005d2ef
+                0x2005d3b3                PMBUS_CMD_TON_DELAY_RANGE = 0x2005d3b3
+                0x1000bad1                configurator_status_get = 0x1000bad1
+                0x2005dfdc                PMBUS_CMD_IOUT_OC_FAULT_RESPONSE = 0x2005dfdc
+                0x10003551                osTimerCall = 0x10003551
+                0x10002f11                log_header_create = 0x10002f11
+                0x2005e29c                PMBUS_CMD_READ_IOUT = 0x2005e29c
+                0x2005df5c                PMBUS_CMD_IOUT_CAL_OFFSET = 0x2005df5c
+                0x2005e8fc                os_pool_m_pmbus_inter_thread_mpool = 0x2005e8fc
+                0x1000afa5                configurator_conf_partial_load = 0x1000afa5
+                0x1000402d                rt_mut_release = 0x1000402d
+                0x2005e434                PMBUS_CMD_MFR_VOUT_MIN = 0x2005e434
+                0x10004945                svcDelay = 0x10004945
+                0x10000e6d                Gpio_IntrHandler = 0x10000e6d
+                0x1000241d                Uart_Send = 0x1000241d
+                0x1000dd85                PMBUS_HANDLE_WRITE_PROTECT = 0x1000dd85
+                0x2005d490                PMBUS_CMD_MFR_MODEL_DATA_LOOP1 = 0x2005d490
+                0x1000027d                NMI_Handler = 0x1000027d
+                0x200612fe                pend_flags_rt_System = 0x200612fe
+                0x10000c9d                GpioBit_DatRd = 0x10000c9d
+                0x10003959                rt_alloc_box = 0x10003959
+                0x2005e3c4                PMBUS_CMD_MFR_DATE_DATA_LOOP0 = 0x2005e3c4
+                0x10000b9d                Default_IRQHandler = 0x10000b9d
+                0x200612b8                osMessageQId_osTimerMessageQ = 0x200612b8
+                0x1000d4dd                PMBUS_HANDLE_STATUS_WORD = 0x1000d4dd
+                0x100062c5                Regulation_PWM_Deadtime_Set = 0x100062c5
+                0x1000cbc1                PMBUS_HANDLE_MFR_DISABLE_SECURITY_ONCE = 0x1000cbc1
+                0x10001bad                UVM_PRINT_ERROR = 0x10001bad
+                0x10003071                osExcGuardSet = 0x10003071
+                0x2005d2dd                PMBUS_CMD_MFR_SELECT_TEMPERATURE_SENSOR_DATA_LOOP1 = 0x2005d2dd
+                0x2005d345                PMBUS_CMD_VOUT_OV_WARN_LIMIT_RANGE = 0x2005d345
+                0x1000d77d                PMBUS_HANDLE_VIN_ON = 0x1000d77d
+                0x1000587d                Regulation_DTIMER3_FAULT_TON_TOFF_MAX_IRQHandler_regulation_drv = 0x1000587d
+                0x10010ebd                PMBUS_RANGE_CALCULATE = 0x10010ebd
+                0x2005d2b3                PMBUS_CMD_VOUT_OV_FAULT_RESPONSE_DATA_LOOP0 = 0x2005d2b3
+                0x10007bb5                Regulation_smooth_transition_feedforward = 0x10007bb5
+                0x10000a1d                ClkControl_SetSW_PWDN_CTRL = 0x10000a1d
+                0x2006153c                uart_info = 0x2006153c
+                0x2005cfe0                glitch_cfg_gpio_intr = 0x2005cfe0
+                0x2005d2c1                PMBUS_CMD_VIN_UV_FAULT_RESPONSE_DATA_LOOP0 = 0x2005d2c1
+                0x10002e19                isr_mbx_receive = 0x10002e19
+                0x1000ac4d                _store_data_otp_fs = 0x1000ac4d
+                0x10004a35                svcKernelSysTick = 0x10004a35
+                0x1000fe48                PMBUS_RANGE_SMBALERT_MASK_ARRAY = 0x1000fe48
+                0x10000a5d                DRIVER_COMMON_init = 0x10000a5d
+                0x2005d401                PMBUS_CMD_READ_PIN_DATA_LOOP1 = 0x2005d401
+                0x2005e38c                PMBUS_CMD_MFR_REVISION_DATA_LOOP0 = 0x2005e38c
+                0x2005e6b8                PMBUS_CMD_MFR_DISABLE_SECURITY_ONCE = 0x2005e6b8
+                0x2005d377                PMBUS_CMD_UT_WARN_LIMIT_DATA_LOOP0 = 0x2005d377
+                0x10004e1d                sysTimerTick = 0x10004e1d
+                0x2005e6a8                PMBUS_CMD_MFR_SETUP_PASSWORD = 0x2005e6a8
+                0x1000bdfd                otp_fs_data_store_fault_clear = 0x1000bdfd
+                0x10001a9d                Telemetry_IRQ_VOUT_POWER_GOOD_ON_OFF_HANDLE = 0x10001a9d
+                0x10006709                Regulation_Switching_Frequency_Set = 0x10006709
+                0x2005d41f                PMBUS_CMD_MFR_VOUT_MAX_DATA_LOOP0 = 0x2005d41f
+                0x2005e3d0                PMBUS_CMD_MFR_SERIAL = 0x2005e3d0
+                0x2005e0cc                PMBUS_CMD_VIN_UV_FAULT_LIMIT = 0x2005e0cc
+                0x10003541                osThreadSetContextExtension = 0x10003541
+                0x10007b91                Regulation_setup_fsw_irq = 0x10007b91
+                0x100003e3                __aeabi_uidivmod = 0x100003e3
+                0x100087ad                Faults_Clear_Common_Hardware_Faults = 0x100087ad
+                0x2005d389                PMBUS_CMD_VIN_OV_WARN_LIMIT_RANGE = 0x2005d389
+                0x10001031                MMU_GetRegProtection = 0x10001031
+                0x100100ed                PMBUS_IRQHandler = 0x100100ed
+                0x100111c4                DriverVersion_pmbus_drv = 0x100111c4
+                0x1000ca6d                PMBUS_HANDLE_IOUT_OC_WARN_LIMIT = 0x1000ca6d
+                0x2005d2ed                PMBUS_CMD_VOUT_CAL_OFFSET_DATA_LOOP0 = 0x2005d2ed
+                0x10005101                wdt_enable_wdt_register_clock_wdt_drv = 0x10005101
+                0x1000432d                rt_ret_val = 0x1000432d
+                0x2005df1c                PMBUS_CMD_POWER_MODE = 0x2005df1c
+                0x2005d359                PMBUS_CMD_IOUT_OC_LV_FAULT_LIMIT_DATA_LOOP0 = 0x2005d359
+                0x2005e1dc                PMBUS_CMD_STATUS_WORD = 0x2005e1dc
+                0x100055ac                os_messageQ_def_osTimerMessageQ = 0x100055ac
+                0x1000d589                PMBUS_HANDLE_STORE_DEFAULT_ALL = 0x1000d589
+                0x1000bc4d                otp_fs_command_invalidate = 0x1000bc4d
+                0x10000be5                GPIO_Drv_init = 0x10000be5
+                0x2005d2e0                PMBUS_CMD_MFR_FIRMWARE_COMMAND_DATA_LOOP0 = 0x2005d2e0
+                0x1000dcf1                PMBUS_HANDLE_VOUT_UV_FAULT_LIMIT = 0x1000dcf1
+                0x2005d3dd                PMBUS_CMD_READ_IIN_DATA_LOOP1 = 0x2005d3dd
+                0x100030c1                osExcLastGuardPop = 0x100030c1
+                0x1000d0e5                PMBUS_HANDLE_OPERATION = 0x1000d0e5
+                0x10007f69                FAULTS_GET_ARRAY_POINTER = 0x10007f69
+                0x2005de14                PMBUS_CMD_CAPABILITY = 0x2005de14
+                0x2005d40f                PMBUS_CMD_MFR_IIN_MAX_DATA_LOOP0 = 0x2005d40f
+                0x2005e3e0                PMBUS_CMD_MFR_SERIAL_DATA_LOOP0 = 0x2005e3e0
+                0x100049e9                svcKernelStart = 0x100049e9
+                0x2005e31c                PMBUS_CMD_READ_PIN = 0x2005e31c
+                0x2005d46c                PMBUS_CMD_PAGE_DATA_LOOP1 = 0x2005d46c
+                0x2005d2b1                PMBUS_CMD_POWER_MODE_DATA_LOOP0 = 0x2005d2b1
+                0x2005e0ac                PMBUS_CMD_VIN_OV_WARN_LIMIT = 0x2005e0ac
+                0x2005d417                PMBUS_CMD_MFR_PIN_MAX_DATA_LOOP1 = 0x2005d417
+                0x10000f71                MMU_ClearRegProtection = 0x10000f71
+                0x2005d431                PMBUS_CMD_MFR_TAMBIENT_MAX_RANGE = 0x2005d431
+                0x10004e71                sys_delay_by_us = 0x10004e71
+                0x2005d385                PMBUS_CMD_VIN_OV_WARN_LIMIT_DATA_LOOP0 = 0x2005d385
+                0x2005d4d4                PMBUS_CMD_MFR_FIRMWARE_COMMAND_DATA_DATA_LOOP0 = 0x2005d4d4
+                0x2005d529                PMBUS_CMD_MFR_DEBUG_BUFF_DATA_LOOP1 = 0x2005d529
+                0x2005d3f7                PMBUS_CMD_READ_FREQUENCY_DATA_LOOP0 = 0x2005d3f7
+                0x1000d5c9                PMBUS_HANDLE_STORE_USER_ALL = 0x1000d5c9
+                0x2005d2bf                PMBUS_CMD_VIN_OV_FAULT_RESPONSE_DATA_LOOP0 = 0x2005d2bf
+                0x1000123d                MMU_UpdateStatus_mmu_drv = 0x1000123d
+                0x2005d2b6                PMBUS_CMD_VOUT_UV_FAULT_RESPONSE_DATA_LOOP1 = 0x2005d2b6
+                0x2005e24c                PMBUS_CMD_STATUS_MFR_SPECIFIC = 0x2005e24c
+                0x1000340d                osSemaphoreWait = 0x1000340d
+                0x1000c399                PMBUS_HANDLE_CLEAR_FAULTS = 0x1000c399
+                0x2005d459                PMBUS_CMD_MFR_MIN_PW_RANGE = 0x2005d459
+                0x100032f5                osMessagePut = 0x100032f5
+                0x10001079                MMU_Initialize = 0x10001079
+                0x2005d2bd                PMBUS_CMD_UT_FAULT_RESPONSE_DATA_LOOP0 = 0x2005d2bd
+                0x10009d4d                Telemetry_change_scales = 0x10009d4d
+                0x1000da45                PMBUS_HANDLE_VOUT_DROOP = 0x1000da45
+                0x10005580                CMSIS_RTOS_RTX_Version = 0x10005580
+                0x2005d3c3                PMBUS_CMD_TOFF_FALL_DATA_LOOP0 = 0x2005d3c3
+                0x2005d415                PMBUS_CMD_MFR_PIN_MAX_DATA_LOOP0 = 0x2005d415
+                0x2005d474                PMBUS_CMD_CAPABILITY_DATA_LOOP1 = 0x2005d474
+                0x2005d2de                PMBUS_CMD_MFR_MIN_PW_DATA_LOOP0 = 0x2005d2de
+                0x2005d37f                PMBUS_CMD_VIN_OV_FAULT_LIMIT_DATA_LOOP0 = 0x2005d37f
+                0x10004cd1                svcThreadCreate = 0x10004cd1
+                0x1000d9cf                PMBUS_HANDLE_VIN_UV_WARN_LIMIT = 0x1000d9cf
+                0x100033c5                osSemaphoreRelease = 0x100033c5
+                0x2005d39d                PMBUS_CMD_IIN_OC_WARN_LIMIT_DATA_LOOP0 = 0x2005d39d
+                0x2005d3bb                PMBUS_CMD_TON_MAX_FAULT_LIMIT_DATA_LOOP1 = 0x2005d3bb
+                0x2005dd94                PMBUS_CMD_CLEAR_FAULTS = 0x2005dd94
+                0x2005d4d0                PMBUS_CMD_MFR_SECURITY_BIT_MASK_HIGH_DATA_LOOP1 = 0x2005d4d0
+                0x200612b4                osThreadId_osTimerThread = 0x200612b4
+                0x1000c32c                os_messageQ_def_otp_msg_box = 0x1000c32c
+                0x10000f85                MMU_ClearStatus = 0x10000f85
+                0x2005d32d                PMBUS_CMD_VIN_OFF_RANGE = 0x2005d32d
+                0x100051c5                wdt_reset_enable_wdt_drv = 0x100051c5
+                0x1000fe88                PMBUS_RANGE_UNSIGNED_LINEAR11_ARRAY = 0x1000fe88
+                0x2005d2d0                PMBUS_CMD_STATUS_TEMPERATURE_DATA_LOOP1 = 0x2005d2d0
+                0x10009b39                Telemetry_Thread = 0x10009b39
+                0x2005d2a4                PMBUS_CMD_OPERATION_DATA_LOOP1 = 0x2005d2a4
+                0x2005d35f                PMBUS_CMD_IOUT_OC_WARN_LIMIT_DATA_LOOP0 = 0x2005d35f
+                0x200612dc                os_dly = 0x200612dc
+                0x100052c0                pmbus_default_data_array_loop0 = 0x100052c0
+                0x2005d464                PMBUS_CMD_UT_FAULT_LIMIT_RANGE = 0x2005d464
+                0x2005e55c                PMBUS_CMD_FW_CONFIG_FAULTS_DATA_LOOP0 = 0x2005e55c
+                0x100048b9                scratchpad_semaphore_release = 0x100048b9
+                0x1000dbed                PMBUS_HANDLE_VOUT_OV_WARN_LIMIT = 0x1000dbed
+                0x10003311                osPoolAlloc = 0x10003311
+                0x2005ea4c                drv2_info = 0x2005ea4c
+                0x1000bc95                otp_fs_command_store = 0x1000bc95
+                0x2005d421                PMBUS_CMD_MFR_VOUT_MAX_DATA_LOOP1 = 0x2005d421
+                0x10007949                Regulation_VC0_VCONTROL_IRQHandler_regulation_drv = 0x10007949
+                0x10002efd                log_error = 0x10002efd
+                0x100030a5                osExcInitialize = 0x100030a5
+                0x20061348                ntc_temp = 0x20061348
+                0x100054e4                DriverVersion_mmu_drv = 0x100054e4
+                0x100111e8                os_thread_def_PMBUS_Thread = 0x100111e8
+                0x10003d3d                rt_init_stack = 0x10003d3d
+                0x10009aa5                Telemetry_Setup_Irq = 0x10009aa5
+                0x10002811                _mutex_release = 0x10002811
+                0x100042fd                rt_resort_prio = 0x100042fd
+                0x1000a985                OTP_ReadModifyWrite_otp_drv = 0x1000a985
+                0x2005c500                fw_config_data = 0x2005c500
+                0x2005d31b                PMBUS_CMD_MAX_DUTY_DATA_LOOP1 = 0x2005d31b
+                0x2005e33c                PMBUS_CMD_MFR_ID = 0x2005e33c
+                0x10003429                osSignalSet = 0x10003429
+                0x1000ad01                _store_hdr_otp_fs = 0x1000ad01
+                0x2005de5c                PMBUS_CMD_VOUT_COMMAND = 0x2005de5c
+                0x2005d3e9                PMBUS_CMD_READ_TEMPERATURE_1_DATA_LOOP1 = 0x2005d3e9
+                0x10001bdd                UVM_PRINT_INFO = 0x10001bdd
+                0x1000d089                PMBUS_HANDLE_MFR_SETUP_PASSWORD = 0x1000d089
+                0x10000e9d                HardFault_Handler = 0x10000e9d
+                0x1000b841                configurator_pmbus_user_set = 0x1000b841
+                0x2005d2d3                PMBUS_CMD_STATUS_OTHER_DATA_LOOP0 = 0x2005d2d3
+                0x2005d409                PMBUS_CMD_MFR_VIN_MAX_DATA_LOOP0 = 0x2005d409
+                0x1000912d                Telemetry_Get_PMBUS_Configuration = 0x1000912d
+                0x1000cabd                PMBUS_HANDLE_IOUT_UC_FAULT_LIMIT = 0x1000cabd
+                0x1000bb8d                get_bits_configurator = 0x1000bb8d
+                0x1000a275                Telemetry_get_vin_source = 0x1000a275
+                0x2005d3e5                PMBUS_CMD_READ_IOUT_DATA_LOOP1 = 0x2005d3e5
+                0x1000b0a1                configurator_conf_partial_store = 0x1000b0a1
+                0x2005d4bc                PMBUS_CMD_PWM_DEADTIME_ADJUSTMENT_DATA_LOOP1 = 0x2005d4bc
+                0x1000d48d                PMBUS_HANDLE_STATUS_CML = 0x1000d48d
+                0x2005cf40                FAULT_FW_App = 0x2005cf40
+                0x100034f9                osThreadExit = 0x100034f9
+                0x200612bc                os_initialized = 0x200612bc
+                0x100055f0                DriverVersion_uart_drv = 0x100055f0
+                0x1000b235                configurator_pmbus_default_ptr_get = 0x1000b235
+                0x2005ef78                mp_stk = 0x2005ef78
+                0x1000259d                Uart_Uninitialize = 0x1000259d
+                0x100091fd                Telemetry_Get_Xvalent_Pinset = 0x100091fd
+                0x100058a1                Regulation_Drv_Init = 0x100058a1
+                0x1000c0c5                put_bits_configurator = 0x1000c0c5
+                0x2005e02c                PMBUS_CMD_OT_FAULT_LIMIT = 0x2005e02c
+                0x2005d2bb                PMBUS_CMD_OT_FAULT_RESPONSE_DATA_LOOP0 = 0x2005d2bb
+                0x1000fea9                PMBUS_GPIO_CB_pmbus_gpio_control = 0x1000fea9
+                0x1000bf81                otp_fs_scan = 0x1000bf81
+                0x10005169                wdt_keep_alive = 0x10005169
+                0x100027a5                _init_box = 0x100027a5
+                0x2005d325                PMBUS_CMD_VIN_ON_DATA_LOOP1 = 0x2005d325
+                0x2005d36b                PMBUS_CMD_OT_FAULT_LIMIT_DATA_LOOP0 = 0x2005d36b
+                0x10004dd9                sysPoolAlloc = 0x10004dd9
+                0x2005d3b1                PMBUS_CMD_TON_DELAY_DATA_LOOP1 = 0x2005d3b1
+                0x2005e404                PMBUS_CMD_MFR_VIN_MAX = 0x2005e404
+                0x2005c690                register_config_s_configurator = 0x2005c690
+                0x10002ecd                log_buffer_reset = 0x10002ecd
+                0x2005d3af                PMBUS_CMD_TON_DELAY_DATA_LOOP0 = 0x2005d3af
+                0x10000271                __asm___10_uart_drv_c_29720402____REVSH = 0x10000271
+                0x10001659                PMBUS_Get_Command_Word = 0x10001659
+                0x2005e1ac                PMBUS_CMD_POUT_OP_WARN_LIMIT = 0x2005e1ac
+                0x2005c554                dcounter_wdt_drv = 0x2005c554
+                0x10002f89                log_write = 0x10002f89
+                0x1000aa19                OTP_UpdateAccessError_otp_drv = 0x1000aa19
+                0x1000aab9                OTP_Write128_otp_drv = 0x1000aab9
+                0x10001211                MMU_SetRegProtection = 0x10001211
+                0x2005d457                PMBUS_CMD_MFR_IOUT_APC_DATA_LOOP1 = 0x2005d457
+                0x100056e1                Regulation_Compute_Feed_Forward = 0x100056e1
+                0x10009445                Telemetry_Sample = 0x10009445
+                0x2005d2a0                PMBUS_CMD_UNSUPPORTED_DATA = 0x2005d2a0
+                0x100057c9                Regulation_DTIMER0_FAULT_IRQHandler_regulation_drv = 0x100057c9
+                0x2005c7c4                os_semaphore_cb_scratchpad_semaphore = 0x2005c7c4
+                0x100054cc                Driver_DTIMER = 0x100054cc
+                0x2005d3a9                PMBUS_CMD_POWER_GOOD_OFF_DATA_LOOP0 = 0x2005d3a9
+                0x100111f8                os_pool_def_pmbus_inter_thread_mpool = 0x100111f8
+                0x2005e6c8                PMBUS_CMD_MFR_SECURITY_BIT_MASK_LOW = 0x2005e6c8
+                0x1000025d                __asm___15_driver_common_c_5aa49453____REV16 = 0x1000025d
+                0x10003239                osKernelSysTick = 0x10003239
+                0x10004fe5                sys_modules_init___main = 0x10004fe5
+                0x100049dd                svcKernelRunning = 0x100049dd
+                0x1000a33c                ntc_temp_lut = 0x1000a33c
+                0x10000c61                GpioBank_IntrGetStatus = 0x10000c61
+                0x2005d2d4                PMBUS_CMD_STATUS_OTHER_DATA_LOOP1 = 0x2005d2d4
+                0x2005e20c                PMBUS_CMD_STATUS_INPUT = 0x2005e20c
+                0x1000cfdd                PMBUS_HANDLE_MFR_SECURITY_BIT_MASK_HIGH = 0x1000cfdd
+                0x2005d2c2                PMBUS_CMD_VIN_UV_FAULT_RESPONSE_DATA_LOOP1 = 0x2005d2c2
+                0x1000c34c                os_pool_def_otp_mpool = 0x1000c34c
+                0x2005d3bd                PMBUS_CMD_TOFF_DELAY_DATA_LOOP0 = 0x2005d3bd
+                0x2005e424                PMBUS_CMD_MFR_PIN_MAX = 0x2005e424
+                0x2005df8c                PMBUS_CMD_VOUT_OV_WARN_LIMIT = 0x2005df8c
+                0x2005e15c                PMBUS_CMD_TON_MAX_FAULT_LIMIT = 0x2005e15c
+                0x2005d43d                PMBUS_CMD_MFR_VRECT_SCALE_DATA_LOOP0 = 0x2005d43d
+                0x10007a91                Regulation_call_fsw_irq_event_cb = 0x10007a91
+                0x2005d2c3                PMBUS_CMD_IIN_OC_FAULT_RESPONSE_DATA_LOOP0 = 0x2005d2c3
+                0x100093e5                Telemetry_Initialize = 0x100093e5
+                0x10008f0d                faults_drv_irq_enable = 0x10008f0d
+                0x2005de9c                PMBUS_CMD_VOUT_MARGIN_HIGH = 0x2005de9c
+                0x1000d4a1                PMBUS_HANDLE_STATUS_INPUT = 0x1000d4a1
+                0x100008f1                ClkControl_SetOTPKrnClk = 0x100008f1
+                0x10003ea5                rt_mbx_send = 0x10003ea5
+                0x10003b69                rt_evt_set = 0x10003b69
+                0x100038e1                patch_ram_execute = 0x100038e1
+                0x1000433b                rt_rmv_dly = 0x1000433b
+                0x1000c381                LINEAR11_TO_MANTISSA_pmbus_cmd_handlers = 0x1000c381
+                0x10004919                set_system_cb = 0x10004919
+                0x10003629                os_tick_init = 0x10003629
+                0x2005d2a8                PMBUS_CMD_WRITE_PROTECT_DATA_LOOP0 = 0x2005d2a8
+                0x2005d3c9                PMBUS_CMD_TOFF_MAX_WARN_LIMIT_DATA_LOOP1 = 0x2005d3c9
+                0x200612fd                os_psh_flag_rt_System = 0x200612fd
+                0x2005d4c4                PMBUS_CMD_MFR_SETUP_PASSWORD_DATA_LOOP1 = 0x2005d4c4
+                0x2005e7cc                pmbus_inter_thread_mpool = 0x2005e7cc
+                0x1000844d                FAULTS_Uninitialize = 0x1000844d
+                0x2005c7e0                ptr_module_init_callback = 0x2005c7e0
+                0x10005189                wdt_load_wdt_drv = 0x10005189
+                0x2005dd74                PMBUS_CMD_OPERATION = 0x2005dd74
+                0x1000c36d                LINEAR11_TO_EXPONENT_pmbus_cmd_handlers = 0x1000c36d
+                0x100042a9                rt_put_prio = 0x100042a9
+                0x2005d3f5                PMBUS_CMD_READ_DUTY_CYCLE_DATA_LOOP1 = 0x2005d3f5
+                0x10002ec3                linked_list_init = 0x10002ec3
+                0x2005deec                PMBUS_CMD_VOUT_MIN = 0x2005deec
+                0x1000fefd                PMBUS_Gpio_Configure = 0x1000fefd
+                0x2005d4d8                PMBUS_CMD_MFR_FIRMWARE_COMMAND_DATA_DATA_LOOP1 = 0x2005d4d8
+                0x10001fc1                Uart_EnableTxFIFOEvent = 0x10001fc1
+                0x100030d5                osExcThrow = 0x100030d5
+                0x10001619                PMBUS_Get_Command_Dword = 0x10001619
+                0x10000b5d                DTIMER_Stop = 0x10000b5d
+                0x2005e698                PMBUS_CMD_MFR_DEBUG_BUFF = 0x2005e698
+                0x2005d333                PMBUS_CMD_INTERLEAVE_RANGE = 0x2005d333
+                0x1000559c                os_thread_def_osTimerThread = 0x1000559c
+                0x2005d34f                PMBUS_CMD_VOUT_UV_FAULT_LIMIT_DATA_LOOP1 = 0x2005d34f
+                0x2005d044                os_pool_m_otp_mpool_otp_drv = 0x2005d044
+                0x2005d3fb                PMBUS_CMD_READ_POUT_DATA_LOOP0 = 0x2005d3fb
+                0x100050a1                wdt_activate = 0x100050a1
+                0x2005d3e1                PMBUS_CMD_READ_VOUT_DATA_LOOP1 = 0x2005d3e1
+                0x10001541                PMBUS_Copy_To_RAM = 0x10001541
+                0x2005dfac                PMBUS_CMD_VOUT_UV_FAULT_LIMIT = 0x2005dfac
+                0x1000063d                ClkControl_EnableClockGate = 0x1000063d
+                0x2005c538                sys_last_critical_exception = 0x2005c538
+                0x10000a0d                ClkControl_SetSWReset = 0x10000a0d
+                0x10008f4c                DriverCapabilities_faults_drv = 0x10008f4c
+                0x2005d2cf                PMBUS_CMD_STATUS_TEMPERATURE_DATA_LOOP0 = 0x2005d2cf
+                0x2005e668                PMBUS_CMD_FW_CONFIG_DEADTIME_ADJUSMENT_THRESHOLD = 0x2005e668
+                0x2005e5a0                PMBUS_CMD_FW_CONFIG_PMBUS_DATA_LOOP0 = 0x2005e5a0
+                0x2005d425                PMBUS_CMD_MFR_IOUT_MAX_DATA_LOOP0 = 0x2005d425
+                0x10001279                NVIC_ClearPendingIRQ_gpio_intr = 0x10001279
+                0x2005e502                PMBUS_CMD_FW_CONFIG_REGULATION_DATA_LOOP1 = 0x2005e502
+                0x10009421                Telemetry_PowerControl = 0x10009421
+                0x2005ed74                dtimer3_cfg = 0x2005ed74
+                0x10000219                OS_Tick_Handler = 0x10000219
+                0x10002311                Uart_ProcessTx = 0x10002311
+                0x10004333                rt_ret_val2 = 0x10004333
+                0x2005d337                PMBUS_CMD_IOUT_CAL_OFFSET_DATA_LOOP1 = 0x2005d337
+                0x10000261                __asm___9_mmu_drv_c_8443c26c____REV16 = 0x10000261
+                0x10008fb9                TWOS_UNCOMPLEMENT_telemetry_api = 0x10008fb9
+                0x10004db9                svcTimerCall = 0x10004db9
+                0x2005e18c                PMBUS_CMD_TOFF_FALL = 0x2005e18c
+                0x100043dd                rt_sem_send = 0x100043dd
+                0x1000c9eb                PMBUS_HANDLE_IOUT_OC_LV_FAULT_LIMIT = 0x1000c9eb
+                0x2005e6d8                PMBUS_CMD_MFR_SECURITY_BIT_MASK_LOW_DATA_LOOP0 = 0x2005e6d8
+                0x2005d305                PMBUS_CMD_VOUT_TRANSITION_RATE_DATA_LOOP0 = 0x2005d305
+                0x10001969                SystemInit = 0x10001969
+                0x10001ff1                Uart_GetStatus = 0x10001ff1
+                0x1000b925                configurator_registers_load_configurator = 0x1000b925
+                0x10004f1d                sys_irq_handler_set = 0x10004f1d
+                0x10000269                __asm___15_driver_common_c_5aa49453____REVSH = 0x10000269
+                0x2005d2f7                PMBUS_CMD_VOUT_MAX_RANGE = 0x2005d2f7
+                0x2005de34                PMBUS_CMD_SMBALERT_MASK_DATA_LOOP0 = 0x2005de34
+                0x100002e9                DebugEntry = 0x100002e9
+                0x10003111                osExtExceptionCatcherGet_cmsis_os_ext = 0x10003111
+                0x1001005d                PMBUS_Gpio_Set_Feature = 0x1001005d
+                0x2005e658                PMBUS_CMD_MFR_SELECT_TEMPERATURE_SENSOR = 0x2005e658
+                0x10003569                osTimerThread = 0x10003569
+                0x2005d2df                PMBUS_CMD_MFR_MIN_PW_DATA_LOOP1 = 0x2005d2df
+                0x100111c8                os_messageQ_def_pmbus_inter_thread_queue = 0x100111c8
+                0x1000abe1                _otp_wait_till_power_up_or_timeout_otp_drv = 0x1000abe1
+                0x1000b055                configurator_conf_partial_register_load_handler_configurator = 0x1000b055
+                0x10003f3d                rt_mbx_wait = 0x10003f3d
+                0x1000b46d                configurator_pmbus_partial_store = 0x1000b46d
+                0x2005d51b                PMBUS_CMD_MFR_DISABLE_SECURITY_ONCE_DATA_LOOP0 = 0x2005d51b
+                0x1000a189                Telemetry_get_adc_code = 0x1000a189
+                0x1000d4c9                PMBUS_HANDLE_STATUS_TEMPERATURE = 0x1000d4c9
+                0x1000d341                PMBUS_HANDLE_PWM_DEADTIME = 0x1000d341
+                0x2005e6f8                PMBUS_CMD_MFR_SECURITY_BIT_MASK_HIGH_DATA_LOOP0 = 0x2005e6f8
+                0x10002915                circ_buffer_push = 0x10002915
+                0x1000204d                Uart_GetTxCount = 0x1000204d
+                0x100003f7                __aeabi_idiv = 0x100003f7
+                0x10001fe1                Uart_GetModemStatus = 0x10001fe1
+                0x10001839                PMBUS_Set_Command_Byte = 0x10001839
+                0x1000c7c9                PMBUS_HANDLE_IC_DEVICE_ID = 0x1000c7c9
+                0x100055f4                DriverCapabilities_uart_drv = 0x100055f4
+                0x10005cb1                Regulation_Get_PMBUS_Configuration = 0x10005cb1
+                0x1000a81d                OTP_Initialize = 0x1000a81d
+                0x10005099                sys_reset = 0x10005099
+                0x2005d2ab                PMBUS_CMD_STORE_USER_CODE_DATA_LOOP1 = 0x2005d2ab
+                0x2005e4c4                PMBUS_CMD_USER_DATA_00_DATA_LOOP1 = 0x2005e4c4
+                0x10007b0d                Regulation_fsw_irq_enable = 0x10007b0d
+                0x10008f6b                LINEAR11_TO_EXPONENT_telemetry_drv = 0x10008f6b
+                0x2005ea44                drv0_info = 0x2005ea44
+                0x10008fad                TWOS_COMPLEMENT_telemetry_drv = 0x10008fad
+                0x2005e0fc                PMBUS_CMD_IIN_OC_FAULT_RESPONSE = 0x2005e0fc
+                0x2005e4d4                PMBUS_CMD_FW_CONFIG_PWM = 0x2005e4d4
+                0x100012a1                NVIC_SetPriority_system_shasta = 0x100012a1
+                0x10001b9d                UVM_PASS_COUNT = 0x10001b9d
+                0x2005c7d0                ptr_system_callback = 0x2005c7d0
+                0x100046a1                rt_tsk_delete = 0x100046a1
+                0x100088b1                Faults_Clear_Hardware_Faults = 0x100088b1
+                0x100023a1                Uart_Receive = 0x100023a1
+                0x10004f81                sys_memset_bss___main = 0x10004f81
+                0x100045ed                rt_tid2ptcb_rt_CMSIS = 0x100045ed
+                0x10003525                osThreadGetId = 0x10003525
+                0x10003cb7                rt_id2obj_rt_CMSIS = 0x10003cb7
+                0x2005d480                PMBUS_CMD_READ_FAN_SPEED_1_DATA_LOOP1 = 0x2005d480
+                0x1000dc31                PMBUS_HANDLE_VOUT_SCALE_LOOP = 0x1000dc31
+                0x10004645                rt_tsk_create = 0x10004645
+                0x100009d5                ClkControl_SetSEMskAll = 0x100009d5
+                0x1000c91d                PMBUS_HANDLE_IOUT_CAL_OFFSET = 0x1000c91d
+                0x2005d2e7                PMBUS_CMD_VOUT_TRIM_DATA_LOOP0 = 0x2005d2e7
+                0x2005ee10                os_messageQ_q_osTimerMessageQ = 0x2005ee10
+                0x2005e484                PMBUS_CMD_IC_DEVICE_ID = 0x2005e484
+                0x10004a71                svcMessageCreate = 0x10004a71
+                0x10000939                ClkControl_SetRSTMODS = 0x10000939
+                0x10000000                __Vectors = 0x10000000
+                0x1000ffad                PMBUS_Gpio_Get_Feature = 0x1000ffad
+                0x10007b61                Regulation_set_regulation_event_cb = 0x10007b61
+                0x2005d4b4                PMBUS_CMD_FW_CONFIG_PWM_DATA_LOOP1 = 0x2005d4b4
+                0x2005cfac                Gpio_drv_app_gpio_drv = 0x2005cfac
+                0x1000be09                otp_fs_data_store_fault_get = 0x1000be09
+                0x2005de04                PMBUS_CMD_RESTORE_USER_CODE = 0x2005de04
+                0x10003b11                rt_dly_wait = 0x10003b11
+                0x10000cbd                GpioBit_DatWr = 0x10000cbd
+                0x10008fdf                TWOS_UNCOMPLEMENT_telemetry_drv = 0x10008fdf
+                0x2005d343                PMBUS_CMD_VOUT_OV_WARN_LIMIT_DATA_LOOP1 = 0x2005d343
+                0x10002b7d                fw_params_config_load_cb = 0x10002b7d
+                0x2005d361                PMBUS_CMD_IOUT_OC_WARN_LIMIT_DATA_LOOP1 = 0x2005d361
+                0x10011161                PMBUS_drv_init = 0x10011161
+                0x2005d2aa                PMBUS_CMD_STORE_USER_CODE_DATA_LOOP0 = 0x2005d2aa
+                0x10005de5                Regulation_Get_Vid = 0x10005de5
+                0x10002e6f                isr_sem_send = 0x10002e6f
+                0x2005d36f                PMBUS_CMD_OT_FAULT_LIMIT_RANGE = 0x2005d36f
+                0x1000508d                sys_power_down = 0x1000508d
+                0x2005e2ec                PMBUS_CMD_READ_DUTY_CYCLE = 0x2005e2ec
+                0x2005d2ce                PMBUS_CMD_STATUS_INPUT_DATA_LOOP1 = 0x2005d2ce
+                0x2005d3a1                PMBUS_CMD_IIN_OC_WARN_LIMIT_RANGE = 0x2005d3a1
+                0x100035a1                os_error = 0x100035a1
+                0x2005d521                PMBUS_CMD_MFR_DEBUG_BUFF_DATA_LOOP0 = 0x2005d521
+                0x10009971                Telemetry_Set_Irq_Hysteresis_Threshold = 0x10009971
+                0x100000cd                os_set_env = 0x100000cd
+                0x10004ed9                sys_interrupt_priorities_configure_system_shasta = 0x10004ed9
+                0x10004365                rt_rmv_list = 0x10004365
+                0x2005c678                version_timestamp = 0x2005c678
+                0x100023e5                Uart_RxSetup = 0x100023e5
+                0x10007fad                FAULTS_Get_Fault_Response_Type = 0x10007fad
+                0x2005d2f3                PMBUS_CMD_VOUT_MAX_DATA_LOOP0 = 0x2005d2f3
+                0x2005e54c                PMBUS_CMD_FW_CONFIG_FAULTS = 0x2005e54c
+                0x1000baa1                configurator_remaining_otp_size_get = 0x1000baa1
+                0x2005d954                ptr_pmbus_callback = 0x2005d954
+                0x1000b151                configurator_conf_registers_load = 0x1000b151
+                0x10000af9                DTIMER_Initialize = 0x10000af9
+                0x2005d3a3                PMBUS_CMD_POWER_GOOD_ON_DATA_LOOP0 = 0x2005d3a3
+                0x1000d38d                PMBUS_HANDLE_RESTORE_DEFAULT_ALL = 0x1000d38d
+                0x2005e17c                PMBUS_CMD_TOFF_DELAY = 0x2005e17c
+                0x2005d3b5                PMBUS_CMD_TON_RISE_DATA_LOOP0 = 0x2005d3b5
+                0x100034c5                osThreadCreate = 0x100034c5
+                0x2005d40b                PMBUS_CMD_MFR_VIN_MAX_DATA_LOOP1 = 0x2005d40b
+                0x1000d4d3                PMBUS_HANDLE_STATUS_VOUT = 0x1000d4d3
+                0x1000db21                PMBUS_HANDLE_VOUT_MIN = 0x1000db21
+                0x10007fb9                FAULTS_Get_PMBUS_Configuration = 0x10007fb9
+                0x1000a785                OTP_IRQHandler = 0x1000a785
+                0x10003c31                rt_free_mem = 0x10003c31
+                0x10004c35                svcSignalSet = 0x10004c35
+                0x10000c49                GpioBank_IntrClear = 0x10000c49
+                0x10008a39                Faults_Set_Polarity_Hardware_Faults = 0x10008a39
+                0x10008f7d                LINEAR11_TO_MANTISSA_telemetry_api = 0x10008f7d
+                0x100041f1                rt_psh_req = 0x100041f1
+                0x2005ea3c                regulation_inter_thread_mpool = 0x2005ea3c
+                0x1000ac15                _otp_write_wait_till_not_busy_or_timeout_otp_drv = 0x1000ac15
+                0x2005d038                otp_mpool_id_otp_drv = 0x2005d038
+                0x2005d4f7                PMBUS_CMD_TOFF_MAX_WARN_LIMIT_RANGE = 0x2005d4f7
+                0x2005c81c                dtimer_conf_dtimer_drv = 0x2005c81c
+                0x2005e03c                PMBUS_CMD_OT_FAULT_RESPONSE = 0x2005e03c
+                0x2005de8c                PMBUS_CMD_VOUT_MAX = 0x2005de8c
+                0x1000bf01                otp_fs_ram_crc_data_is_valid = 0x1000bf01
+                0x10000131                SVC_Handler = 0x10000131
+                0x2005d405                PMBUS_CMD_MFR_VIN_MIN_DATA_LOOP1 = 0x2005d405
+                0x2005d397                PMBUS_CMD_IIN_OC_FAULT_LIMIT_DATA_LOOP0 = 0x2005d397
+                0x10000915                ClkControl_SetPMBKrnClk = 0x10000915
+                0x100002ed                WatchDog_PreHandler = 0x100002ed
+                0x10004d61                svcThreadGetId = 0x10004d61
+                0x2005d2cc                PMBUS_CMD_STATUS_IOUT_DATA_LOOP1 = 0x2005d2cc
+                0x2005d3d3                PMBUS_CMD_STATUS_WORD_DATA_LOOP0 = 0x2005d3d3
+                0x2005e4a4                PMBUS_CMD_USER_DATA_00 = 0x2005e4a4
+                0x100015e1                PMBUS_Get_Command_Byte = 0x100015e1
+                0x2005d3ad                PMBUS_CMD_POWER_GOOD_OFF_RANGE = 0x2005d3ad
+                0x1000a931                OTP_Read = 0x1000a931
+                0x2005d437                PMBUS_CMD_FW_CONFIG_DE_THRESH_DATA_LOOP0 = 0x2005d437
+                0x2005d433                PMBUS_CMD_IC_DEVICE_ID_DATA_LOOP0 = 0x2005d433
+                0x10003165                osKernelInitialize = 0x10003165
+                0x2005d38f                PMBUS_CMD_VIN_UV_WARN_LIMIT_RANGE = 0x2005d38f
+                0x10004f2d                sys_mem_init___main = 0x10004f2d
+                0x2005d2d9                PMBUS_CMD_PMBUS_REVISION_DATA_LOOP0 = 0x2005d2d9
+                0x2005d2db                PMBUS_CMD_MFR_IOUT_OC_FAST_FAULT_RESPONSE_DATA_LOOP1 = 0x2005d2db
+                0x100009e5                ClkControl_SetSWPowerDown = 0x100009e5
+                0x2005d33f                PMBUS_CMD_VOUT_OV_FAULT_LIMIT_RANGE = 0x2005d33f
+                0x2005de24                PMBUS_CMD_SMBALERT_MASK = 0x2005de24
+                0x1000d8cd                PMBUS_HANDLE_VIN_OV_FAULT_LIMIT = 0x1000d8cd
+                0x2005e608                PMBUS_CMD_PWM_DEADTIME_DATA_LOOP0 = 0x2005e608
+                0x2005e21c                PMBUS_CMD_STATUS_TEMPERATURE = 0x2005e21c
+                0x2005d335                PMBUS_CMD_IOUT_CAL_OFFSET_DATA_LOOP0 = 0x2005d335
+                0x10004111                rt_mut_wait = 0x10004111
+                0x1000c469                PMBUS_HANDLE_FW_CONFIG_DE_THRESH = 0x1000c469
+                0x2005d4ac                PMBUS_CMD_IC_DEVICE_REV_DATA_LOOP1 = 0x2005d4ac
+                0x2005d2fd                PMBUS_CMD_VOUT_MARGIN_HIGH_RANGE = 0x2005d2fd
+                0x10000225                __aeabi_memcpy8 = 0x10000225
+                0x2005d3db                PMBUS_CMD_READ_IIN_DATA_LOOP0 = 0x2005d3db
+                0x2005d37d                PMBUS_CMD_UT_FAULT_LIMIT_DATA_LOOP1 = 0x2005d37d
+                0x1000b179                configurator_conf_registers_store = 0x1000b179
+                0x2005d319                PMBUS_CMD_MAX_DUTY_DATA_LOOP0 = 0x2005d319
+                0x2006148c                tid_Telemetry_Thread = 0x2006148c
+                0x2005d2ac                PMBUS_CMD_RESTORE_USER_CODE_DATA_LOOP0 = 0x2005d2ac
+                0x10000225                __aeabi_memcpy4 = 0x10000225
+                0x2005d2b4                PMBUS_CMD_VOUT_OV_FAULT_RESPONSE_DATA_LOOP1 = 0x2005d2b4
+                0x1000fe68                PMBUS_RANGE_MFR_IOUT_OC_FAST_FAULT_RESPONSE_ARRAY = 0x1000fe68
+                0x2005d2c5                PMBUS_CMD_TON_MAX_FAULT_RESPONSE_DATA_LOOP0 = 0x2005d2c5
+                0x10000111                _free_box = 0x10000111
+                0x10005480                os_semaphore_def_scratchpad_semaphore = 0x10005480
+                0x10003659                os_tick_ovf = 0x10003659
+                0x2005d2a9                PMBUS_CMD_WRITE_PROTECT_DATA_LOOP1 = 0x2005d2a9
+                0x100024cd                Uart_Transfer = 0x100024cd
+                0x2005d2ff                PMBUS_CMD_VOUT_MARGIN_LOW_DATA_LOOP0 = 0x2005d2ff
+                0x2005d2c7                PMBUS_CMD_STATUS_BYTE_DATA_LOOP0 = 0x2005d2c7
+                0x10003391                osSemaphoreCreate = 0x10003391
+                0x100003e3                __aeabi_uidiv = 0x100003e3
+                0x2005dffc                PMBUS_CMD_IOUT_OC_WARN_LIMIT = 0x2005dffc
+                0x100067dd                Regulation_Thread_regulation_drv = 0x100067dd
+                0x1000a74c                Driver_TELEM = 0x1000a74c
+                0x2005dd84                PMBUS_CMD_ON_OFF_CONFIG = 0x2005dd84
+                0x10006611                Regulation_Shutdown_Sequence = 0x10006611
+                0x2005df9c                PMBUS_CMD_VOUT_UV_WARN_LIMIT = 0x2005df9c
+                0x10001fd5                Uart_GetCapabilities = 0x10001fd5
+                0x2005d35b                PMBUS_CMD_IOUT_OC_LV_FAULT_LIMIT_DATA_LOOP1 = 0x2005d35b
+                0x1000d615                PMBUS_HANDLE_STORE_USER_CODE = 0x1000d615
+                0x100024b9                Uart_SetModemControl = 0x100024b9
+                0x2005d3c1                PMBUS_CMD_TOFF_DELAY_RANGE = 0x2005d3c1
+                0x100000c0                __Vectors_End = 0x100000c0
+                0x1000d287                PMBUS_HANDLE_PIN_OP_WARN_LIMIT = 0x1000d287
+                0x10000f95                MMU_Configure = 0x10000f95
+                0x1000a73c                os_thread_def_Telemetry_Thread = 0x1000a73c
+                0x2005d331                PMBUS_CMD_INTERLEAVE_DATA_LOOP1 = 0x2005d331
+                0x2005e12c                PMBUS_CMD_POWER_GOOD_OFF = 0x2005e12c
+                0x2005d3a5                PMBUS_CMD_POWER_GOOD_ON_DATA_LOOP1 = 0x2005d3a5
+                0x2005d30d                PMBUS_CMD_VOUT_DROOP_DATA_LOOP1 = 0x2005d30d
+                0x2005c8f8                FAULTS_ARRAY = 0x2005c8f8
+                0x2005e414                PMBUS_CMD_MFR_IIN_MAX = 0x2005e414
+                0x1000bbe1                is_non_partial_xv_en_configurator = 0x1000bbe1
+                0x10002b55                dtimer_stop = 0x10002b55
+                0x10005574                os_trv = 0x10005574
+                0x2005d36d                PMBUS_CMD_OT_FAULT_LIMIT_DATA_LOOP1 = 0x2005d36d
+                0x1000b5cd                configurator_pmbus_set_configurator = 0x1000b5cd
+                0x10005590                mp_stk_size = 0x10005590
+                0x10005141                wdt_interrupt_enable_wdt_drv = 0x10005141
+                0x2005e09c                PMBUS_CMD_VIN_OV_FAULT_RESPONSE = 0x2005e09c
+                0x2005e620                PMBUS_CMD_MFR_IOUT_OC_FAST_FAULT_LIMIT = 0x2005e620
+                0x1000d685                PMBUS_HANDLE_TOFF_MAX_WARN_LIMIT = 0x1000d685
+                0x2005d43f                PMBUS_CMD_MFR_VRECT_SCALE_DATA_LOOP1 = 0x2005d43f
+                0x10003805                patch_otp_process = 0x10003805
+                0x10004dff                sysPoolFree = 0x10004dff
+                0x2005e01c                PMBUS_CMD_IOUT_UC_FAULT_RESPONSE = 0x2005e01c
+                0x10005594                os_stack_sz = 0x10005594
+                0x2005cf88                FAULT_COMMON_App = 0x2005cf88
+                0x2005d455                PMBUS_CMD_MFR_IOUT_APC_DATA_LOOP0 = 0x2005d455
+                0x2005df0c                PMBUS_CMD_FREQUENCY_SWITCH = 0x2005df0c
+                0x10004bf5                svcSemaphoreWait = 0x10004bf5
+                0x100084b1                Fault_Threshold_Set = 0x100084b1
+                0x2005df3c                PMBUS_CMD_VIN_OFF = 0x2005df3c
+                0x2005d3d7                PMBUS_CMD_READ_VIN_DATA_LOOP0 = 0x2005d3d7
+                0x2005e590                PMBUS_CMD_FW_CONFIG_PMBUS = 0x2005e590
+                0x10005aad                Regulation_Fsw_IRQHandler_regulation_api = 0x10005aad
+                0x10005598                os_fifo_size = 0x10005598
+                0x1000ae89                configurator_boot_xvalent = 0x1000ae89
+                0x100012e5                PMBUS_Calculate_Size_Check = 0x100012e5
+                0x1000053d                setjmp = 0x1000053d
+                0x100003f7                __aeabi_idivmod = 0x100003f7
+                0x10007c31                iout_temperature_compensation = 0x10007c31
+                0x10004aff                svcMessagePut = 0x10004aff
+                0x2005d3cb                PMBUS_CMD_POUT_OP_WARN_LIMIT_DATA_LOOP0 = 0x2005d3cb
+                0x10009115                Telemetry_GetVersion = 0x10009115
+                0x1000dd45                PMBUS_HANDLE_VOUT_UV_WARN_LIMIT = 0x1000dd45
+                0x100019f1                Telemetry_IRQ_STUB_HANDLE = 0x100019f1
+                0x2005e26c                PMBUS_CMD_READ_VIN = 0x2005e26c
+                0x2005d478                PMBUS_CMD_VOUT_DROOP_RANGE = 0x2005d478
+                0x2005d4c0                PMBUS_CMD_MFR_IOUT_APC_RANGE = 0x2005d4c0
+                0x10007f95                FAULTS_GetVersion = 0x10007f95
+                0x10002bd5                fw_params_init = 0x10002bd5
+                0x2005e464                PMBUS_CMD_MFR_POUT_MAX = 0x2005e464
+                0x2005d3a7                PMBUS_CMD_POWER_GOOD_ON_RANGE = 0x2005d3a7
+                0x2005cfc4                glitch_drv_info_gpio_intr = 0x2005cfc4
+                0x10006535                Regulation_Set_Vout = 0x10006535
+                0x200614d0                TELEM_DATA = 0x200614d0
+                0x2005d381                PMBUS_CMD_VIN_OV_FAULT_LIMIT_DATA_LOOP1 = 0x2005d381
+                0x100005a1                ClkControl_ClrRSTMODS = 0x100005a1
+                0x100007cd                ClkControl_RstSEMsk = 0x100007cd
+                0x2005e7d0                pmbus_inter_thread_queue = 0x2005e7d0
+                0x10000ced                GpioBit_IntrEnable = 0x10000ced
+                0x10000a81                DTIMER_ClearIRQ = 0x10000a81
+                0x1000557c                CMSIS_RTOS_API_Version = 0x1000557c
+                0x100045b1                rt_systick = 0x100045b1
+                0x1000cffd                PMBUS_HANDLE_MFR_SECURITY_BIT_MASK_LOW = 0x1000cffd
+                0x1000cf99                PMBUS_HANDLE_MFR_MIN_PW = 0x1000cf99
+                0x000000c0                __Vectors_Size = 0xc0
+                0x2005cef8                FAULT_HW_App = 0x2005cef8
+                0x10007b35                Regulation_set_fsw_irq_event_cb = 0x10007b35
+                0x2005d44b                PMBUS_CMD_MFR_IOUT_OC_FAST_FAULT_LIMIT_DATA_LOOP1 = 0x2005d44b
+                0x1000fff1                PMBUS_Gpio_Get_PMBUS_Configuration = 0x1000fff1
+                0x2005e520                PMBUS_CMD_FW_CONFIG_TELEMETRY_DATA_LOOP0 = 0x2005e520
+                0x10009a59                Telemetry_Set_Irq_Threshold = 0x10009a59
+                0x2005e7d8                pmbus_drv_state = 0x2005e7d8
+                0x2005d3bf                PMBUS_CMD_TOFF_DELAY_DATA_LOOP1 = 0x2005d3bf
+                0x2005e3f4                PMBUS_CMD_MFR_VIN_MIN = 0x2005e3f4
+                0x10002551                Uart_TxSetup = 0x10002551
+                0x100062f9                Regulation_Power_Mode = 0x100062f9
+                0x2005d4eb                PMBUS_CMD_TON_MAX_FAULT_LIMIT_RANGE = 0x2005d4eb
+                0x10001065                MMU_Hardfault_IRQHandler = 0x10001065
+                0x2005e14c                PMBUS_CMD_TON_RISE = 0x2005e14c
+                0x2005d329                PMBUS_CMD_VIN_OFF_DATA_LOOP0 = 0x2005d329
+                0x1000d975                PMBUS_HANDLE_VIN_UV_FAULT_LIMIT = 0x1000d975
+                0x2005c541                sys_filler_byte = 0x2005c541
+                0x2005c7cc                scratchpad_semaphore_id = 0x2005c7cc
+                0x10005859                Regulation_DTIMER2_FAULT_TON_TOFF_MAX_IRQHandler_regulation_drv = 0x10005859
+                0x1000c621                PMBUS_HANDLE_FW_CONFIG_PMBUS = 0x1000c621
+                0x2005d2cb                PMBUS_CMD_STATUS_IOUT_DATA_LOOP0 = 0x2005d2cb
+                0x10001fe5                Uart_GetRxCount = 0x10001fe5
+                0x1000bf4f                otp_fs_ram_crc_hdr_is_valid = 0x1000bf4f
+                0x1000be15                otp_fs_data_store_status_get = 0x1000be15
+                0x100035e9                os_idle_demon = 0x100035e9
+                0x1000c853                PMBUS_HANDLE_IIN_OC_WARN_LIMIT = 0x1000c853
+                0x2005defc                PMBUS_CMD_MAX_DUTY = 0x2005defc
+                0x1000cf25                PMBUS_HANDLE_MFR_IOUT_OC_FAST_FAULT_LIMIT = 0x1000cf25
+                0x2005d2ad                PMBUS_CMD_RESTORE_USER_CODE_DATA_LOOP1 = 0x2005d2ad
+                0x2005d3e3                PMBUS_CMD_READ_IOUT_DATA_LOOP0 = 0x2005d3e3
+                0x2005d2e5                PMBUS_CMD_VOUT_COMMAND_RANGE = 0x2005d2e5
+                0x1000dec9                PMBUS_Restore_All = 0x1000dec9
+                0x10003339                osPoolCreate = 0x10003339
+                0x1000e155                Set_Deadtime_By_Loop = 0x1000e155
+                0x100001c5                PendSV_Handler = 0x100001c5
+                0x2005d353                PMBUS_CMD_IOUT_OC_FAULT_LIMIT_DATA_LOOP0 = 0x2005d353
+                0x100005a0                SVC_Table = 0x100005a0
+                0x1000daa9                PMBUS_HANDLE_VOUT_MAX = 0x1000daa9
+                0x100043a5                rt_sem_psh = 0x100043a5
+                0x10002c1d                fw_params_trim_load_cb = 0x10002c1d
+                0x10002ea7                linked_list_back_push = 0x10002ea7
+                0x2005d317                PMBUS_CMD_VOUT_MIN_RANGE = 0x2005d317
+                0x10001395                PMBUS_Copy_From_Memory = 0x10001395
+                0x100003df                __aeabi_memclr8 = 0x100003df
+                0x10002c75                hash_bit_permute_step_hash_generator = 0x10002c75
+                0x10008921                Faults_IRQHandler = 0x10008921
+                0x2005d4a0                PMBUS_CMD_MFR_SERIAL_DATA_LOOP1 = 0x2005d4a0
+                0x2005ddc4                PMBUS_CMD_RESTORE_DEFAULT_ALL = 0x2005ddc4
+                0x1000e2d9                PMBUS_CMD_HANDLER = 0x1000e2d9
+                0x2005d41d                PMBUS_CMD_MFR_VOUT_MIN_RANGE = 0x2005d41d
+                0x2005d468                ptr_mfr_specific_init = 0x2005d468
+                0x2005d453                PMBUS_CMD_FW_CONFIG_DEADTIME_ADJUSMENT_THRESHOLD_RANGE = 0x2005d453
+                0x100003df                __aeabi_memclr4 = 0x100003df
+                0x100055f8                Driver_UART = 0x100055f8
+                0x100031b5                osKernelStart = 0x100031b5
+                0x1000313d                osExtThreadCreate = 0x1000313d
+                0x2005ee34                mp_tcb = 0x2005ee34
+                0x10000aa9                DTIMER_GetCapabilities = 0x10000aa9
+                0x2005e5b8                PMBUS_CMD_MFR_IOUT_OC_FAST_FAULT_RESPONSE = 0x2005e5b8
+                0x10005971                Regulation_FAULT_Timer_Activation = 0x10005971
+                0x2005e7d4                ptr_pmbus_driver_user_error_handle = 0x2005e7d4
+                0x10004c61                svcSignalWait = 0x10004c61
+                0x2005d39b                PMBUS_CMD_IIN_OC_FAULT_LIMIT_RANGE = 0x2005d39b
+                0x100051b5                wdt_release_reset_wdt_drv = 0x100051b5
+                0x100051a9                wdt_register_interrupt_callback_wdt_drv = 0x100051a9
+                0x2005c8f0                _FAULT_THRESH_EXP = 0x2005c8f0
+                0x10003655                os_tick_irqack = 0x10003655
+                0x2005d3d1                PMBUS_CMD_PIN_OP_WARN_LIMIT_DATA_LOOP1 = 0x2005d3d1
+                0x10003fed                rt_ms2tick_rt_CMSIS = 0x10003fed
+                0x2005ea38                tid_Regulation_Thread = 0x2005ea38
+                0x2005d4a8                PMBUS_CMD_IC_DEVICE_ID_DATA_LOOP1 = 0x2005d4a8
+                0x100000c7                rt_get_PSP = 0x100000c7
+                0x10007da5                COMMON_FAULT_HANDLE = 0x10007da5
+                0x1000c129                register_content_handle_configurator = 0x1000c129
+                0x10004e19                sysThreadError_rt_CMSIS = 0x10004e19
+                0x1000282d                call_module_init_cb = 0x1000282d
+                0x2005d2e1                PMBUS_CMD_VOUT_COMMAND_DATA_LOOP0 = 0x2005d2e1
+                0x10005588                os_timernum = 0x10005588
+                0x2005eb44                ptr_regulation_event_callback = 0x2005eb44
+                0x10003c09                rt_free_box = 0x10003c09
+                0x10007d30                os_messageQ_def_regulation_inter_thread_queue = 0x10007d30
+                0x1000da21                PMBUS_HANDLE_VOUT_COMMAND = 0x1000da21
+                0x2005ddf4                PMBUS_CMD_STORE_USER_CODE = 0x2005ddf4
+                0x100028c9                circ_buffer_init = 0x100028c9
+                0x2005e728                protection_data = 0x2005e728
+                0x10001add                Telemetry_VOUT_UV_TON_MAX_DISABLE_Irq_Threshold_Set = 0x10001add
+                0x10003db5                rt_mbx_psh = 0x10003db5
+                0x2005d2b2                PMBUS_CMD_POWER_MODE_DATA_LOOP1 = 0x2005d2b2
+                0x2005d2b5                PMBUS_CMD_VOUT_UV_FAULT_RESPONSE_DATA_LOOP0 = 0x2005d2b5
+                0x2005d00c                os_messageQ_q_otp_msg_box = 0x2005d00c
+                0x10003711                patch_otp_cmd_patch_version_process_patch_app = 0x10003711
+                0x1000b85d                configurator_pmbus_user_store = 0x1000b85d
+                0x1000311d                osExtKernelInitialize = 0x1000311d
+                0x2005c6a0                Configurator_PMBUS_partials_configurator = 0x2005c6a0
+                0x2005cfa4                POWER_WARN_THRESH = 0x2005cfa4
+                0x2005d34b                PMBUS_CMD_VOUT_UV_WARN_LIMIT_RANGE = 0x2005d34b
+                0x10001329                PMBUS_Copy_Command_To_RAM = 0x10001329
+                0x2005d30b                PMBUS_CMD_VOUT_DROOP_DATA_LOOP0 = 0x2005d30b
+                0x200612bd                os_running = 0x200612bd
+                0x2005d44d                PMBUS_CMD_MFR_IOUT_OC_FAST_FAULT_LIMIT_RANGE = 0x2005d44d
+                0x2005d2da                PMBUS_CMD_MFR_IOUT_OC_FAST_FAULT_RESPONSE_DATA_LOOP0 = 0x2005d2da
+                0x10000c75                GpioBank_SetCallbackHandler = 0x10000c75
+                0x100093c5                Telemetry_IRQ_Event_Handle_Set = 0x100093c5
+                0x100007bd                ClkControl_RstEssentialWKUP = 0x100007bd
+                0x2005e27c                PMBUS_CMD_READ_IIN = 0x2005e27c
+                0x10007979                Regulation_VC1_VCONTROL_IRQHandler_regulation_drv = 0x10007979
+                0x100039c1                rt_block = 0x100039c1
+                0x2005e07c                PMBUS_CMD_UT_FAULT_RESPONSE = 0x2005e07c
+                0x2005e3b4                PMBUS_CMD_MFR_DATE = 0x2005e3b4
+                0x2005c683                configurator_xv_partial = 0x2005c683
+                0x1000a75d                OTP_ClearAccessError = 0x1000a75d
+                0x2005c874                osExtension_cmsis_os_ext = 0x2005c874
+                0x10002f27                log_length_get = 0x10002f27
+                0x2005d365                PMBUS_CMD_IOUT_UC_FAULT_LIMIT_DATA_LOOP0 = 0x2005d365
+                0x2005d413                PMBUS_CMD_MFR_IIN_MAX_RANGE = 0x2005d413
+                0x100081c9                FAULTS_PowerControl = 0x100081c9
+                0x2005e718                PMBUS_CMD_MFR_FIRMWARE_COMMAND = 0x2005e718
+                0x1000103d                MMU_GetStatus = 0x1000103d
+                0x2005d32b                PMBUS_CMD_VIN_OFF_DATA_LOOP1 = 0x2005d32b
+                0x2005c558                wdt_last_stackframe = 0x2005c558
+                0x2005d2ba                PMBUS_CMD_IOUT_UC_FAULT_RESPONSE_DATA_LOOP1 = 0x2005d2ba
+                0x2005d49c                PMBUS_CMD_MFR_DATE_DATA_LOOP1 = 0x2005d49c
+                0x2005d494                PMBUS_CMD_MFR_REVISION_DATA_LOOP1 = 0x2005d494
+                0x2005d2fb                PMBUS_CMD_VOUT_MARGIN_HIGH_DATA_LOOP1 = 0x2005d2fb
+                0x10008295                FAULTS_SETUP_FAULT = 0x10008295
+                0x10005679                REGULATION_INTER_THREAD_SET = 0x10005679
+                0x2005d290                ON_OFF_STATE = 0x2005d290
+                0x10005568                os_maxtaskrun = 0x10005568
+                0x2005ed84                os_pool_m_regulation_inter_thread_mpool = 0x2005ed84
+                0x1000a1e9                Telemetry_get_power = 0x1000a1e9
+                0x2005d40d                PMBUS_CMD_MFR_VIN_MAX_RANGE = 0x2005d40d
+                0x2005d2a1                PMBUS_CMD_UNSUPPORTED_RANGE = 0x2005d2a1
+                0x10005af9                Regulation_Generic_Telemetry_IRQ_VOUT_UV_DISABLE_TON_MAX_HANDLE = 0x10005af9
+                0x2005e7c8                tid_PMBUS_Thread = 0x2005e7c8
+                0x2005c7d8                DRIVER_COMMON_STRUCT = 0x2005c7d8
+                0x1000db9d                PMBUS_HANDLE_VOUT_OV_FAULT_LIMIT = 0x1000db9d
+                0x10002bc5                fw_params_config_store_cb = 0x10002bc5
+                0x1000336d                osPoolFree = 0x1000336d
+                0x10001181                MMU_SetMemProtection = 0x10001181
+                0x1000104d                MMU_GetVersion = 0x1000104d
+                0x10000c8d                GpioBit_CkCnfg = 0x10000c8d
+                0x2005d3f1                PMBUS_CMD_READ_FAN_SPEED_2_DATA_LOOP0 = 0x2005d3f1
+                0x10001a01                Telemetry_IRQ_VIN_ON_OFF_HANDLE = 0x10001a01
+                0x2005d2d7                PMBUS_CMD_STATUS_FANS_1_2_DATA_LOOP0 = 0x2005d2d7
+                0x2005e630                PMBUS_CMD_PWM_DEADTIME_ADJUSTMENT = 0x2005e630
+                0x2005d2cd                PMBUS_CMD_STATUS_INPUT_DATA_LOOP0 = 0x2005d2cd
+                0x100048ed                set_module_init_cb = 0x100048ed
+                0x10008a89                LOOP_FAULT_HANDLE = 0x10008a89
+                0x2005d407                PMBUS_CMD_MFR_VIN_MIN_RANGE = 0x2005d407
+                0x2005d33d                PMBUS_CMD_VOUT_OV_FAULT_LIMIT_DATA_LOOP1 = 0x2005d33d
+                0x2005d411                PMBUS_CMD_MFR_IIN_MAX_DATA_LOOP1 = 0x2005d411
+                0x10003825                patch_otp_remap = 0x10003825
+                0x10007aa5                Regulation_call_regulation_event_cb = 0x10007aa5
+                0x2005e5e8                PMBUS_CMD_MFR_TRANSFORMER_SCALE = 0x2005e5e8
+                0x2005d3df                PMBUS_CMD_READ_VOUT_DATA_LOOP0 = 0x2005d3df
+                0x100018c5                PMBUS_Set_Command_Word = 0x100018c5
+                0x10005d41                Regulation_Get_Ramp_Rate = 0x10005d41
+                0x2005d2d1                PMBUS_CMD_STATUS_CML_DATA_LOOP0 = 0x2005d2d1
+                0x1000172f                PMBUS_Get_Vout_Scale = 0x1000172f
+                0x10002841                call_system_cb = 0x10002841
+                0x10008f59                LINEAR11_TO_EXPONENT_telemetry_api = 0x10008f59
+                0x1000549c                dtimer_sel = 0x1000549c
+                0x10007a01                Regulation_Wait_For_SM_Message = 0x10007a01
+                0x2005d391                PMBUS_CMD_VIN_UV_FAULT_LIMIT_DATA_LOOP0 = 0x2005d391
+                0x1000d369                PMBUS_HANDLE_PWM_DEADTIME_ADJUSTMENT = 0x1000d369
+                0x10004b3b                svcPoolCreate = 0x10004b3b
+                0x2005d2c8                PMBUS_CMD_STATUS_BYTE_DATA_LOOP1 = 0x2005d2c8
+                0x10001225                MMU_Uninitialize = 0x10001225
+                0x2005d367                PMBUS_CMD_IOUT_UC_FAULT_LIMIT_DATA_LOOP1 = 0x2005d367
+                0x100051ec                trim_struct_data = 0x100051ec
+                0x2005e0dc                PMBUS_CMD_VIN_UV_FAULT_RESPONSE = 0x2005e0dc
+                0x10002221                Uart_ProcessRx = 0x10002221
+                0x1000d3c1                PMBUS_HANDLE_RESTORE_USER_ALL = 0x1000d3c1
+                0x10003b1d                rt_evt_psh = 0x10003b1d
+                0x2005d2c0                PMBUS_CMD_VIN_OV_FAULT_RESPONSE_DATA_LOOP1 = 0x2005d2c0
+                0x2005d2b8                PMBUS_CMD_IOUT_OC_FAULT_RESPONSE_DATA_LOOP1 = 0x2005d2b8
+                0x2005e1fc                PMBUS_CMD_STATUS_IOUT = 0x2005e1fc
+                0x1000bf29                otp_fs_ram_crc_hdr_generate = 0x1000bf29
+                0x2005dd54                PMBUS_CMD_UNSUPPORTED = 0x2005dd54
+                0x2005d339                PMBUS_CMD_IOUT_CAL_OFFSET_RANGE = 0x2005d339
+                0x2005c7b4                Configurator_PMBUS_default_s_configurator = 0x2005c7b4
+                0x10004399                rt_sem_init = 0x10004399
+                0x2005d341                PMBUS_CMD_VOUT_OV_WARN_LIMIT_DATA_LOOP0 = 0x2005d341
+                0x10008911                Faults_Enable_Hardware_Faults = 0x10008911
+                0x2005f438                os_stack_mem = 0x2005f438
+                0x2005e368                PMBUS_CMD_MFR_MODEL_DATA_LOOP0 = 0x2005e368
+                0x10002949                dtimer_activate_dtimer_drv = 0x10002949
+                0x2005d307                PMBUS_CMD_VOUT_TRANSITION_RATE_DATA_LOOP1 = 0x2005d307
+                0x2005d2d6                PMBUS_CMD_STATUS_MFR_SPECIFIC_DATA_LOOP1 = 0x2005d2d6
+                0x10002605                __main = 0x10002605
+                0x2005e30c                PMBUS_CMD_READ_POUT = 0x2005e30c
+                0x2005d2be                PMBUS_CMD_UT_FAULT_RESPONSE_DATA_LOOP1 = 0x2005d2be
+                0x1000cc85                PMBUS_HANDLE_MFR_FIRMWARE_COMMAND = 0x1000cc85
+                0x2005c544                sys_boot_descriptor = 0x2005c544
+                0x10008f34                Driver_FAULTS = 0x10008f34
+                0x1000896d                Faults_Mask_Fault = 0x1000896d
+                0x10005639                LINEAR11_TO_EXPONENT_regulation_drv = 0x10005639
+                0x10008091                FAULTS_Initialize = 0x10008091
+                0x2005d064                Otp_File_System_Write_Buffer_s_otp_fs = 0x2005d064
+                0x2005d3d5                PMBUS_CMD_STATUS_WORD_DATA_LOOP1 = 0x2005d3d5
+                0x2005d44f                PMBUS_CMD_FW_CONFIG_DEADTIME_ADJUSMENT_THRESHOLD_DATA_LOOP0 = 0x2005d44f
+                0x2005d4a4                PMBUS_CMD_MFR_TAMBIENT_MAX_DATA_LOOP1 = 0x2005d4a4
+                0x2005d2af                PMBUS_CMD_VOUT_MODE_DATA_LOOP0 = 0x2005d2af
+                0x2005d3b9                PMBUS_CMD_TON_MAX_FAULT_LIMIT_DATA_LOOP0 = 0x2005d3b9
+                0x2005e2fc                PMBUS_CMD_READ_FREQUENCY = 0x2005e2fc
+                0x2005dde4                PMBUS_CMD_RESTORE_USER_ALL = 0x2005dde4
+                0x1000aa31                OTP_Write = 0x1000aa31
+                0x2005d2ae                PMBUS_CMD_CAPABILITY_DATA_LOOP0 = 0x2005d2ae
+                0x200612c4                os_rdy = 0x200612c4
+                0x1000d4ab                PMBUS_HANDLE_STATUS_IOUT = 0x1000d4ab
+                0x100020dd                Uart_IRQ_Disable = 0x100020dd
+                0x2005e7c4                PMBUS_HANDLER_STATE = 0x2005e7c4
+                0x2005d503                PMBUS_CMD_PIN_OP_WARN_LIMIT_RANGE = 0x2005d503
+                0x2005d45b                PMBUS_CMD_VOUT_MODE_RANGE = 0x2005d45b
+                0x1000c9d3                PMBUS_HANDLE_IOUT_OC_FAULT_RESPONSE = 0x1000c9d3
+                0x2005e1bc                PMBUS_CMD_PIN_OP_WARN_LIMIT = 0x2005e1bc
+                0x2005d419                PMBUS_CMD_MFR_VOUT_MIN_DATA_LOOP0 = 0x2005d419
+                0x100055c8                priority_0_IRQs_system_shasta = 0x100055c8
+                0x1000558c                mp_tcb_size = 0x1000558c
+                0x2005d4e0                PMBUS_CMD_WRITE_PROTECT_RANGE = 0x2005d4e0
+                0x10003669                os_tick_val = 0x10003669
+                0x2005d315                PMBUS_CMD_VOUT_MIN_DATA_LOOP1 = 0x2005d315
+                0x10010c71                PMBUS_Initialize = 0x10010c71
+                0x10002f31                log_read = 0x10002f31
+                0x2005d2a5                PMBUS_CMD_ON_OFF_CONFIG_DATA_LOOP0 = 0x2005d2a5
+                0x10005811                Regulation_DTIMER1_FAULT_IRQHandler_regulation_drv = 0x10005811
+                0x1000318d                osKernelRunning = 0x1000318d
+                0x2005c682                configurator_xv_full = 0x2005c682
+                0x2005de6c                PMBUS_CMD_VOUT_TRIM = 0x2005de6c
+                0x1000d3d9                PMBUS_HANDLE_RESTORE_USER_CODE = 0x1000d3d9
+                0x2005d2d8                PMBUS_CMD_STATUS_FANS_1_2_DATA_LOOP1 = 0x2005d2d8
+                0x2005d447                PMBUS_CMD_MFR_TRANSFORMER_SCALE_RANGE = 0x2005d447
+                0x1000fe28                PMBUS_RANGE_OPERATION_ARRAY = 0x1000fe28
+                0x10004255                rt_put_dly = 0x10004255
+                0x2005d3cf                PMBUS_CMD_PIN_OP_WARN_LIMIT_DATA_LOOP0 = 0x2005d3cf
+                0x2005d4b0                PMBUS_CMD_FW_CONFIG_PWM_DATA_LOOP0 = 0x2005d4b0
+                0x1000495d                svcKernelInitialize = 0x1000495d
+                0x2005ddd4                PMBUS_CMD_STORE_USER_ALL = 0x2005ddd4
+                0x2005e06c                PMBUS_CMD_UT_FAULT_LIMIT = 0x2005e06c
+                0x10000a4d                ClkControl_SystemClkInit = 0x10000a4d
+                0x10001711                PMBUS_Get_Vout_Mode_Exponent = 0x10001711
+                0x2005dda4                PMBUS_CMD_WRITE_PROTECT = 0x2005dda4
+                0x2005d3f3                PMBUS_CMD_READ_DUTY_CYCLE_DATA_LOOP0 = 0x2005d3f3
+                0x10009ef1                Telemetry_drv_init = 0x10009ef1
+                0x1000b30d                configurator_pmbus_partial_load_handler_configurator = 0x1000b30d
+                0x2005d393                PMBUS_CMD_VIN_UV_FAULT_LIMIT_DATA_LOOP1 = 0x2005d393
+                0x10003511                osThreadGetContextExtension = 0x10003511
+                0x10005665                NVIC_ClearPendingIRQ_regulation_drv = 0x10005665
+                0x2005e9a8                os_messageQ_q_regulation_inter_thread_queue = 0x2005e9a8
+                0x1000bee3                otp_fs_ram_crc_data_generate = 0x1000bee3
+                0x1000d23b                PMBUS_HANDLE_OT_WARN_LIMIT = 0x1000d23b
+                0x2005d349                PMBUS_CMD_VOUT_UV_WARN_LIMIT_DATA_LOOP1 = 0x2005d349
+                0x00000000                __ARM_use_no_argv = 0x0
+                0x2005d47c                PMBUS_CMD_POWER_MODE_RANGE = 0x2005d47c
+                0x2005d48c                PMBUS_CMD_MFR_ID_DATA_LOOP1 = 0x2005d48c
+                0x10004451                rt_stk_check = 0x10004451
+                0x1000cf7f                PMBUS_HANDLE_MFR_IOUT_OC_FAST_FAULT_RESPONSE = 0x1000cf7f
+                0x2005d3ed                PMBUS_CMD_READ_TEMPERATURE_2_DATA_LOOP1 = 0x2005d3ed
+                0x2005d3b7                PMBUS_CMD_TON_RISE_DATA_LOOP1 = 0x2005d3b7
+                0x10007abd                Regulation_disable_ata = 0x10007abd
+                0x2005d395                PMBUS_CMD_VIN_UV_FAULT_LIMIT_RANGE = 0x2005d395
+                0x2005dd64                PMBUS_CMD_PAGE = 0x2005dd64
+                0x1000c651                PMBUS_HANDLE_FW_CONFIG_REGULATION = 0x1000c651
+                0x2005e32c                PMBUS_CMD_PMBUS_REVISION = 0x2005e32c
+                0x1000c421                PMBUS_HANDLE_FREQUENCY_SWITCH = 0x1000c421
+                0x1000346d                osSignalWait = 0x1000346d
+                0x2005d4c8                PMBUS_CMD_MFR_DISABLE_SECURITY_ONCE_DATA_LOOP1 = 0x2005d4c8
+                0x10004489                rt_sys_init = 0x10004489
+                0x10003d95                rt_mbx_count = 0x10003d95
+                0x2005ea48                drv1_info = 0x2005ea48
+                0x2005de4c                PMBUS_CMD_VOUT_MODE = 0x2005de4c
+                0x100002e1                PMBus_IRQHandler = 0x100002e1
+                0x2005ea40                regulation_inter_thread_queue = 0x2005ea40
+                0x100028df                circ_buffer_is_empty = 0x100028df
+                0x10002c65                fw_params_trim_store_cb = 0x10002c65
+                0x2005e6e8                PMBUS_CMD_MFR_SECURITY_BIT_MASK_HIGH = 0x2005e6e8
+                0x10008ea5                TWOS_UNCOMPLEMENT_faults_drv = 0x10008ea5
+                0x2005e11c                PMBUS_CMD_POWER_GOOD_ON = 0x2005e11c
+                0x2005eac4                REGULATION_APP_QUEUE = 0x2005eac4
+                0x100055ce                priority_1_IRQs_system_shasta = 0x100055ce
+                0x2005e28c                PMBUS_CMD_READ_VOUT = 0x2005e28c
+                0x2005e988                ptr_fsw_irq_callback = 0x2005e988
+                0x2005d42b                PMBUS_CMD_MFR_POUT_MAX_DATA_LOOP0 = 0x2005d42b
+                0x2005e4b4                PMBUS_CMD_USER_DATA_00_DATA_LOOP0 = 0x2005e4b4
+                0x2005d321                PMBUS_CMD_FREQUENCY_SWITCH_DATA_LOOP1 = 0x2005d321
+                0x2005d03c                OTP_AccessError_otp_drv = 0x2005d03c
+                0x10008f95                LINEAR11_TO_MANTISSA_telemetry_drv = 0x10008f95
+                0x100059e5                Regulation_Fault_Mask = 0x100059e5
+                0x100020ed                Uart_IRQ_Enable = 0x100020ed
+                0x100003db                __aeabi_memclr = 0x100003db
+                0x1000a76d                OTP_Hardfault_IRQHandler = 0x1000a76d
+                0x2005e16c                PMBUS_CMD_TON_MAX_FAULT_RESPONSE = 0x2005e16c
+                0x2005c685                xvalent = 0x2005c685
+                0x2005d4b8                PMBUS_CMD_PWM_DEADTIME_DATA_LOOP1 = 0x2005d4b8
+                0x10003289                osMessageGet = 0x10003289
+                0x1000a299                Telemetry_irq_disable = 0x1000a299
+                0x10002185                Uart_PowerControl = 0x10002185
+                0x10000275                Reset_Handler = 0x10000275
+                0x2005e5c8                PMBUS_CMD_FW_CONFIG_DE_THRESH = 0x2005e5c8
+                0x2005e00c                PMBUS_CMD_IOUT_UC_FAULT_LIMIT = 0x2005e00c
+                0x2005c680                configurator_status_configurator = 0x2005c680
+                0x2005d2c6                PMBUS_CMD_TON_MAX_FAULT_RESPONSE_DATA_LOOP1 = 0x2005d2c6
+                0x10011049                PMBUS_Thread_pmbus_drv = 0x10011049
+                0x2005d39f                PMBUS_CMD_IIN_OC_WARN_LIMIT_DATA_LOOP1 = 0x2005d39f
+                0x2005d313                PMBUS_CMD_VOUT_MIN_DATA_LOOP0 = 0x2005d313
+                0x1000a2cd                Telemetry_irq_enable = 0x1000a2cd
+                0x10003a55                rt_dec_dly = 0x10003a55
+                0x10005500                Driver_MMU = 0x10005500
+                0x2005d2d5                PMBUS_CMD_STATUS_MFR_SPECIFIC_DATA_LOOP0 = 0x2005d2d5
+                0x10008f48                DriverVersion_faults_drv = 0x10008f48
+                0x2005de7c                PMBUS_CMD_VOUT_CAL_OFFSET = 0x2005de7c
+                0x200612c0                os_timer_head = 0x200612c0
+                0x2005df2c                PMBUS_CMD_VIN_ON = 0x2005df2c
+                0x2005d303                PMBUS_CMD_VOUT_MARGIN_LOW_RANGE = 0x2005d303
+                0x2005d2a3                PMBUS_CMD_OPERATION_DATA_LOOP0 = 0x2005d2a3
+                0x2005e7c0                PMBUS_ADDRESSING = 0x2005e7c0
+                0x2005e22c                PMBUS_CMD_STATUS_CML = 0x2005e22c
+                0x10005e95                Regulation_Get_Vout_Transition_Rate = 0x10005e95
+                0x100088cd                Faults_Enable_Constant_Current_Mode = 0x100088cd
+                0x2005d3eb                PMBUS_CMD_READ_TEMPERATURE_2_DATA_LOOP0 = 0x2005d3eb
+                0x2005d2b7                PMBUS_CMD_IOUT_OC_FAULT_RESPONSE_DATA_LOOP0 = 0x2005d2b7
+                0x2005c508                fw_trim_data = 0x2005c508
+                0x2005d3ff                PMBUS_CMD_READ_PIN_DATA_LOOP0 = 0x2005d3ff
+                0x2005ea50                drv3_info = 0x2005ea50
+                0x2005e454                PMBUS_CMD_MFR_IOUT_MAX = 0x2005e454
+                0x2005e474                PMBUS_CMD_MFR_TAMBIENT_MAX = 0x2005e474
+                0x1000e1ed                protect_pmbus = 0x1000e1ed
+                0x2005d2e3                PMBUS_CMD_VOUT_COMMAND_DATA_LOOP1 = 0x2005d2e3
+                0x2005d2c9                PMBUS_CMD_STATUS_VOUT_DATA_LOOP0 = 0x2005d2c9
+                0x2005d534                PMBUS_CMD_ARRAY_LOOP = 0x2005d534
+                0x20061490                ptr_Telemetry_IRQ_HANDLE = 0x20061490
+                0x20061344                os_time = 0x20061344
+                0x1000b825                configurator_pmbus_user_ptr_get = 0x1000b825
+                0x10002071                Uart_IRQHandler = 0x10002071
+                0x2005d42f                PMBUS_CMD_MFR_TAMBIENT_MAX_DATA_LOOP0 = 0x2005d42f
+                0x100081ed                FAULTS_Resolve_Shutdown_Priority = 0x100081ed
+                0x2005d2f1                PMBUS_CMD_VOUT_CAL_OFFSET_RANGE = 0x2005d2f1
+                0x2005e4f4                PMBUS_CMD_FW_CONFIG_REGULATION_DATA_LOOP0 = 0x2005e4f4
+                0x2005c684                configurator_xv_partial_pmbus = 0x2005c684
+                0x10005835                Regulation_DTIMER1_TON_TOFF_DELAY_IRQHandler_regulation_drv = 0x10005835
+                0x1000174d                PMBUS_Inter_Thread_Set_Command = 0x1000174d
+                0x2005d43b                PMBUS_CMD_FW_CONFIG_DE_THRESH_RANGE = 0x2005d43b
+                0x1000d497                PMBUS_HANDLE_STATUS_FANS_1_2 = 0x1000d497
+                0x2005df4c                PMBUS_CMD_INTERLEAVE = 0x2005df4c
+                0x2005d3e7                PMBUS_CMD_READ_TEMPERATURE_1_DATA_LOOP0 = 0x2005d3e7
+                0x2005c540                sys_boot_state = 0x2005c540
+                0x100017c5                PMBUS_Log_Error = 0x100017c5
+                0x1000d6a9                PMBUS_HANDLE_TON_MAX_FAULT_LIMIT = 0x1000d6a9
+                0x10005fb9                Regulation_OSP_Fault_Detection_sequence = 0x10005fb9
+                0x10009045                Telemetry_Generic_Irq_Threshold_Set = 0x10009045
+                0x2006134c                Telemetry_ARRAY = 0x2006134c
+                0x2005c818                fw_patch_p = 0x2005c818
+                0x10000321                __aeabi_memcpy = 0x10000321
+                0x10003d25                rt_init_robin = 0x10003d25
+                0x2005d403                PMBUS_CMD_MFR_VIN_MIN_DATA_LOOP0 = 0x2005d403
+                0x2005d3d9                PMBUS_CMD_READ_VIN_DATA_LOOP1 = 0x2005d3d9
+                0x2005ea54                REGULATION_APP = 0x2005ea54
+                0x1000c979                PMBUS_HANDLE_IOUT_OC_FAULT_LIMIT = 0x1000c979
+                0x2005c548                SystemCoreClock = 0x2005c548
+                0x10003ac9                rt_dispatch = 0x10003ac9
+                0x10000ab5                DTIMER_GetStatus = 0x10000ab5
+                0x1000b9b9                configurator_registers_store_configurator = 0x1000b9b9
+                0x2005deac                PMBUS_CMD_VOUT_MARGIN_LOW = 0x2005deac
+                0x1000c7e1                PMBUS_HANDLE_IC_DEVICE_REV = 0x1000c7e1
+                0x1000bb05                configurator_trim_registers_store = 0x1000bb05
+                0x100099bd                Telemetry_Set_Irq_Polarity = 0x100099bd
+                0x2005d4e5                PMBUS_CMD_TON_RISE_RANGE = 0x2005d4e5
+                0x2005d3fd                PMBUS_CMD_READ_POUT_DATA_LOOP1 = 0x2005d3fd
+                0x2005d375                PMBUS_CMD_OT_WARN_LIMIT_RANGE = 0x2005d375
+                0x1000d1e1                PMBUS_HANDLE_OT_FAULT_LIMIT = 0x1000d1e1
+                0x2005d2eb                PMBUS_CMD_VOUT_TRIM_RANGE = 0x2005d2eb
+                0x10000e2d                GpioBit_SetDir = 0x10000e2d
+                0x2005e640                PMBUS_CMD_PWM_DEADTIME_ADJUSTMENT_DATA_LOOP0 = 0x2005e640
+                0x2005d3c7                PMBUS_CMD_TOFF_MAX_WARN_LIMIT_DATA_LOOP0 = 0x2005d3c7
+                0x1000128d                NVIC_EnableIRQ_gpio_intr = 0x1000128d
+                0x1000b201                configurator_error_clear = 0x1000b201
+                0x10007d88                os_thread_def_Regulation_Thread = 0x10007d88
+                0x2005d484                PMBUS_CMD_READ_FAN_SPEED_2_DATA_LOOP1 = 0x2005d484
+                0x10007f2d                Clear_Firmware_Fault = 0x10007f2d
+                0x2005d387                PMBUS_CMD_VIN_OV_WARN_LIMIT_DATA_LOOP1 = 0x2005d387
+                0x10002469                Uart_SetBaudRate = 0x10002469
+                0x10002115                Uart_Initialize = 0x10002115
+                0x2005d2c4                PMBUS_CMD_IIN_OC_FAULT_RESPONSE_DATA_LOOP1 = 0x2005d2c4
+                0x1000bc71                otp_fs_command_invalidate_handler_otp_fs = 0x1000bc71
+                0x2005df7c                PMBUS_CMD_VOUT_OV_FAULT_RESPONSE = 0x2005df7c
+                0x10004479                rt_switch_req = 0x10004479
+                0x1000c8a5                PMBUS_HANDLE_INTERLEAVE = 0x1000c8a5
+                0x1000a318                DriverVersion_telemetry_drv = 0x1000a318
+                0x2006129c                os_active_TCB = 0x2006129c
+                0x2005c688                Configurator_encoder_s_configurator = 0x2005c688
+                0x100092c5                Telemetry_IRQHandler = 0x100092c5
+                0x2005e23c                PMBUS_CMD_STATUS_OTHER = 0x2005e23c
+                0x10000a35                ClkControl_SetSW_PWDN_REQ = 0x10000a35
+                0x10003cc1                rt_init_context_rt_Task = 0x10003cc1
+                0x10004aad                svcMessageGet = 0x10004aad
+                0x2005d2a6                PMBUS_CMD_ON_OFF_CONFIG_DATA_LOOP1 = 0x2005d2a6
+                0x2005e688                PMBUS_CMD_MFR_MIN_PW = 0x2005e688
+                0x1000e199                pmbus_clear_protection = 0x1000e199
+                0x2005d357                PMBUS_CMD_IOUT_OC_FAULT_LIMIT_RANGE = 0x2005d357
+                0x10008041                FAULTS_Get_Threshold_Source_Exponent = 0x10008041
+                0x2005e5d8                PMBUS_CMD_MFR_VRECT_SCALE = 0x2005e5d8
+                0x1000aba9                _otp_read_wait_till_not_busy_or_timeout_otp_drv = 0x1000aba9
+                0x2005e0bc                PMBUS_CMD_VIN_UV_WARN_LIMIT = 0x2005e0bc
+                0x20061304                os_tsk = 0x20061304
+                0x2005e25c                PMBUS_CMD_STATUS_FANS_1_2 = 0x2005e25c
+                0x100047e5                rt_tsk_prio = 0x100047e5
+                0x2005d2f5                PMBUS_CMD_VOUT_MAX_DATA_LOOP1 = 0x2005d2f5
+                0x2005e10c                PMBUS_CMD_IIN_OC_WARN_LIMIT = 0x2005e10c
+                0x1000bc11                otp_fs_command_header_update_program = 0x1000bc11
+                0x1000badd                configurator_trim_registers_load = 0x1000badd
+                0x10003c8d                rt_get_first = 0x10003c8d
+                0x2005debc                PMBUS_CMD_VOUT_TRANSITION_RATE = 0x2005debc
+                0x2005e2cc                PMBUS_CMD_READ_FAN_SPEED_1 = 0x2005e2cc
+                0x2005d515                PMBUS_CMD_MFR_SETUP_PASSWORD_DATA_LOOP0 = 0x2005d515
+                0x1000d72f                PMBUS_HANDLE_UT_WARN_LIMIT = 0x1000d72f
+                0x2005d034                otp_msg_box_id_otp_drv = 0x2005d034
+                0x2005c54c                sys_num_critical_reboots = 0x2005c54c
+                0x2005e34c                PMBUS_CMD_MFR_ID_DATA_LOOP0 = 0x2005e34c
+                0x2005e37c                PMBUS_CMD_MFR_REVISION = 0x2005e37c
+                0x10010e99                PMBUS_PowerControl = 0x10010e99
+                0x2005d423                PMBUS_CMD_MFR_VOUT_MAX_RANGE = 0x2005d423
+                0x10003255                osMessageCreate = 0x10003255
+                0x10001c0d                UVM_PRINT_WARNING = 0x10001c0d
+                0x2005d451                PMBUS_CMD_FW_CONFIG_DEADTIME_ADJUSMENT_THRESHOLD_DATA_LOOP1 = 0x2005d451
+                0x10004e69                sys_delay_by_nops_system_shasta = 0x10004e69
+                0x1000a219                Telemetry_get_tempi = 0x1000a219
+                0x1000be21                otp_fs_hdr_load = 0x1000be21
+                0x10000ded                GpioBit_SetCnfg = 0x10000ded
+                0x2005ed64                dtimer2_cfg = 0x2005ed64
+                0x2005d311                PMBUS_CMD_VOUT_SCALE_LOOP_DATA_LOOP1 = 0x2005d311
+                0x1000d2c9                PMBUS_HANDLE_POWER_GOOD_ON = 0x1000d2c9
+                0x100025b9                WatchDog_IRQHandler = 0x100025b9
+                0x1000c4ed                PMBUS_HANDLE_FW_CONFIG_FAULTS = 0x1000c4ed
+                0x2005e5ab                PMBUS_CMD_FW_CONFIG_PMBUS_DATA_LOOP1 = 0x2005e5ab
+                0x1000d4b5                PMBUS_HANDLE_STATUS_MFR_SPECIFIC = 0x1000d4b5
+                0x10001c3d                UVM_TEST_END = 0x10001c3d
+                0x2005d351                PMBUS_CMD_VOUT_UV_FAULT_LIMIT_RANGE = 0x2005d351
+                0x1000b8ed                configurator_ptr_align_and_zero_fill = 0x1000b8ed
+                0x2005d074                patch_rom_table = 0x2005d074
+                0x2005e04c                PMBUS_CMD_OT_WARN_LIMIT = 0x2005e04c
+                0x10009f39                Telemetry_get = 0x10009f39
+                0x2005c681                configurator_error_configurator = 0x2005c681
+                0x2005d461                PMBUS_CMD_UT_WARN_LIMIT_RANGE = 0x2005d461
+                0x100039f9                rt_chk_robin = 0x100039f9
+                0x2005e5f8                PMBUS_CMD_PWM_DEADTIME = 0x2005e5f8
+                0x10004215                rt_psq_enq = 0x10004215
+                0x2005d934                PMBUS_CMD_SUPPORT_ARRAY_LOOP = 0x2005d934
+                0x100009f5                ClkControl_SetSWRST_CTRL = 0x100009f5
+                0x10000ae1                DTIMER_GetVersion = 0x10000ae1
+                0x2005d31f                PMBUS_CMD_FREQUENCY_SWITCH_DATA_LOOP0 = 0x2005d31f
+                0x1000440d                rt_sem_wait = 0x1000440d
+                0x2005d4cc                PMBUS_CMD_MFR_SECURITY_BIT_MASK_LOW_DATA_LOOP1 = 0x2005d4cc
+                0x1000787d                Regulation_Update_Vid = 0x1000787d
+                0x100058fd                Regulation_FAULT_TON_TOFF_MAX_Timer_Activation = 0x100058fd
+                0x1000cb81                PMBUS_HANDLE_MFR_DEBUG_BUFF = 0x1000cb81
+                0x10005119                wdt_interrupt_clear_wdt_drv = 0x10005119
+                0x10009005                Telemetry_Enable_IRQ_Type = 0x10009005
+                0x100055b4                mp_tmr_size = 0x100055b4
+                0x2005dfcc                PMBUS_CMD_IOUT_OC_FAULT_LIMIT = 0x2005dfcc
+                0x10005b69                Regulation_Get_All_Q_Messages_By_Priority = 0x10005b69
+                0x2005d371                PMBUS_CMD_OT_WARN_LIMIT_DATA_LOOP0 = 0x2005d371
+                0x2005d443                PMBUS_CMD_MFR_TRANSFORMER_SCALE_DATA_LOOP0 = 0x2005d443
+                0x10001c4d                Uart_Control_uart_drv = 0x10001c4d
+                0x10004d7d                svcThreadTerminate = 0x10004d7d
+                0x10001871                PMBUS_Set_Command_Dword = 0x10001871
+                0x2005e494                PMBUS_CMD_IC_DEVICE_REV = 0x2005e494
+                0x2005d445                PMBUS_CMD_MFR_TRANSFORMER_SCALE_DATA_LOOP1 = 0x2005d445
+                0x2005d30f                PMBUS_CMD_VOUT_SCALE_LOOP_DATA_LOOP0 = 0x2005d30f
+                0x2005d31d                PMBUS_CMD_MAX_DUTY_RANGE = 0x2005d31d
+                0x1000e0cd                PMBUS_Status_Cmd_Handle = 0x1000e0cd
+                0x10008ecd                faults_drv_init = 0x10008ecd
+                0x10002dc1                isrMessagePut_rt_CMSIS = 0x10002dc1
+                0x2005d33b                PMBUS_CMD_VOUT_OV_FAULT_LIMIT_DATA_LOOP0 = 0x2005d33b
+                0x1000367d                patch_init = 0x1000367d
+                0x10005498                DriverCapabilities_dtimer_drv = 0x10005498
+                0x2005d509                PMBUS_CMD_MFR_PIN_MAX_RANGE = 0x2005d509
+                0x1000b279                configurator_pmbus_default_store = 0x1000b279
+                0x2005d383                PMBUS_CMD_VIN_OV_FAULT_LIMIT_RANGE = 0x2005d383
+                0x2005d3c5                PMBUS_CMD_TOFF_FALL_DATA_LOOP1 = 0x2005d3c5
+                0x2005e510                PMBUS_CMD_FW_CONFIG_TELEMETRY = 0x2005e510
+                0x2005d435                PMBUS_CMD_IC_DEVICE_REV_DATA_LOOP0 = 0x2005d435
+                0x10002855                check_limits_mmu_drv = 0x10002855
+                0x10008efd                faults_drv_irq_disable = 0x10008efd
+                0x2005e3a8                PMBUS_CMD_MFR_LOCATION_DATA_LOOP0 = 0x2005e3a8
+                0x10005eed                Regulation_Initialize = 0x10005eed
+                0x2005d498                PMBUS_CMD_MFR_LOCATION_DATA_LOOP1 = 0x2005d498
+                0x2006130c                os_idle_TCB = 0x2006130c
+                0x2005d327                PMBUS_CMD_VIN_ON_RANGE = 0x2005d327
+                0x2005e1ec                PMBUS_CMD_STATUS_VOUT = 0x2005e1ec
+                0x2005d379                PMBUS_CMD_UT_WARN_LIMIT_DATA_LOOP1 = 0x2005d379
+                0x100088c1                Faults_Enable_Common_Hardware_Faults = 0x100088c1
+                0x10009cdd                Telemetry_Uninitialize = 0x10009cdd
+                0x2005e2ac                PMBUS_CMD_READ_TEMPERATURE_1 = 0x2005e2ac
+                0x10004181                rt_pop_req = 0x10004181
+                0x100003a3                _memset_w = 0x100003a3
+                0x2005e2bc                PMBUS_CMD_READ_TEMPERATURE_2 = 0x2005e2bc
+                0x2005e358                PMBUS_CMD_MFR_MODEL = 0x2005e358
+                0x10006769                Regulation_TON_TOFF_DELAY_Timer_Activation = 0x10006769
+                0x100008c1                ClkControl_SetCPUClk = 0x100008c1
+                0x1000be49                otp_fs_max_xvalent = 0x1000be49
+                0x2005ddb4                PMBUS_CMD_STORE_DEFAULT_ALL = 0x2005ddb4
+                0x10003c65                rt_get_TID_rt_Task = 0x10003c65
+                0x10004b75                svcSemaphoreCreate = 0x10004b75
+                0x10002e7d                linked_list_back_pop = 0x10002e7d
+                0x10003d09                rt_init_mem = 0x10003d09
+                0x00000473                __RL_RTX_VER = 0x473
+                0x2005e2dc                PMBUS_CMD_READ_FAN_SPEED_2 = 0x2005e2dc
+                0x100087b9                Faults_Clear_Faults = 0x100087b9
+                0x2005d3ef                PMBUS_CMD_READ_FAN_SPEED_1_DATA_LOOP0 = 0x2005d3ef
+                0x2005d470                PMBUS_CMD_PAGE_RANGE = 0x2005d470
+                0x100055d6                priority_3_IRQs_system_shasta = 0x100055d6
+                0x10002e63                isr_mbx_send = 0x10002e63
+                0x2005ee30                m_tmr = 0x2005ee30
+                0x1000d01d                PMBUS_HANDLE_MFR_SELECT_TEMPERATURE_SENSOR = 0x1000d01d
+                0x2005d42d                PMBUS_CMD_MFR_POUT_MAX_DATA_LOOP1 = 0x2005d42d
+                0x2005dfbc                PMBUS_CMD_VOUT_UV_FAULT_RESPONSE = 0x2005dfbc
+                0x10000211                SysTick_Handler = 0x10000211
+                0x2005d2b0                PMBUS_CMD_VOUT_MODE_DATA_LOOP1 = 0x2005d2b0
+                0x2005c67c                UVM_COMMS = 0x2005c67c
+                0x1000d2a7                PMBUS_HANDLE_POUT_OP_WARN_LIMIT = 0x1000d2a7
+                0x10008a49                Faults_Set_Shutdown_Mask_Hardware_Faults = 0x10008a49
+                0x100042e9                rt_put_rdy_first = 0x100042e9
+                0x2005d441                PMBUS_CMD_MFR_VRECT_SCALE_RANGE = 0x2005d441
+                0x2005d347                PMBUS_CMD_VOUT_UV_WARN_LIMIT_DATA_LOOP0 = 0x2005d347
+                0x10004609                rt_timer_insert_rt_CMSIS = 0x10004609
+                0x1000c7bd                PMBUS_HANDLE_FW_CONFIG_TELEMETRY = 0x1000c7bd
+                0x1000b6f1                configurator_pmbus_store_configurator = 0x1000b6f1
+                0x2005e708                PMBUS_CMD_MFR_FIRMWARE_COMMAND_DATA = 0x2005e708
+                0x10005570                os_rrobin = 0x10005570
+                0x10004869                rt_tsk_self = 0x10004869
+                0x200612f4                os_robin = 0x200612f4
+                0x2005d2f9                PMBUS_CMD_VOUT_MARGIN_HIGH_DATA_LOOP0 = 0x2005d2f9
+                0x1001112d                PMBUS_Uninitialize = 0x1001112d
+                0x2005de3f                PMBUS_CMD_SMBALERT_MASK_DATA_LOOP1 = 0x2005de3f
+                0x2005ed54                dtimer1_cfg = 0x2005ed54
+                0x2005d2b9                PMBUS_CMD_IOUT_UC_FAULT_RESPONSE_DATA_LOOP0 = 0x2005d2b9
+                0x2005e19c                PMBUS_CMD_TOFF_MAX_WARN_LIMIT = 0x2005e19c
+                0x2005d3ab                PMBUS_CMD_POWER_GOOD_OFF_DATA_LOOP1 = 0x2005d3ab
+                0x2005c7a4                Configurator_PMBUS_user_s_configurator = 0x2005c7a4
+                0x10005224                conf_struct_data = 0x10005224
+                0x2005d439                PMBUS_CMD_FW_CONFIG_DE_THRESH_DATA_LOOP1 = 0x2005d439
+                0x1000b21d                configurator_error_get = 0x1000b21d
+                0x2005d373                PMBUS_CMD_OT_WARN_LIMIT_DATA_LOOP1 = 0x2005d373
+                0x2005d4dc                PMBUS_CMD_MFR_FIRMWARE_COMMAND_DATA_LOOP1 = 0x2005d4dc
+                0x2005d488                PMBUS_CMD_PMBUS_REVISION_DATA_LOOP1 = 0x2005d488
+                0x2005e13c                PMBUS_CMD_TON_DELAY = 0x2005e13c
+                0x2005d429                PMBUS_CMD_MFR_IOUT_MAX_RANGE = 0x2005d429
+                0x1000d927                PMBUS_HANDLE_VIN_OV_WARN_LIMIT = 0x1000d927
+                0x1000df65                PMBUS_Restore_Code = 0x1000df65
+                0x2005d301                PMBUS_CMD_VOUT_MARGIN_LOW_DATA_LOOP1 = 0x2005d301
+                0x1000c069                otp_fs_used_size = 0x1000c069
+                0x2005cfc8                Gpio_drv_app_gpio_intr = 0x2005cfc8
+                0x10000281                HardFault_PreHandler = 0x10000281
+                0x2005d030                otp_partition_used_otp_drv = 0x2005d030
+                0x1000a1c9                Telemetry_get_fan_speed = 0x1000a1c9
+                0x10002a69                dtimer_shutdown = 0x10002a69
+LOAD .\build\patch/patch_init.o
+LOAD .\build\patch/add_on_features.o
+LOAD .\build\patch/open_loop_llc.o
+LOAD .\build\patch/periodic_functions.o
+LOAD .\build\patch/pmbus_mfr_autogen.o
+LOAD .\build\patch/pmbus_mfr_specific_handlers.o
+LOAD .\build\patch/regulation_state_machine_callbacks.o
+LOAD .\build\patch/user_app.o
+START GROUP
+LOAD c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v6-m\libgcc.a
+LOAD c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libg.a
+LOAD c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libc.a
+END GROUP
+                0x20063800                ramstartaddr = 0x20063800
+                0x00000400                ramsize = 0x400
+                0x0000001c                _otp_patch_header_size = 0x1c
+                0x00004000                _otp_data_size = 0x4000
+                0x00004000                _otp_patch1_size = 0x4000
+                0x00004000                _otp_patch2_size = 0x4000
+                0x00004000                _otp_patch3_size = 0x4000
+                0x00000000                _otp_patch4_size = 0x0
+
+.data           0x20063800        0x0
+                0x20063800                _start_data = .
+ *(.data*)
+                0x20063800                _end_data = .
+
+.igot.plt       0x20063800        0x0
+ .igot.plt      0x20063800        0x0 .\build\patch/patch_init.o
+                0x20063800                . = ALIGN (0x4)
+
+.bss            0x20063800       0xf4
+                0x20063800                _start_bss = .
+ *(.bss*)
+ *(COMMON)
+ COMMON         0x20063800       0x69 .\build\patch/pmbus_mfr_autogen.o
+                0x20063800                PMBUS_CMD_MFR_SOFTSTART_CYCLE_COUNT_DATA_LOOP0
+                0x20063804                PMBUS_CMD_MFR_SOFTSTART_MAX_FREQUENCY
+                0x20063814                PMBUS_CMD_MFR_SOFTSTART_IRQ_RATE_SEL_DATA_LOOP1
+                0x20063818                PMBUS_CMD_MFR_SOFTSTART_MAX_FREQUENCY_DATA_LOOP0
+                0x2006381c                PMBUS_CMD_MFR_SOFTSTART_IRQ_RATE_SEL
+                0x2006382c                PMBUS_CMD_MFR_SOFTSTART_MAX_FREQUENCY_DATA_LOOP1
+                0x20063830                PMBUS_CMD_MFR_SOFTSTART_PWM_STEPSIZE_DATA_LOOP0
+                0x20063834                PMBUS_CMD_MFR_SOFTSTART_CYCLE_COUNT_DATA_LOOP1
+                0x20063838                PMBUS_CMD_MFR_SOFTSTART_PWM_STEPSIZE_DATA_LOOP1
+                0x2006383c                PMBUS_CMD_MFR_SOFTSTART_PWM_STEPSIZE
+                0x2006384c                PMBUS_CMD_MFR_SOFTSTART_CYCLE_COUNT
+                0x2006385c                PMBUS_CMD_MFR_SOFTSTART_IRQ_RATE_SEL_DATA_LOOP0
+                0x20063860                PMBUS_CMD_MFR_SOFTSTART_IRQ_RATE_SEL_RANGE
+ *fill*         0x20063869        0x3 
+ COMMON         0x2006386c       0x88 .\build\patch/regulation_state_machine_callbacks.o
+                0x2006386c                user_data
+                0x200638f4                _end_bss = .
+                0x200638f4                . = ALIGN (0x4)
+
+.reset_resist
+ *(RESET_RESIST)
+
+.otp_data       0x10020000     0x4000
+                0x10020000                _otp_data_base = .
+                0x10024000                . = (. + _otp_data_size)
+ *fill*         0x10020000     0x4000 
+                0x10024000                _end_otp_data = .
+
+.otp_header     0x10024000       0x1c
+                0x1002401c                . = (. + _otp_patch_header_size)
+ *fill*         0x10024000       0x1c 
+
+.txt            0x1002401c      0x824
+ *(.text*)
+ .text.patch_entry
+                0x1002401c       0x5c .\build\patch/patch_init.o
+                0x1002401c                patch_entry
+ .text.add_on_features_init
+                0x10024078        0x2 .\build\patch/add_on_features.o
+                0x10024078                add_on_features_init
+ *fill*         0x1002407a        0x2 
+ .text.update_force_duty
+                0x1002407c       0x28 .\build\patch/open_loop_llc.o
+                0x1002407c                update_force_duty
+ .text.update_switching_period
+                0x100240a4       0x30 .\build\patch/open_loop_llc.o
+                0x100240a4                update_switching_period
+ .text.open_loop_llc_soft_start_enable
+                0x100240d4      0x1a8 .\build\patch/open_loop_llc.o
+                0x100240d4                open_loop_llc_soft_start_enable
+ .text.open_loop_llc_soft_start_disable
+                0x1002427c       0x54 .\build\patch/open_loop_llc.o
+                0x1002427c                open_loop_llc_soft_start_disable
+ .text.open_loop_llc_soft_start_irq_handler
+                0x100242d0       0x90 .\build\patch/open_loop_llc.o
+                0x100242d0                open_loop_llc_soft_start_irq_handler
+ .text.pmbus_mfr_autogen_init
+                0x10024360      0x104 .\build\patch/pmbus_mfr_autogen.o
+                0x10024360                pmbus_mfr_autogen_init
+ .text.PMBUS_HANDLE_MFR_SOFTSTART_IRQ_RATE_SEL
+                0x10024464       0x30 .\build\patch/pmbus_mfr_specific_handlers.o
+                0x10024464                PMBUS_HANDLE_MFR_SOFTSTART_IRQ_RATE_SEL
+ .text.PMBUS_HANDLE_MFR_SOFTSTART_PWM_STEPSIZE
+                0x10024494       0x44 .\build\patch/pmbus_mfr_specific_handlers.o
+                0x10024494                PMBUS_HANDLE_MFR_SOFTSTART_PWM_STEPSIZE
+ .text.PMBUS_HANDLE_MFR_SOFTSTART_CYCLE_COUNT
+                0x100244d8       0x44 .\build\patch/pmbus_mfr_specific_handlers.o
+                0x100244d8                PMBUS_HANDLE_MFR_SOFTSTART_CYCLE_COUNT
+ .text.PMBUS_HANDLE_MFR_SOFTSTART_MAX_FREQUENCY
+                0x1002451c       0xf4 .\build\patch/pmbus_mfr_specific_handlers.o
+                0x1002451c                PMBUS_HANDLE_MFR_SOFTSTART_MAX_FREQUENCY
+ .text.AT_TON_DELAY
+                0x10024610       0x14 .\build\patch/regulation_state_machine_callbacks.o
+                0x10024610                AT_TON_DELAY
+ .text.AT_SHUTDOWN
+                0x10024624       0x44 .\build\patch/regulation_state_machine_callbacks.o
+                0x10024624                AT_SHUTDOWN
+ .text.regulation_sm_callbacks_init
+                0x10024668       0x80 .\build\patch/regulation_state_machine_callbacks.o
+                0x10024668                regulation_sm_callbacks_init
+ .text.patch_pmbus_mfr_autogen_init
+                0x100246e8        0x8 .\build\patch/user_app.o
+                0x100246e8                patch_pmbus_mfr_autogen_init
+ .text.user_drv_init
+                0x100246f0       0x38 .\build\patch/user_app.o
+                0x100246f0                user_drv_init
+ .text.memcpy   0x10024728       0x84 c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libg.a(lib_a-memcpy-stub.o)
+                0x10024728                memcpy
+ .text.memset   0x100247ac       0x94 c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libg.a(lib_a-memset.o)
+                0x100247ac                memset
+ *(.rodata*)
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+ *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+                0x10024840                _end_otp_patch1 = .
+                0x10024840                _end_text = .
+                0x10024840                _ram_exec_source = ALIGN (0x4)
+
+.glue_7         0x10024840        0x0
+ .glue_7        0x10024840        0x0 linker stubs
+
+.glue_7t        0x10024840        0x0
+ .glue_7t       0x10024840        0x0 linker stubs
+
+.vfp11_veneer   0x10024840        0x0
+ .vfp11_veneer  0x10024840        0x0 linker stubs
+
+.v4_bx          0x10024840        0x0
+ .v4_bx         0x10024840        0x0 linker stubs
+
+.iplt           0x10024840        0x0
+ .iplt          0x10024840        0x0 .\build\patch/patch_init.o
+
+.rel.dyn        0x10024840        0x0
+ .rel.iplt      0x10024840        0x0 .\build\patch/patch_init.o
+
+.ram_exec       0x200638f4        0x0 load address 0x10024840
+                0x200638f4                _start_ram_exec = .
+ *(RAM_EXEC*)
+                0x200638f4                _end_ram_exec = .
+                0x200638f4                . = ALIGN (0x4)
+
+.otp_patch2     0x10024840     0x4000
+                0x10024840                _otp_patch2_base = .
+                0x10028840                . = (. + _otp_patch2_size)
+ *fill*         0x10024840     0x4000 
+                0x10028840                _end_otp_patch2 = .
+
+.otp_patch3     0x10028840     0x4000
+                0x10028840                _otp_patch3_base = .
+                0x1002c840                . = (. + _otp_patch3_size)
+ *fill*         0x10028840     0x4000 
+                0x1002c840                _end_otp_patch3 = .
+
+.otp_patch4     0x1002c840        0x0
+                0x1002c840                _otp_patch4_base = .
+                0x1002c840                . = (. + _otp_patch4_size)
+                0x1002c840                _end_otp_patch4 = .
+                0x1002c840                _end = .
+                [!provide]                PROVIDE (end, .)
+OUTPUT(.\build\patch/patch.elf elf32-littlearm)
+
+.debug_info     0x00000000    0x20724
+ .debug_info    0x00000000     0x338d .\build\patch/patch_init.o
+ .debug_info    0x0000338d     0x5921 .\build\patch/add_on_features.o
+ .debug_info    0x00008cae     0x64dc .\build\patch/open_loop_llc.o
+ .debug_info    0x0000f18a     0x1f03 .\build\patch/pmbus_mfr_autogen.o
+ .debug_info    0x0001108d     0x4651 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_info    0x000156de     0x5667 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_info    0x0001ad45     0x59df .\build\patch/user_app.o
+
+.debug_abbrev   0x00000000     0x14b1
+ .debug_abbrev  0x00000000      0x320 .\build\patch/patch_init.o
+ .debug_abbrev  0x00000320      0x27c .\build\patch/add_on_features.o
+ .debug_abbrev  0x0000059c      0x41e .\build\patch/open_loop_llc.o
+ .debug_abbrev  0x000009ba       0xfd .\build\patch/pmbus_mfr_autogen.o
+ .debug_abbrev  0x00000ab7      0x395 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_abbrev  0x00000e4c      0x376 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_abbrev  0x000011c2      0x2ef .\build\patch/user_app.o
+
+.debug_loc      0x00000000      0xf3a
+ .debug_loc     0x00000000       0x38 .\build\patch/patch_init.o
+ .debug_loc     0x00000038      0x7cb .\build\patch/open_loop_llc.o
+ .debug_loc     0x00000803       0x20 .\build\patch/pmbus_mfr_autogen.o
+ .debug_loc     0x00000823      0x505 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_loc     0x00000d28      0x1d2 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_loc     0x00000efa       0x40 .\build\patch/user_app.o
+
+.debug_aranges  0x00000000      0x130
+ .debug_aranges
+                0x00000000       0x20 .\build\patch/patch_init.o
+ .debug_aranges
+                0x00000020       0x20 .\build\patch/add_on_features.o
+ .debug_aranges
+                0x00000040       0x40 .\build\patch/open_loop_llc.o
+ .debug_aranges
+                0x00000080       0x20 .\build\patch/pmbus_mfr_autogen.o
+ .debug_aranges
+                0x000000a0       0x38 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_aranges
+                0x000000d8       0x30 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_aranges
+                0x00000108       0x28 .\build\patch/user_app.o
+
+.debug_ranges   0x00000000      0x1c8
+ .debug_ranges  0x00000000       0x10 .\build\patch/patch_init.o
+ .debug_ranges  0x00000010       0x10 .\build\patch/add_on_features.o
+ .debug_ranges  0x00000020       0x78 .\build\patch/open_loop_llc.o
+ .debug_ranges  0x00000098       0x10 .\build\patch/pmbus_mfr_autogen.o
+ .debug_ranges  0x000000a8       0xe8 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_ranges  0x00000190       0x20 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_ranges  0x000001b0       0x18 .\build\patch/user_app.o
+
+.debug_macro    0x00000000     0xb02d
+ .debug_macro   0x00000000      0x2bf .\build\patch/patch_init.o
+ .debug_macro   0x000002bf      0x892 .\build\patch/patch_init.o
+ .debug_macro   0x00000b51       0x22 .\build\patch/patch_init.o
+ .debug_macro   0x00000b73       0x87 .\build\patch/patch_init.o
+ .debug_macro   0x00000bfa       0x51 .\build\patch/patch_init.o
+ .debug_macro   0x00000c4b       0xef .\build\patch/patch_init.o
+ .debug_macro   0x00000d3a       0x6a .\build\patch/patch_init.o
+ .debug_macro   0x00000da4      0x1df .\build\patch/patch_init.o
+ .debug_macro   0x00000f83       0x58 .\build\patch/patch_init.o
+ .debug_macro   0x00000fdb       0x35 .\build\patch/patch_init.o
+ .debug_macro   0x00001010       0x9c .\build\patch/patch_init.o
+ .debug_macro   0x000010ac      0x16d .\build\patch/patch_init.o
+ .debug_macro   0x00001219       0x58 .\build\patch/patch_init.o
+ .debug_macro   0x00001271       0x1f .\build\patch/patch_init.o
+ .debug_macro   0x00001290       0x43 .\build\patch/patch_init.o
+ .debug_macro   0x000012d3       0x20 .\build\patch/patch_init.o
+ .debug_macro   0x000012f3      0x187 .\build\patch/patch_init.o
+ .debug_macro   0x0000147a      0x330 .\build\patch/patch_init.o
+ .debug_macro   0x000017aa       0x10 .\build\patch/patch_init.o
+ .debug_macro   0x000017ba       0x35 .\build\patch/patch_init.o
+ .debug_macro   0x000017ef       0x16 .\build\patch/patch_init.o
+ .debug_macro   0x00001805       0x96 .\build\patch/patch_init.o
+ .debug_macro   0x0000189b       0xe2 .\build\patch/patch_init.o
+ .debug_macro   0x0000197d       0x33 .\build\patch/patch_init.o
+ .debug_macro   0x000019b0       0x3a .\build\patch/patch_init.o
+ .debug_macro   0x000019ea       0x1f .\build\patch/patch_init.o
+ .debug_macro   0x00001a09      0x242 .\build\patch/patch_init.o
+ .debug_macro   0x00001c4b       0x10 .\build\patch/patch_init.o
+ .debug_macro   0x00001c5b       0x3a .\build\patch/patch_init.o
+ .debug_macro   0x00001c95       0x5f .\build\patch/patch_init.o
+ .debug_macro   0x00001cf4       0x7b .\build\patch/patch_init.o
+ .debug_macro   0x00001d6f       0x93 .\build\patch/patch_init.o
+ .debug_macro   0x00001e02       0x10 .\build\patch/patch_init.o
+ .debug_macro   0x00001e12     0x1174 .\build\patch/patch_init.o
+ .debug_macro   0x00002f86       0x22 .\build\patch/patch_init.o
+ .debug_macro   0x00002fa8       0x4a .\build\patch/patch_init.o
+ .debug_macro   0x00002ff2      0x413 .\build\patch/patch_init.o
+ .debug_macro   0x00003405       0x52 .\build\patch/patch_init.o
+ .debug_macro   0x00003457       0x16 .\build\patch/patch_init.o
+ .debug_macro   0x0000346d      0x60e .\build\patch/patch_init.o
+ .debug_macro   0x00003a7b      0x898 .\build\patch/patch_init.o
+ .debug_macro   0x00004313      0x492 .\build\patch/patch_init.o
+ .debug_macro   0x000047a5       0x10 .\build\patch/patch_init.o
+ .debug_macro   0x000047b5       0x10 .\build\patch/patch_init.o
+ .debug_macro   0x000047c5      0x27a .\build\patch/patch_init.o
+ .debug_macro   0x00004a3f      0x52a .\build\patch/add_on_features.o
+ .debug_macro   0x00004f69       0x2d .\build\patch/add_on_features.o
+ .debug_macro   0x00004f96       0x10 .\build\patch/add_on_features.o
+ .debug_macro   0x00004fa6      0x43f .\build\patch/add_on_features.o
+ .debug_macro   0x000053e5      0x30a .\build\patch/add_on_features.o
+ .debug_macro   0x000056ef       0x40 .\build\patch/add_on_features.o
+ .debug_macro   0x0000572f       0xd3 .\build\patch/add_on_features.o
+ .debug_macro   0x00005802       0x34 .\build\patch/add_on_features.o
+ .debug_macro   0x00005836       0xe8 .\build\patch/add_on_features.o
+ .debug_macro   0x0000591e      0x46f .\build\patch/add_on_features.o
+ .debug_macro   0x00005d8d     0x15a6 .\build\patch/add_on_features.o
+ .debug_macro   0x00007333      0x112 .\build\patch/add_on_features.o
+ .debug_macro   0x00007445       0x10 .\build\patch/add_on_features.o
+ .debug_macro   0x00007455      0x97f .\build\patch/add_on_features.o
+ .debug_macro   0x00007dd4       0x64 .\build\patch/add_on_features.o
+ .debug_macro   0x00007e38       0x16 .\build\patch/add_on_features.o
+ .debug_macro   0x00007e4e      0x304 .\build\patch/add_on_features.o
+ .debug_macro   0x00008152      0x388 .\build\patch/add_on_features.o
+ .debug_macro   0x000084da      0x14b .\build\patch/add_on_features.o
+ .debug_macro   0x00008625      0x28c .\build\patch/add_on_features.o
+ .debug_macro   0x000088b1      0x277 .\build\patch/add_on_features.o
+ .debug_macro   0x00008b28      0x280 .\build\patch/add_on_features.o
+ .debug_macro   0x00008da8      0x1bc .\build\patch/add_on_features.o
+ .debug_macro   0x00008f64       0x34 .\build\patch/add_on_features.o
+ .debug_macro   0x00008f98       0x22 .\build\patch/add_on_features.o
+ .debug_macro   0x00008fba       0x16 .\build\patch/add_on_features.o
+ .debug_macro   0x00008fd0      0x2ad .\build\patch/add_on_features.o
+ .debug_macro   0x0000927d      0x1ca .\build\patch/add_on_features.o
+ .debug_macro   0x00009447       0x1c .\build\patch/add_on_features.o
+ .debug_macro   0x00009463      0x10c .\build\patch/add_on_features.o
+ .debug_macro   0x0000956f       0x22 .\build\patch/add_on_features.o
+ .debug_macro   0x00009591      0x4f5 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00009a86       0xe8 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00009b6e       0x10 .\build\patch/open_loop_llc.o
+ .debug_macro   0x00009b7e       0x1c .\build\patch/open_loop_llc.o
+ .debug_macro   0x00009b9a      0x109 .\build\patch/pmbus_mfr_autogen.o
+ .debug_macro   0x00009ca3      0x44a .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x0000a0ed      0x5ce .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x0000a6bb       0x10 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_macro   0x0000a6cb      0x476 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_macro   0x0000ab41      0x4ec .\build\patch/user_app.o
+
+.debug_line     0x00000000     0x389d
+ .debug_line    0x00000000      0x593 .\build\patch/patch_init.o
+ .debug_line    0x00000593      0x95a .\build\patch/add_on_features.o
+ .debug_line    0x00000eed      0xaa7 .\build\patch/open_loop_llc.o
+ .debug_line    0x00001994      0x379 .\build\patch/pmbus_mfr_autogen.o
+ .debug_line    0x00001d0d      0x8c4 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_line    0x000025d1      0x98c .\build\patch/regulation_state_machine_callbacks.o
+ .debug_line    0x00002f5d      0x940 .\build\patch/user_app.o
+
+.debug_str      0x00000000    0x6a081
+ .debug_str     0x00000000    0x2e396 .\build\patch/patch_init.o
+                              0x2e74c (size before relaxing)
+ .debug_str     0x0002e396    0x35fba .\build\patch/add_on_features.o
+                              0x64769 (size before relaxing)
+ .debug_str     0x00064350     0x1106 .\build\patch/open_loop_llc.o
+                              0x5e2e6 (size before relaxing)
+ .debug_str     0x00065456       0x23 .\build\patch/pmbus_mfr_autogen.o
+                               0xaae6 (size before relaxing)
+ .debug_str     0x00065479     0x4948 .\build\patch/pmbus_mfr_specific_handlers.o
+                              0x583f3 (size before relaxing)
+ .debug_str     0x00069dc1      0x191 .\build\patch/regulation_state_machine_callbacks.o
+                              0x5c897 (size before relaxing)
+ .debug_str     0x00069f52      0x12f .\build\patch/user_app.o
+                              0x5def5 (size before relaxing)
+
+.comment        0x00000000       0x7f
+ .comment       0x00000000       0x7f .\build\patch/patch_init.o
+                                 0x80 (size before relaxing)
+ .comment       0x0000007f       0x80 .\build\patch/add_on_features.o
+ .comment       0x0000007f       0x80 .\build\patch/open_loop_llc.o
+ .comment       0x0000007f       0x80 .\build\patch/pmbus_mfr_autogen.o
+ .comment       0x0000007f       0x80 .\build\patch/pmbus_mfr_specific_handlers.o
+ .comment       0x0000007f       0x80 .\build\patch/regulation_state_machine_callbacks.o
+ .comment       0x0000007f       0x80 .\build\patch/user_app.o
+
+.ARM.attributes
+                0x00000000       0x31
+ .ARM.attributes
+                0x00000000       0x31 .\build\patch/patch_init.o
+ .ARM.attributes
+                0x00000031       0x31 .\build\patch/add_on_features.o
+ .ARM.attributes
+                0x00000062       0x31 .\build\patch/open_loop_llc.o
+ .ARM.attributes
+                0x00000093       0x31 .\build\patch/pmbus_mfr_autogen.o
+ .ARM.attributes
+                0x000000c4       0x31 .\build\patch/pmbus_mfr_specific_handlers.o
+ .ARM.attributes
+                0x000000f5       0x31 .\build\patch/regulation_state_machine_callbacks.o
+ .ARM.attributes
+                0x00000126       0x31 .\build\patch/user_app.o
+ .ARM.attributes
+                0x00000157       0x2c c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libg.a(lib_a-memcpy-stub.o)
+ .ARM.attributes
+                0x00000183       0x2c c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libg.a(lib_a-memset.o)
+
+.debug_frame    0x00000000      0x254
+ .debug_frame   0x00000000       0x28 .\build\patch/patch_init.o
+ .debug_frame   0x00000028       0x20 .\build\patch/add_on_features.o
+ .debug_frame   0x00000048       0x80 .\build\patch/open_loop_llc.o
+ .debug_frame   0x000000c8       0x2c .\build\patch/pmbus_mfr_autogen.o
+ .debug_frame   0x000000f4       0x68 .\build\patch/pmbus_mfr_specific_handlers.o
+ .debug_frame   0x0000015c       0x58 .\build\patch/regulation_state_machine_callbacks.o
+ .debug_frame   0x000001b4       0x40 .\build\patch/user_app.o
+ .debug_frame   0x000001f4       0x30 c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libg.a(lib_a-memcpy-stub.o)
+ .debug_frame   0x00000224       0x30 c:/xdpp1b/xdpp1b_fw/tools/armgnu/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libg.a(lib_a-memset.o)
